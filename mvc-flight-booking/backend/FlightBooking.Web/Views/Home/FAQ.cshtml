@@ -1,0 +1,195 @@
+@{
+    ViewData["Title"] = "Sık Sorulan Sorular";
+}
+
+<div class="container">
+    <h2 style="color: white; margin-bottom: 32px; font-size: 32px; font-weight: 800;">
+        BULUTBİLET<span style="color: #00e5ff;">.COM</span> - Sık Sorulan Sorular
+    </h2>
+
+    <div class="faq-container">
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+                <h3>❓ Nasıl rezervasyon yapabilirim?</h3>
+                <span class="faq-toggle">+</span>
+            </div>
+            <div class="faq-answer">
+                <p>Ana sayfadaki arama formunu kullanarak kalkış şehri, varış şehri ve tarih bilgilerini girin. Uygun uçuşları görüntüledikten sonra "Rezervasyon Yap" butonuna tıklayarak rezervasyon işlemini tamamlayabilirsiniz. Üye olmadan da rezervasyon yapabilirsiniz.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+                <h3>💳 Hangi ödeme yöntemlerini kabul ediyorsunuz?</h3>
+                <span class="faq-toggle">+</span>
+            </div>
+            <div class="faq-answer">
+                <p>Kredi kartı, banka kartı ve havale/EFT ile ödeme yapabilirsiniz. Tüm ödemeleriniz SSL şifreleme ile güvence altındadır. Visa, Mastercard, American Express kartlarını kabul ediyoruz.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+                <h3>🔄 Rezervasyonumu iptal edebilir miyim?</h3>
+                <span class="faq-toggle">+</span>
+            </div>
+            <div class="faq-answer">
+                <p>Evet, uçuştan 24 saat öncesine kadar ücretsiz iptal edebilirsiniz. İptal işlemi için PNR numaranız ve e-posta adresinizle "PNR Sorgula" sayfasından işlem yapabilirsiniz. 24 saatten sonraki iptallerde havayolu şirketinin iptal koşulları geçerlidir.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+                <h3>✏️ Rezervasyonumda değişiklik yapabilir miyim?</h3>
+                <span class="faq-toggle">+</span>
+            </div>
+            <div class="faq-answer">
+                <p>Rezervasyonunuzda tarih ve saat değişikliği yapabilirsiniz. Değişiklik ücreti havayolu şirketine göre değişir. Yolcu bilgilerinde küçük düzeltmeler ücretsizdir, ancak isim değişiklikleri için ek ücret alınabilir.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+                <h3>🎫 E-biletimi nasıl alabilirim?</h3>
+                <span class="faq-toggle">+</span>
+            </div>
+            <div class="faq-answer">
+                <p>Rezervasyon tamamlandıktan sonra e-biletiniz otomatik olarak e-posta adresinize gönderilir. Ayrıca PNR numaranızla "PNR Sorgula" sayfasından e-biletinizi görüntüleyebilir ve indirebilirsiniz.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+                <h3>🧳 Bagaj hakları nelerdir?</h3>
+                <span class="faq-toggle">+</span>
+            </div>
+            <div class="faq-answer">
+                <p>Kabin bagajı genellikle 8 kg'dır. Bagaj hakları havayolu şirketine ve bilet tipine göre değişir. Detaylı bagaj bilgileri e-biletinizde yer alır. Ek bagaj ihtiyacınız için havayolu şirketiyle iletişime geçebilirsiniz.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+                <h3>🪑 Koltuk seçimi yapabilir miyim?</h3>
+                <span class="faq-toggle">+</span>
+            </div>
+            <div class="faq-answer">
+                <p>Evet, rezervasyon sırasında koltuk seçimi yapabilirsiniz. Pencere kenarı, koridor ve orta koltuk seçenekleri mevcuttur. Bazı özel koltuklar için ek ücret alınabilir.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+                <h3>📞 Müşteri hizmetlerine nasıl ulaşabilirim?</h3>
+                <span class="faq-toggle">+</span>
+            </div>
+            <div class="faq-answer">
+                <p>7/24 müşteri hizmetlerimize +90 (212) 123 45 67 numarasından ulaşabilirsiniz. Ayrıca info@bulutbilet.com e-posta adresinden de bizimle iletişime geçebilirsiniz.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+                <h3>🆔 Hangi kimlik belgeleri gereklidir?</h3>
+                <span class="faq-toggle">+</span>
+            </div>
+            <div class="faq-answer">
+                <p>İç hat uçuşlar için TC kimlik kartı veya pasaport yeterlidir. 18 yaş altı yolcular için nüfus cüzdanı da kabul edilir. Yurt dışı uçuşlar için geçerli pasaport zorunludur.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFAQ(this)">
+                <h3>⏰ Ne kadar önceden havalimanında olmalıyım?</h3>
+                <span class="faq-toggle">+</span>
+            </div>
+            <div class="faq-answer">
+                <p>İç hat uçuşlar için en az 1 saat, dış hat uçuşlar için en az 2 saat önceden havalimanında bulunmanızı öneriyoruz. Yoğun dönemlerde bu süreleri artırmanız faydalı olacaktır.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .faq-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .faq-item {
+        background: rgba(255,255,255,0.95);
+        margin-bottom: 16px;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .faq-question {
+        padding: 20px;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: linear-gradient(135deg, #00bcd4 0%, #00acc1 100%);
+        color: white;
+        transition: all 0.3s ease;
+    }
+
+    .faq-question:hover {
+        background: linear-gradient(135deg, #00acc1 0%, #0097a7 100%);
+    }
+
+    .faq-question h3 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    .faq-toggle {
+        font-size: 24px;
+        font-weight: bold;
+        transition: transform 0.3s ease;
+    }
+
+    .faq-answer {
+        padding: 0 20px;
+        max-height: 0;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        background: white;
+    }
+
+    .faq-answer.active {
+        padding: 20px;
+        max-height: 200px;
+    }
+
+    .faq-answer p {
+        margin: 0;
+        color: #333;
+        line-height: 1.6;
+    }
+
+    .faq-item.active .faq-toggle {
+        transform: rotate(45deg);
+    }
+</style>
+
+<script>
+    function toggleFAQ(element) {
+        const faqItem = element.parentElement;
+        const answer = faqItem.querySelector('.faq-answer');
+        
+        // Close all other FAQ items
+        document.querySelectorAll('.faq-item').forEach(item => {
+            if (item !== faqItem) {
+                item.classList.remove('active');
+                item.querySelector('.faq-answer').classList.remove('active');
+            }
+        });
+        
+        // Toggle current item
+        faqItem.classList.toggle('active');
+        answer.classList.toggle('active');
+    }
+</script>

@@ -1,0 +1,306 @@
+@{
+    ViewData["Title"] = "Ana Sayfa";
+}
+
+<div>
+    <div class="hero">
+        <h1>BULUTBİLET<span style="color: #00e5ff;">.COM</span></h1>
+        <h2 style="font-size: 28px; margin-top: 16px; margin-bottom: 32px;">Hayalinizdeki Yolculuğa Başlayın</h2>
+        <p style="margin-bottom: 40px;">🌍 En uygun fiyatlarla uçak biletinizi hemen rezerve edin</p>
+        
+        <!-- Quick Flight Search Form -->
+        <div class="quick-search-form" style="background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); padding: 32px; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.15); max-width: 800px; margin: 0 auto 40px;">
+            <form asp-controller="Flight" asp-action="Search" method="get" class="quick-search-grid">
+                <div class="form-group" style="margin: 0;">
+                    <label style="color: #333; font-weight: 600; margin-bottom: 8px; display: block;">Nereden</label>
+                    <select name="DepartureCity" class="city-select" style="width: 100%; padding: 12px 16px; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 16px; background: white;">
+                        <option value="">Kalkış Şehri Seçin</option>
+                        <option value="İstanbul">İstanbul (IST) - İstanbul Havalimanı</option>
+                        <option value="Ankara">Ankara (ESB) - Esenboğa Havalimanı</option>
+                        <option value="İzmir">İzmir (ADB) - Adnan Menderes Havalimanı</option>
+                        <option value="Antalya">Antalya (AYT) - Antalya Havalimanı</option>
+                        <option value="Adana">Adana (ADA) - Şakirpaşa Havalimanı</option>
+                        <option value="Trabzon">Trabzon (TZX) - Trabzon Havalimanı</option>
+                        <option value="Gaziantep">Gaziantep (GZT) - Oğuzeli Havalimanı</option>
+                        <option value="Kayseri">Kayseri (ASR) - Erkilet Havalimanı</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin: 0;">
+                    <label style="color: #333; font-weight: 600; margin-bottom: 8px; display: block;">Nereye</label>
+                    <select name="ArrivalCity" class="city-select" style="width: 100%; padding: 12px 16px; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 16px; background: white;">
+                        <option value="">Varış Şehri Seçin</option>
+                        <option value="İstanbul">İstanbul (IST) - İstanbul Havalimanı</option>
+                        <option value="Ankara">Ankara (ESB) - Esenboğa Havalimanı</option>
+                        <option value="İzmir">İzmir (ADB) - Adnan Menderes Havalimanı</option>
+                        <option value="Antalya">Antalya (AYT) - Antalya Havalimanı</option>
+                        <option value="Adana">Adana (ADA) - Şakirpaşa Havalimanı</option>
+                        <option value="Trabzon">Trabzon (TZX) - Trabzon Havalimanı</option>
+                        <option value="Gaziantep">Gaziantep (GZT) - Oğuzeli Havalimanı</option>
+                        <option value="Kayseri">Kayseri (ASR) - Erkilet Havalimanı</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin: 0;">
+                    <label style="color: #333; font-weight: 600; margin-bottom: 8px; display: block;">Tarih</label>
+                    <input type="date" name="DepartureDate" value="@DateTime.Today.ToString("yyyy-MM-dd")" min="@DateTime.Today.ToString("yyyy-MM-dd")" style="width: 100%; padding: 12px 16px; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 16px;" />
+                </div>
+                <div class="form-group" style="margin: 0;">
+                    <label style="color: transparent; font-weight: 600; margin-bottom: 8px; display: block; user-select: none;">Ara</label>
+                    <button type="submit" class="btn btn-primary" style="padding: 12px 24px; font-size: 16px; border-radius: 12px; width: 100%; height: 48px;">
+                        🔍 Ara
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <a href="@Url.Action("Search", "Flight", new { showAll = "true" })" class="btn btn-secondary" style="font-size: 16px; padding: 12px 32px; background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.3); color: white;">
+            Tüm Uçuşlar
+        </a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('.quick-search-form form');
+            const departureSelect = form.querySelector('select[name="DepartureCity"]');
+            const arrivalSelect = form.querySelector('select[name="ArrivalCity"]');
+            const dateInput = form.querySelector('input[name="DepartureDate"]');
+            
+            // Set max date to 3 months from now
+            const maxDate = new Date();
+            maxDate.setMonth(maxDate.getMonth() + 3);
+            dateInput.max = maxDate.toISOString().split('T')[0];
+            
+            // Prevent same city selection and update options
+            function updateCityOptions() {
+                const departureValue = departureSelect.value;
+                const arrivalValue = arrivalSelect.value;
+                
+                // Reset all options to enabled
+                Array.from(departureSelect.options).forEach(option => {
+                    option.disabled = false;
+                    option.style.color = '';
+                });
+                Array.from(arrivalSelect.options).forEach(option => {
+                    option.disabled = false;
+                    option.style.color = '';
+                });
+                
+                // Disable selected city in the other dropdown
+                if (departureValue) {
+                    Array.from(arrivalSelect.options).forEach(option => {
+                        if (option.value === departureValue) {
+                            option.disabled = true;
+                            option.style.color = '#ccc';
+                        }
+                    });
+                }
+                
+                if (arrivalValue) {
+                    Array.from(departureSelect.options).forEach(option => {
+                        if (option.value === arrivalValue) {
+                            option.disabled = true;
+                            option.style.color = '#ccc';
+                        }
+                    });
+                }
+                
+                // If same city is selected, clear the second one
+                if (departureValue && arrivalValue && departureValue === arrivalValue) {
+                    arrivalSelect.value = '';
+                    alert('⚠️ Kalkış ve varış şehri aynı olamaz!');
+                }
+            }
+            
+            departureSelect.addEventListener('change', updateCityOptions);
+            arrivalSelect.addEventListener('change', updateCityOptions);
+            
+            // Form submission validation
+            form.addEventListener('submit', function(e) {
+                if (!departureSelect.value) {
+                    e.preventDefault();
+                    alert('⚠️ Lütfen kalkış şehrini seçin');
+                    departureSelect.focus();
+                    return;
+                }
+                
+                if (!arrivalSelect.value) {
+                    e.preventDefault();
+                    alert('⚠️ Lütfen varış şehrini seçin');
+                    arrivalSelect.focus();
+                    return;
+                }
+                
+                if (!dateInput.value) {
+                    e.preventDefault();
+                    alert('⚠️ Lütfen tarih seçin');
+                    dateInput.focus();
+                    return;
+                }
+                
+                if (departureSelect.value === arrivalSelect.value) {
+                    e.preventDefault();
+                    alert('⚠️ Kalkış ve varış şehri aynı olamaz!');
+                    return;
+                }
+                
+                // Show loading state
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '🔄 Aranıyor...';
+                submitBtn.disabled = true;
+                
+                // Form will submit to Flight/Search with parameters
+                // Re-enable after 5 seconds as fallback
+                setTimeout(() => {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }, 5000);
+            });
+            
+            // Add hover effects
+            const formGroups = form.querySelectorAll('.form-group');
+            formGroups.forEach(group => {
+                const input = group.querySelector('select, input');
+                input.addEventListener('focus', () => {
+                    input.style.borderColor = '#00bcd4';
+                    input.style.boxShadow = '0 0 0 3px rgba(0,188,212,0.1)';
+                });
+                
+                input.addEventListener('blur', () => {
+                    input.style.borderColor = '#e0e0e0';
+                    input.style.boxShadow = 'none';
+                });
+            });
+        });
+    </script>
+    
+    <style>
+        .quick-search-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 16px;
+            align-items: start;
+        }
+        
+        .quick-search-form select,
+        .quick-search-form input {
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .quick-search-form select:hover,
+        .quick-search-form input:hover {
+            border-color: #00bcd4 !important;
+            box-shadow: 0 4px 12px rgba(0,188,212,0.2) !important;
+            transform: translateY(-1px);
+        }
+        
+        .city-select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 12px center;
+            background-repeat: no-repeat;
+            background-size: 16px;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+        }
+        
+        .city-select:focus {
+            outline: none;
+            border-color: #00bcd4 !important;
+            box-shadow: 0 0 0 3px rgba(0,188,212,0.1) !important;
+        }
+        
+        .city-select option {
+            padding: 8px 12px;
+            font-size: 14px;
+        }
+        
+        .city-select option:disabled {
+            color: #ccc !important;
+            background-color: #f5f5f5;
+        }
+        
+        .quick-search-form button:hover {
+            background: #00acc1 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,188,212,0.3) !important;
+        }
+        
+        @@media (max-width: 768px) {
+            .quick-search-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            .quick-search-form {
+                padding: 24px 20px !important;
+            }
+            
+            .quick-search-form button {
+                width: 100% !important;
+                padding: 16px !important;
+                font-size: 18px !important;
+                height: 56px !important;
+            }
+        }
+        
+        @@media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2.5rem !important;
+            }
+            
+            .hero h2 {
+                font-size: 1.5rem !important;
+            }
+            
+            .quick-search-form {
+                margin: 0 20px 40px !important;
+            }
+        }
+    </style>
+
+    <div class="container">
+        <div class="grid">
+            <div class="card" style="background: linear-gradient(135deg, #00bcd4 0%, #00acc1 100%); color: white; transform: translateY(0); animation: slideInLeft 0.6s ease-out; border: none;">
+                <h2 style="font-size: 28px; margin-bottom: 20px; font-weight: 700;">🎫 Üye Olmadan Rezervasyon</h2>
+                <p style="font-size: 16px; line-height: 1.7; font-weight: 400;">
+                    ✨ Sadece e-posta ile hızlı rezervasyon yapın!<br/>
+                    💳 Ödemenizi güvenle tamamlayın<br/>
+                    🎉 İsterseniz sonra üye olun
+                </p>
+            </div>
+            <div class="card" style="background: linear-gradient(135deg, #0097a7 0%, #00838f 100%); color: white; animation: slideInLeft 0.8s ease-out; border: none;">
+                <h2 style="font-size: 28px; margin-bottom: 20px; font-weight: 700;">💳 Güvenli Ödeme</h2>
+                <p style="font-size: 16px; line-height: 1.7; font-weight: 400;">Tüm ödemeleriniz güvenli altyapımız ile korunmaktadır. SSL şifreleme ile %100 güvenlik garantisi.</p>
+            </div>
+            <div class="card" style="background: linear-gradient(135deg, #006064 0%, #004d40 100%); color: white; animation: slideInLeft 1s ease-out; border: none;">
+                <h2 style="font-size: 28px; margin-bottom: 20px; font-weight: 700;">🔄 Esnek İptal</h2>
+                <p style="font-size: 16px; line-height: 1.7; font-weight: 400;">Uçuştan 24 saat öncesine kadar ücretsiz iptal ve değişiklik imkanı sunuyoruz.</p>
+            </div>
+        </div>
+
+        <div style="margin-top: 80px; text-align: center; background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(224,247,250,0.95) 100%); backdrop-filter: blur(20px); padding: 60px 40px; border-radius: 32px; box-shadow: 0 20px 80px rgba(0,188,212,0.15); animation: fadeIn 1.2s ease-in; border: 1px solid rgba(0,188,212,0.1);">
+            <h2 style="font-size: 42px; margin-bottom: 32px; background: linear-gradient(135deg, #00bcd4 0%, #00acc1 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 800; font-family: 'Inter', sans-serif;">
+                🌟 Neden Bizi Seçmelisiniz?
+            </h2>
+            <div class="grid" style="margin-top: 40px;">
+                <div style="padding: 24px;">
+                    <div style="font-size: 56px; margin-bottom: 16px;">⚡</div>
+                    <h3 style="color: #00bcd4; margin-bottom: 12px; font-size: 20px; font-weight: 600;">Hızlı İşlem</h3>
+                    <p style="color: #546e7a; font-size: 16px; line-height: 1.6;">Dakikalar içinde rezervasyon</p>
+                </div>
+                <div style="padding: 24px;">
+                    <div style="font-size: 56px; margin-bottom: 16px;">💰</div>
+                    <h3 style="color: #0097a7; margin-bottom: 12px; font-size: 20px; font-weight: 600;">En İyi Fiyat</h3>
+                    <p style="color: #546e7a; font-size: 16px; line-height: 1.6;">Garantili düşük fiyatlar</p>
+                </div>
+                <div style="padding: 24px;">
+                    <div style="font-size: 56px; margin-bottom: 16px;">🎯</div>
+                    <h3 style="color: #00838f; margin-bottom: 12px; font-size: 20px; font-weight: 600;">7/24 Destek</h3>
+                    <p style="color: #546e7a; font-size: 16px; line-height: 1.6;">Her zaman yanınızdayız</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,328 @@
+@model RegisterViewModel
+
+@{
+    ViewData["Title"] = "Kayıt Ol - BULUTBİLET.COM";
+}
+
+<div class="container">
+    <div class="card" style="max-width: 600px; margin: 0 auto;">
+        <h2>📝 Kayıt Ol</h2>
+        <p>BULUTBİLET.COM'a üye olun ve avantajlardan yararlanın</p>
+        
+        @if (ViewBag.FromBooking == true)
+        {
+            <div class="alert alert-success" style="background: linear-gradient(135deg, #00bcd4 0%, #00acc1 100%); color: white; border: none; border-radius: 12px; padding: 16px; margin-bottom: 20px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="font-size: 24px;">🎉</div>
+                    <div>
+                        <strong>Rezervasyon Başarılı!</strong><br/>
+                        <small>PNR: @ViewBag.PNR</small>
+                    </div>
+                </div>
+                <p style="margin: 12px 0 0 0; font-size: 14px; opacity: 0.9;">
+                    @ViewBag.PreFilledMessage
+                </p>
+            </div>
+        }
+        
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger">
+                ⚠️ Lütfen hataları düzeltin ve tekrar deneyin.
+            </div>
+        }
+
+        <form asp-action="Register" method="post">
+            @if (ViewBag.FromBooking == true && !string.IsNullOrEmpty(ViewBag.PNR))
+            {
+                <input type="hidden" name="pnr" value="@ViewBag.PNR" />
+            }
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="FirstName">Ad</label>
+                    <input asp-for="FirstName" placeholder="Adınız" />
+                    <span asp-validation-for="FirstName" class="field-validation-error"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="LastName">Soyad</label>
+                    <input asp-for="LastName" placeholder="Soyadınız" />
+                    <span asp-validation-for="LastName" class="field-validation-error"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Email">E-posta Adresi</label>
+                <input asp-for="Email" type="email" placeholder="ornek@email.com" />
+                <span asp-validation-for="Email" class="field-validation-error"></span>
+                <small style="color: #666; font-size: 12px;">
+                    📧 Rezervasyon bilgileriniz bu adrese gönderilecektir
+                </small>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="PhoneNumber">Telefon Numarası</label>
+                <input asp-for="PhoneNumber" type="tel" placeholder="0555 123 45 67" 
+                       oninput="formatPhoneNumberRegister(this)" maxlength="14" />
+                <span asp-validation-for="PhoneNumber" class="field-validation-error"></span>
+                <small style="color: #666; font-size: 12px;">Format: 0555 123 45 67</small>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="IdentityNumber">TC Kimlik Numarası</label>
+                <input asp-for="IdentityNumber" type="text" placeholder="TC Kimlik No (11 hane)" 
+                       oninput="validateTCKimlikRegister(this)" maxlength="11" pattern="[0-9]{11}" />
+                <span asp-validation-for="IdentityNumber" class="field-validation-error"></span>
+                <small id="tcErrorRegister" style="color: red; display: none; font-size: 12px;">Geçerli bir TC Kimlik numarası girin</small>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="DateOfBirth">Doğum Tarihi</label>
+                    <input asp-for="DateOfBirth" type="date" max="@DateTime.Today.AddYears(-18).ToString("yyyy-MM-dd")" />
+                    <span asp-validation-for="DateOfBirth" class="field-validation-error"></span>
+                    <small style="color: #666; font-size: 12px;">18 yaşından büyük olmalısınız</small>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Gender">Cinsiyet</label>
+                    <select asp-for="Gender">
+                        <option value="Erkek">Erkek</option>
+                        <option value="Kadın">Kadın</option>
+                    </select>
+                    <span asp-validation-for="Gender" class="field-validation-error"></span>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="Password">Şifre</label>
+                    <div style="position: relative;">
+                        <input asp-for="Password" type="password" placeholder="En az 6 karakter" />
+                        <button type="button" onclick="togglePassword('Password')" 
+                                style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #666; cursor: pointer;">
+                            👁️
+                        </button>
+                    </div>
+                    <span asp-validation-for="Password" class="field-validation-error"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="ConfirmPassword">Şifre Tekrar</label>
+                    <div style="position: relative;">
+                        <input asp-for="ConfirmPassword" type="password" placeholder="Şifrenizi tekrar girin" />
+                        <button type="button" onclick="togglePassword('ConfirmPassword')" 
+                                style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #666; cursor: pointer;">
+                            👁️
+                        </button>
+                    </div>
+                    <span asp-validation-for="ConfirmPassword" class="field-validation-error"></span>
+                </div>
+            </div>
+
+            <div class="form-group" style="background: linear-gradient(135deg, rgba(0, 188, 212, 0.1), rgba(0, 172, 193, 0.1)); padding: 16px; border-radius: 12px; border: 1px solid rgba(0, 188, 212, 0.2);">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                    <input asp-for="AcceptTerms" type="checkbox" style="width: auto; margin: 0;" required />
+                    <label asp-for="AcceptTerms" style="margin: 0; font-weight: 600;">Kullanım şartlarını kabul ediyorum</label>
+                </div>
+                <span asp-validation-for="AcceptTerms" class="field-validation-error"></span>
+                <small style="color: #666; font-size: 12px;">
+                    📋 <a href="#" onclick="alert('Kullanım şartları yakında eklenecektir.')" style="color: #00bcd4;">Kullanım Şartları</a> ve 
+                    <a href="#" onclick="alert('Gizlilik politikası yakında eklenecektir.')" style="color: #00bcd4;">Gizlilik Politikası</a>'nı okudum ve kabul ediyorum.
+                </small>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: 20px;">
+                📝 Kayıt Ol
+            </button>
+        </form>
+        
+        <div style="text-align: center; margin-top: 24px; padding-top: 20px; border-top: 1px solid #eee;">
+            <p>
+                Zaten hesabınız var mı? 
+                <a asp-action="Login" style="color: #00bcd4; text-decoration: none; font-weight: 600;">
+                    Giriş yapın
+                </a>
+            </p>
+        </div>
+
+        <div style="background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(56, 142, 60, 0.1)); padding: 20px; border-radius: 12px; margin-top: 20px; border: 1px solid rgba(76, 175, 80, 0.2);">
+            <h4 style="color: #4caf50; margin-bottom: 12px;">🎉 Üyelik Avantajları</h4>
+            <ul style="margin: 0; padding-left: 20px; color: #666;">
+                <li>Hızlı rezervasyon işlemleri</li>
+                <li>Geçmiş rezervasyonlarınızı görüntüleme</li>
+                <li>Özel kampanya ve indirimlerden haberdar olma</li>
+                <li>Kişisel bilgilerinizi kaydetme</li>
+                <li>Favori rotalarınızı takip etme</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function formatPhoneNumberRegister(input) {
+            let value = input.value.replace(/\D/g, ''); // Sadece rakamları al
+            
+            // 0 ile başlamazsa başına 0 ekle
+            if (value.length > 0 && value[0] !== '0') {
+                value = '0' + value;
+            }
+            
+            // Maksimum 11 hane
+            if (value.length > 11) {
+                value = value.substring(0, 11);
+            }
+            
+            // Format: 0555 123 45 67
+            let formatted = value;
+            if (value.length > 4) {
+                formatted = value.substring(0, 4) + ' ' + value.substring(4);
+            }
+            if (value.length > 7) {
+                formatted = value.substring(0, 4) + ' ' + value.substring(4, 7) + ' ' + value.substring(7);
+            }
+            if (value.length > 9) {
+                formatted = value.substring(0, 4) + ' ' + value.substring(4, 7) + ' ' + value.substring(7, 9) + ' ' + value.substring(9);
+            }
+            
+            input.value = formatted;
+        }
+
+        function validateTCKimlikRegister(input) {
+            const value = input.value.replace(/\D/g, ''); // Sadece rakamları al
+            input.value = value;
+            
+            const errorElement = document.getElementById('tcErrorRegister');
+            
+            if (value.length === 0) {
+                errorElement.style.display = 'none';
+                return;
+            }
+            
+            if (value.length !== 11) {
+                errorElement.textContent = 'TC Kimlik numarası 11 hane olmalıdır';
+                errorElement.style.display = 'block';
+                return;
+            }
+            
+            // TC Kimlik numarası algoritması kontrolü
+            if (!isValidTCKimlikRegister(value)) {
+                errorElement.textContent = 'Geçersiz TC Kimlik numarası';
+                errorElement.style.display = 'block';
+                return;
+            }
+            
+            errorElement.style.display = 'none';
+        }
+
+        function isValidTCKimlikRegister(tc) {
+            if (tc.length !== 11) return false;
+            if (tc[0] === '0') return false; // İlk hane 0 olamaz
+            if (tc === '11111111111') return false; // Tüm haneler aynı olamaz
+            
+            const digits = tc.split('').map(Number);
+            
+            // 10. hane kontrolü
+            const sum1 = digits[0] + digits[2] + digits[4] + digits[6] + digits[8];
+            const sum2 = digits[1] + digits[3] + digits[5] + digits[7];
+            const check1 = ((sum1 * 7) - sum2) % 10;
+            
+            if (check1 !== digits[9]) return false;
+            
+            // 11. hane kontrolü
+            const sum3 = digits.slice(0, 10).reduce((a, b) => a + b, 0);
+            const check2 = sum3 % 10;
+            
+            return check2 === digits[10];
+        }
+
+        function togglePassword(fieldId) {
+            const field = document.getElementById(fieldId);
+            const button = field.nextElementSibling;
+            
+            if (field.type === 'password') {
+                field.type = 'text';
+                button.textContent = '🙈';
+            } else {
+                field.type = 'password';
+                button.textContent = '👁️';
+            }
+        }
+    </script>
+    <script>
+        function togglePassword(inputId) {
+            const passwordInput = document.getElementById(inputId);
+            const toggleBtn = event.target;
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleBtn.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                toggleBtn.textContent = '👁️';
+            }
+        }
+
+        // Form validation and enhancements
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form[asp-action="Register"]');
+            
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    const password = document.getElementById('Password').value;
+                    const confirmPassword = document.getElementById('ConfirmPassword').value;
+                    const acceptTerms = document.getElementById('AcceptTerms').checked;
+                    
+                    if (password !== confirmPassword) {
+                        e.preventDefault();
+                        alert('⚠️ Şifreler eşleşmiyor!');
+                        return false;
+                    }
+                    
+                    if (password.length < 6) {
+                        e.preventDefault();
+                        alert('⚠️ Şifre en az 6 karakter olmalıdır!');
+                        return false;
+                    }
+                    
+                    if (!acceptTerms) {
+                        e.preventDefault();
+                        alert('⚠️ Kullanım şartlarını kabul etmelisiniz!');
+                        return false;
+                    }
+                    
+                    const submitBtn = this.querySelector('button[type="submit"]');
+                    submitBtn.innerHTML = '⏳ Kayıt yapılıyor...';
+                    submitBtn.disabled = true;
+                });
+            }
+            
+            // Auto-format phone number
+            const phoneInput = document.getElementById('PhoneNumber');
+            if (phoneInput) {
+                phoneInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    if (value.length > 0) {
+                        if (value.length <= 4) {
+                            value = value;
+                        } else if (value.length <= 7) {
+                            value = `${value.slice(0, 4)} ${value.slice(4)}`;
+                        } else if (value.length <= 9) {
+                            value = `${value.slice(0, 4)} ${value.slice(4, 7)} ${value.slice(7)}`;
+                        } else {
+                            value = `${value.slice(0, 4)} ${value.slice(4, 7)} ${value.slice(7, 9)} ${value.slice(9, 11)}`;
+                        }
+                    }
+                    e.target.value = value;
+                });
+            }
+            
+            // Auto-focus on first name input
+            const firstNameInput = document.getElementById('FirstName');
+            if (firstNameInput) {
+                firstNameInput.focus();
+            }
+        });
+    </script>
+}

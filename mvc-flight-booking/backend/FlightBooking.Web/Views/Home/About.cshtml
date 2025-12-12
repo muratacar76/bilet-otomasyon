@@ -1,0 +1,309 @@
+<div class="container">
+    <div class="about-hero">
+        <h1>Hakkımızda</h1>
+        <p class="hero-subtitle">BULUTBİLET.COM ile hayalinizdeki yolculuğa başlamanın en kolay yolu</p>
+    </div>
+
+    <div class="about-content">
+        <section class="about-section">
+            <div class="section-content">
+                <div class="text-content">
+                    <h2>Misyonumuz</h2>
+                    <p>BULUTBİLET.COM olarak, yolcularımıza en uygun fiyatlı uçak biletlerini sunarak, seyahat deneyimlerini kolaylaştırmayı hedefliyoruz. Güvenilir, hızlı ve kullanıcı dostu platformumuzla, herkesin hayalindeki destinasyona ulaşmasını sağlıyoruz.</p>
+                </div>
+                <div class="icon-content">
+                    <div class="mission-icon">🎯</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="about-section">
+            <div class="section-content reverse">
+                <div class="icon-content">
+                    <div class="vision-icon">🌟</div>
+                </div>
+                <div class="text-content">
+                    <h2>Vizyonumuz</h2>
+                    <p>Türkiye'nin en güvenilir ve tercih edilen online uçak bileti platformu olmak. Teknoloji ve müşteri memnuniyetini bir araya getirerek, seyahat sektöründe öncü bir rol oynamak istiyoruz.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="values-section">
+            <h2>Değerlerimiz</h2>
+            <div class="values-grid">
+                <div class="value-card">
+                    <div class="value-icon">🔒</div>
+                    <h3>Güvenlik</h3>
+                    <p>Kişisel verileriniz ve ödeme bilgileriniz en yüksek güvenlik standartlarıyla korunur.</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon">⚡</div>
+                    <h3>Hız</h3>
+                    <p>Hızlı arama, kolay rezervasyon ve anında onay ile zamanınızı değerli kılıyoruz.</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon">💰</div>
+                    <h3>Uygun Fiyat</h3>
+                    <p>En rekabetçi fiyatları sunarak, bütçenize uygun seyahat seçenekleri sağlıyoruz.</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon">🎧</div>
+                    <h3>Müşteri Hizmetleri</h3>
+                    <p>7/24 müşteri desteği ile her zaman yanınızdayız.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="stats-section">
+            <h2>Rakamlarla BULUTBİLET.COM</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">1M+</div>
+                    <div class="stat-label">Mutlu Müşteri</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">50+</div>
+                    <div class="stat-label">Havayolu Ortağı</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">200+</div>
+                    <div class="stat-label">Destinasyon</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Müşteri Desteği</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="team-section">
+            <h2>Ekibimiz</h2>
+            <p>Deneyimli ve tutkulu ekibimiz, size en iyi hizmeti sunmak için çalışıyor. Seyahat sektöründeki uzmanlığımız ve teknoloji bilgimizle, her zaman daha iyisini hedefliyoruz.</p>
+            
+            <div class="contact-cta">
+                <h3>Bizimle İletişime Geçin</h3>
+                <p>Sorularınız, önerileriniz veya geri bildirimleriniz için bize ulaşın.</p>
+                <a asp-controller="Home" asp-action="Contact" class="btn btn-primary">İletişim</a>
+            </div>
+        </section>
+    </div>
+</div>
+
+<style>
+.about-hero {
+    text-align: center;
+    padding: 60px 0;
+    background: linear-gradient(135deg, #1976d2, #42a5f5);
+    color: white;
+    margin-bottom: 60px;
+    border-radius: 12px;
+}
+
+.about-hero h1 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+.hero-subtitle {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.about-content {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.about-section {
+    margin-bottom: 80px;
+}
+
+.section-content {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 60px;
+    align-items: center;
+}
+
+.section-content.reverse {
+    grid-template-columns: 1fr 2fr;
+}
+
+.text-content h2 {
+    font-size: 2.5rem;
+    color: #1976d2;
+    margin-bottom: 20px;
+}
+
+.text-content p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #555;
+}
+
+.icon-content {
+    text-align: center;
+}
+
+.mission-icon, .vision-icon {
+    font-size: 8rem;
+    margin-bottom: 20px;
+}
+
+.values-section {
+    background: #f8f9fa;
+    padding: 60px 40px;
+    border-radius: 12px;
+    margin-bottom: 80px;
+}
+
+.values-section h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    color: #1976d2;
+    margin-bottom: 50px;
+}
+
+.values-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+}
+
+.value-card {
+    background: white;
+    padding: 40px 30px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.value-card:hover {
+    transform: translateY(-5px);
+}
+
+.value-icon {
+    font-size: 3rem;
+    margin-bottom: 20px;
+}
+
+.value-card h3 {
+    font-size: 1.5rem;
+    color: #1976d2;
+    margin-bottom: 15px;
+}
+
+.value-card p {
+    color: #666;
+    line-height: 1.6;
+}
+
+.stats-section {
+    text-align: center;
+    margin-bottom: 80px;
+}
+
+.stats-section h2 {
+    font-size: 2.5rem;
+    color: #1976d2;
+    margin-bottom: 50px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 40px;
+}
+
+.stat-item {
+    padding: 30px;
+}
+
+.stat-number {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #1976d2;
+    margin-bottom: 10px;
+}
+
+.stat-label {
+    font-size: 1.1rem;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.team-section {
+    background: #f8f9fa;
+    padding: 60px 40px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.team-section h2 {
+    font-size: 2.5rem;
+    color: #1976d2;
+    margin-bottom: 30px;
+}
+
+.team-section p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #555;
+    max-width: 800px;
+    margin: 0 auto 50px;
+}
+
+.contact-cta {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.contact-cta h3 {
+    color: #1976d2;
+    margin-bottom: 15px;
+}
+
+.contact-cta p {
+    margin-bottom: 30px;
+    color: #666;
+}
+
+@@media (max-width: 768px) {
+    .about-hero h1 {
+        font-size: 2rem;
+    }
+    
+    .section-content,
+    .section-content.reverse {
+        grid-template-columns: 1fr;
+        gap: 30px;
+        text-align: center;
+    }
+    
+    .text-content h2 {
+        font-size: 2rem;
+    }
+    
+    .mission-icon, .vision-icon {
+        font-size: 4rem;
+    }
+    
+    .values-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+</style>

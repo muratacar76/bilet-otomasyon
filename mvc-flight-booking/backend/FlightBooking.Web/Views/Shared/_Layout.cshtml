@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - BULUTBİLET.COM</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <link rel="icon" type="image/x-icon" href="~/favicon.ico">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <h1><a asp-controller="Home" asp-action="Index">BULUTBİLET.COM</a></h1>
+            <div class="navbar-links">
+                <a asp-controller="Home" asp-action="Index" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")">Ana Sayfa</a>
+                @if (!(User.IsInRole("Admin") || User.FindFirst("IsAdmin")?.Value == "true"))
+                {
+                    <a asp-controller="Booking" asp-action="Query" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Booking" && ViewContext.RouteData.Values["action"]?.ToString() == "Query" ? "active" : "")">PNR Sorgula</a>
+                }
+                
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <a asp-controller="Booking" asp-action="MyBookings" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Booking" && ViewContext.RouteData.Values["action"]?.ToString() == "MyBookings" ? "active" : "")">Rezervasyonlarım</a>
+                    @if (User.IsInRole("Admin") || User.FindFirst("IsAdmin")?.Value == "true")
+                    {
+                        <a asp-controller="Admin" asp-action="Index" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Admin" ? "active" : "")">Admin Panel</a>
+                    }
+                    <span>Hoş geldin, @(User.FindFirst("FirstName")?.Value ?? User.Identity.Name)</span>
+                    <form asp-controller="Auth" asp-action="Logout" method="post" style="display: inline;">
+                        <button type="submit">Çıkış Yap</button>
+                    </form>
+                }
+                else
+                {
+                    <a asp-controller="Auth" asp-action="Login" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Auth" && ViewContext.RouteData.Values["action"]?.ToString() == "Login" ? "active" : "")">Giriş Yap</a>
+                    <a asp-controller="Auth" asp-action="Register" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Auth" && ViewContext.RouteData.Values["action"]?.ToString() == "Register" ? "active" : "")">Kayıt Ol</a>
+                }
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        @RenderBody()
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <h3>BULUTBİLET.COM</h3>
+                <p>Hayalinizdeki yolculuğa başlamanın en kolay yolu. Güvenli, hızlı ve uygun fiyatlı uçak bileti rezervasyonu.</p>
+                <div class="footer-contact-quick">
+                    <div class="quick-contact">
+                        <span>📞</span>
+                        <a href="tel:+902121234567">+90 (212) 123 45 67</a>
+                    </div>
+                    <div class="quick-contact">
+                        <span>✉️</span>
+                        <a href="mailto:info@bulutbilet.com">info@bulutbilet.com</a>
+                    </div>
+                    <div class="quick-contact">
+                        <span>🕒</span>
+                        <span>7/24 Müşteri Hizmetleri</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h4>Hızlı Linkler</h4>
+                <div class="footer-links-grid">
+                    <a asp-controller="Home" asp-action="Index">Ana Sayfa</a>
+                    @if (!(User.IsInRole("Admin") || User.FindFirst("IsAdmin")?.Value == "true"))
+                    {
+                        <a asp-controller="Booking" asp-action="Query">PNR Sorgula</a>
+                    }
+                    <a asp-controller="Home" asp-action="Campaigns">Kampanyalar</a>
+                    <a asp-controller="Home" asp-action="FAQ">Sık Sorulan Sorular</a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h4>Hesap</h4>
+                <div class="footer-links-grid">
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <a asp-controller="Booking" asp-action="MyBookings">Rezervasyonlarım</a>
+                        <a href="#" onclick="alert('Profil ayarları yakında aktif olacak!')">Profil Ayarları</a>
+                        <a asp-controller="Auth" asp-action="Logout">Çıkış Yap</a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Auth" asp-action="Login">Giriş Yap</a>
+                        <a asp-controller="Auth" asp-action="Register">Kayıt Ol</a>
+                    }
+                    <a asp-controller="Auth" asp-action="ForgotPassword">Şifremi Unuttum</a>
+                    <a asp-controller="Home" asp-action="Help">Yardım</a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h4>Bizi Takip Edin</h4>
+                <div class="social-links-compact">
+                    <a href="https://facebook.com/bulutbilet" target="_blank" class="social-icon facebook">📘</a>
+                    <a href="https://twitter.com/bulutbilet" target="_blank" class="social-icon twitter">🐦</a>
+                    <a href="https://instagram.com/bulutbilet" target="_blank" class="social-icon instagram">📷</a>
+                    <a href="https://linkedin.com/company/bulutbilet" target="_blank" class="social-icon linkedin">💼</a>
+                </div>
+                <div class="footer-legal-links">
+                    <a asp-controller="Legal" asp-action="Privacy">Gizlilik Politikası</a>
+                    <a asp-controller="Legal" asp-action="Terms">Kullanım Şartları</a>
+                    <a asp-controller="Legal" asp-action="Cookies">Çerez Politikası</a>
+                    <a asp-controller="Legal" asp-action="KVKK">KVKK</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="footer-bottom-content">
+                <p>&copy; 2024 BULUTBİLET.COM - Tüm hakları saklıdır.</p>
+                <p class="footer-location">İstanbul, Türkiye</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

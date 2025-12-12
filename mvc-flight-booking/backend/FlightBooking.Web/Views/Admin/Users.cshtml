@@ -1,0 +1,246 @@
+@{
+    ViewData["Title"] = "Kullanıcı Yönetimi";
+}
+
+<div class="container">
+    <div style="margin-bottom: 32px;">
+        <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
+            <a asp-controller="Admin" asp-action="Index" 
+               style="padding: 8px 16px; background: #667eea; color: white; text-decoration: none; border-radius: 8px; font-size: 14px;">
+                ← Admin Panel
+            </a>
+            <h1 style="font-size: 32px; font-weight: 800; margin: 0; color: #37474f;">
+                👥 Kullanıcı Yönetimi
+            </h1>
+        </div>
+        
+        <!-- İstatistikler -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px;">
+            <div style="padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 16px; text-align: center;">
+                <div style="font-size: 32px; font-weight: bold;" id="total-users">0</div>
+                <div style="font-size: 14px; opacity: 0.9;">Toplam Kullanıcı</div>
+            </div>
+            <div style="padding: 20px; background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%); color: white; border-radius: 16px; text-align: center;">
+                <div style="font-size: 32px; font-weight: bold;" id="active-users">0</div>
+                <div style="font-size: 14px; opacity: 0.9;">Aktif Kullanıcı</div>
+            </div>
+            <div style="padding: 20px; background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%); color: white; border-radius: 16px; text-align: center;">
+                <div style="font-size: 32px; font-weight: bold;" id="passive-users">0</div>
+                <div style="font-size: 14px; opacity: 0.9;">Pasif Kullanıcı</div>
+            </div>
+            <div style="padding: 20px; background: linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%); color: white; border-radius: 16px; text-align: center;">
+                <div style="font-size: 32px; font-weight: bold;" id="guest-users">0</div>
+                <div style="font-size: 14px; opacity: 0.9;">Misafir Kullanıcı</div>
+            </div>
+            <div style="padding: 20px; background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%); color: white; border-radius: 16px; text-align: center;">
+                <div style="font-size: 32px; font-weight: bold;" id="admin-users">0</div>
+                <div style="font-size: 14px; opacity: 0.9;">Admin Kullanıcı</div>
+            </div>
+            <div style="padding: 20px; background: linear-gradient(135deg, #00bcd4 0%, #00acc1 100%); color: white; border-radius: 16px; text-align: center;">
+                <div style="font-size: 32px; font-weight: bold;" id="new-users">0</div>
+                <div style="font-size: 14px; opacity: 0.9;">Bu Ay Yeni</div>
+            </div>
+        </div>
+
+        <button class="btn btn-primary" onclick="showCreateModal()" style="margin-bottom: 24px;">
+            ➕ Yeni Kullanıcı Ekle
+        </button>
+    </div>
+
+    <!-- Kullanıcı Listesi -->
+    <div class="card">
+        <h2 style="margin-bottom: 24px;">Kullanıcı Listesi</h2>
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #f8f9ff; border-bottom: 2px solid #e0e0e0;">
+                        <th style="padding: 12px; text-align: left; font-weight: bold;">Ad Soyad</th>
+                        <th style="padding: 12px; text-align: left; font-weight: bold;">E-posta</th>
+                        <th style="padding: 12px; text-align: left; font-weight: bold;">Telefon</th>
+                        <th style="padding: 12px; text-align: center; font-weight: bold;">Tip</th>
+                        <th style="padding: 12px; text-align: center; font-weight: bold;">Durum</th>
+                        <th style="padding: 12px; text-align: center; font-weight: bold;">Rezervasyon</th>
+                        <th style="padding: 12px; text-align: center; font-weight: bold;">Kayıt Tarihi</th>
+                        <th style="padding: 12px; text-align: center; font-weight: bold;">İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody id="users-tbody">
+                    <!-- Kullanıcılar JavaScript ile yüklenecek -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Kullanıcı Oluşturma Modal -->
+<div id="create-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close" onclick="hideCreateModal()">&times;</span>
+        <h2 style="margin-bottom: 24px; text-align: center;">➕ Yeni Kullanıcı Ekle</h2>
+        <form id="create-form">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="form-group">
+                    <label>Ad</label>
+                    <input type="text" id="create-firstName" required />
+                </div>
+                <div class="form-group">
+                    <label>Soyad</label>
+                    <input type="text" id="create-lastName" required />
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>E-posta</label>
+                <input type="email" id="create-email" required />
+            </div>
+            
+            <div class="form-group">
+                <label>Şifre</label>
+                <input type="password" id="create-password" placeholder="Boş bırakılırsa şifresiz oluşturulur" />
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="form-group">
+                    <label>Telefon</label>
+                    <input type="tel" id="create-phoneNumber" placeholder="05xxxxxxxxx" maxlength="11" />
+                </div>
+                <div class="form-group">
+                    <label>TC Kimlik No</label>
+                    <input type="text" id="create-identityNumber" maxlength="11" />
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="form-group">
+                    <label>Doğum Tarihi</label>
+                    <input type="date" id="create-dateOfBirth" />
+                </div>
+                <div class="form-group">
+                    <label>Cinsiyet</label>
+                    <select id="create-gender">
+                        <option value="Erkek">Erkek</option>
+                        <option value="Kadın">Kadın</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 12px; margin-top: 24px;">
+                <button type="submit" class="btn btn-primary" style="flex: 1;">
+                    ✅ Kullanıcı Oluştur
+                </button>
+                <button type="button" class="btn btn-secondary" onclick="hideCreateModal()">
+                    İptal
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Kullanıcı Düzenleme Modal -->
+<div id="edit-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close" onclick="hideEditModal()">&times;</span>
+        <h2 style="margin-bottom: 20px; text-align: center; font-size: 20px;">✏️ Kullanıcı Düzenle</h2>
+        <form id="edit-form">
+            <input type="hidden" id="edit-userId" />
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="form-group">
+                    <label>Ad</label>
+                    <input type="text" id="edit-firstName" required />
+                </div>
+                <div class="form-group">
+                    <label>Soyad</label>
+                    <input type="text" id="edit-lastName" required />
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>E-posta</label>
+                <input type="email" id="edit-email" required />
+            </div>
+            
+            <div class="form-group">
+                <label>Yeni Şifre</label>
+                <input type="password" id="edit-password" placeholder="Değiştirmek istemiyorsanız boş bırakın" />
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="form-group">
+                    <label>Telefon</label>
+                    <input type="tel" id="edit-phoneNumber" placeholder="05xxxxxxxxx" maxlength="11" />
+                </div>
+                <div class="form-group">
+                    <label>TC Kimlik No</label>
+                    <input type="text" id="edit-identityNumber" maxlength="11" />
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="form-group">
+                    <label>Doğum Tarihi</label>
+                    <input type="date" id="edit-dateOfBirth" />
+                </div>
+                <div class="form-group">
+                    <label>Cinsiyet</label>
+                    <select id="edit-gender">
+                        <option value="Erkek">Erkek</option>
+                        <option value="Kadın">Kadın</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 12px; margin-top: 24px;">
+                <button type="submit" class="btn btn-primary" style="flex: 1;">
+                    ✅ Güncelle
+                </button>
+                <button type="button" class="btn btn-secondary" onclick="hideEditModal()">
+                    İptal
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/admin.js"></script>
+    <script>
+        // Form submit olayları
+
+        document.getElementById('create-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const formData = {
+                firstName: document.getElementById('create-firstName').value,
+                lastName: document.getElementById('create-lastName').value,
+                email: document.getElementById('create-email').value,
+                password: document.getElementById('create-password').value,
+                phoneNumber: document.getElementById('create-phoneNumber').value,
+                identityNumber: document.getElementById('create-identityNumber').value,
+                dateOfBirth: document.getElementById('create-dateOfBirth').value,
+                gender: document.getElementById('create-gender').value
+            };
+
+            await userManager.createUser(formData);
+            hideCreateModal();
+        });
+
+        document.getElementById('edit-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const userId = document.getElementById('edit-userId').value;
+            const formData = {
+                firstName: document.getElementById('edit-firstName').value,
+                lastName: document.getElementById('edit-lastName').value,
+                email: document.getElementById('edit-email').value,
+                password: document.getElementById('edit-password').value,
+                phoneNumber: document.getElementById('edit-phoneNumber').value,
+                identityNumber: document.getElementById('edit-identityNumber').value,
+                dateOfBirth: document.getElementById('edit-dateOfBirth').value,
+                gender: document.getElementById('edit-gender').value
+            };
+
+            await userManager.updateUser(userId, formData);
+            hideEditModal();
+        });
+    </script>
+}

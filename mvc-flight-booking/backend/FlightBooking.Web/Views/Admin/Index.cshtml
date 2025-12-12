@@ -1,0 +1,135 @@
+@{
+    ViewData["Title"] = "Admin Panel";
+}
+
+<div class="container">
+    <h2 style="color: white; margin-bottom: 32px; font-size: 32px; font-weight: 800;">
+        BULUTBİLET<span style="color: #00e5ff;">.COM</span> - Admin Paneli
+    </h2>
+
+    <!-- Admin Menü -->
+    <div style="display: flex; gap: 16px; margin-bottom: 32px; flex-wrap: wrap; justify-content: center;">
+        <a asp-controller="Admin" asp-action="Index" 
+           style="padding: 12px 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 12px; font-weight: bold; display: flex; align-items: center; gap: 8px;">
+            ✈️ Uçuş & Rezervasyon Yönetimi
+        </a>
+        <a asp-controller="Admin" asp-action="Users" 
+           style="padding: 12px 24px; background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%); color: white; text-decoration: none; border-radius: 12px; font-weight: bold; display: flex; align-items: center; gap: 8px;">
+            👥 Kullanıcı Yönetimi
+        </a>
+    </div>
+
+    <!-- Uçuş Yönetimi -->
+    <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3>Uçuş Yönetimi</h3>
+            <button class="btn btn-primary" onclick="toggleFlightForm()">
+                <span id="flight-form-toggle-text">Yeni Uçuş Ekle</span>
+            </button>
+        </div>
+
+        <!-- Uçuş Ekleme Formu -->
+        <div id="flight-form" style="display: none; margin-bottom: 24px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+            <h4 id="flight-form-title">Yeni Uçuş</h4>
+            <form id="flight-form-element">
+                <div class="form-row">
+                    <input type="text" id="flightNumber" placeholder="Uçuş No" required />
+                    <input type="text" id="airline" placeholder="Havayolu" required />
+                </div>
+                <div class="form-row">
+                    <input type="text" id="departureCity" placeholder="Kalkış Şehri" required />
+                    <input type="text" id="arrivalCity" placeholder="Varış Şehri" required />
+                </div>
+                <div class="form-row">
+                    <input type="datetime-local" id="departureTime" required />
+                    <input type="datetime-local" id="arrivalTime" required />
+                </div>
+                <div class="form-row">
+                    <input type="number" id="price" placeholder="Fiyat" required />
+                    <input type="number" id="totalSeats" placeholder="Toplam Koltuk" required />
+                </div>
+                <button type="submit" class="btn btn-success" id="flight-submit-btn">Ekle</button>
+                <button type="button" class="btn btn-secondary" onclick="cancelFlightForm()">İptal</button>
+            </form>
+        </div>
+
+        <!-- Uçuş Listesi -->
+        <div style="overflow-x: auto;">
+            <table id="flights-table" style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #f8f9fa;">
+                        <th style="padding: 12px; text-align: left;">Uçuş No</th>
+                        <th style="padding: 12px; text-align: left;">Havayolu</th>
+                        <th style="padding: 12px; text-align: left;">Rota</th>
+                        <th style="padding: 12px; text-align: left;">Kalkış</th>
+                        <th style="padding: 12px; text-align: left;">Fiyat</th>
+                        <th style="padding: 12px; text-align: left;">Koltuk</th>
+                        <th style="padding: 12px; text-align: left;">İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody id="flights-tbody">
+                    <!-- Uçuşlar JavaScript ile yüklenecek -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Rezervasyon Yönetimi -->
+    <div class="card" style="margin-top: 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3>Tüm Rezervasyonlar (<span id="bookings-count">0</span>)</h3>
+            <button class="btn btn-danger" onclick="deleteAllBookings()" style="font-size: 14px; padding: 8px 16px;">
+                🗑️ Tüm Rezervasyonları Sil
+            </button>
+        </div>
+        <div style="overflow-x: auto;">
+            <table id="bookings-table" style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #f8f9fa;">
+                        <th style="padding: 12px; text-align: left;">Rezervasyon No</th>
+                        <th style="padding: 12px; text-align: left;">Kullanıcı</th>
+                        <th style="padding: 12px; text-align: left;">Uçuş</th>
+                        <th style="padding: 12px; text-align: left;">Yolcu</th>
+                        <th style="padding: 12px; text-align: left;">Fiyat</th>
+                        <th style="padding: 12px; text-align: left;">Durum</th>
+                        <th style="padding: 12px; text-align: left;">Ödeme</th>
+                        <th style="padding: 12px; text-align: left;">İşlem</th>
+                    </tr>
+                </thead>
+                <tbody id="bookings-tbody">
+                    <!-- Rezervasyonlar JavaScript ile yüklenecek -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/admin.js"></script>
+    <script>
+        // Uçuş formu submit olayı
+
+        document.getElementById('flight-form-element').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const formData = {
+                flightNumber: document.getElementById('flightNumber').value,
+                airline: document.getElementById('airline').value,
+                departureCity: document.getElementById('departureCity').value,
+                arrivalCity: document.getElementById('arrivalCity').value,
+                departureTime: document.getElementById('departureTime').value,
+                arrivalTime: document.getElementById('arrivalTime').value,
+                price: parseFloat(document.getElementById('price').value),
+                totalSeats: parseInt(document.getElementById('totalSeats').value)
+            };
+
+            if (flightManager.editingId) {
+                await flightManager.updateFlight(flightManager.editingId, formData);
+            } else {
+                await flightManager.createFlight(formData);
+            }
+            
+            toggleFlightForm();
+        });
+    </script>
+}

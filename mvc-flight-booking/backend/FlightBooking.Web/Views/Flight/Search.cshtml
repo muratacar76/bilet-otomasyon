@@ -1,0 +1,1464 @@
+@model FlightSearchViewModel
+
+@{
+    ViewData["Title"] = "BULUTBİLET.COM - Uçuş Ara";
+}
+
+<div class="container">
+    <div class="search-form">
+        <h2 style="margin-bottom: 32px; font-size: 32px; font-weight: 800; color: #37474f;">
+            BULUTBİLET<span style="color: #00e5ff">.COM</span> - Uçuş Ara
+        </h2>
+        <div class="search-form-container" style="background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); padding: 32px; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.15); max-width: 900px; margin: 0 auto 40px;">
+            <form id="flightSearchForm" asp-action="Search" method="post" class="search-form-grid">
+                <div class="form-group" style="margin: 0;">
+                    <label style="color: #333; font-weight: 600; margin-bottom: 8px; display: block;">Nereden</label>
+                    <select asp-for="DepartureCity" id="departureCity" class="city-select" style="width: 100%; padding: 12px 16px; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 16px; background: white;">
+                        <option value="">Kalkış Şehri Seçin</option>
+                        <option value="İstanbul">İstanbul (IST) - İstanbul Havalimanı</option>
+                        <option value="Ankara">Ankara (ESB) - Esenboğa Havalimanı</option>
+                        <option value="İzmir">İzmir (ADB) - Adnan Menderes Havalimanı</option>
+                        <option value="Antalya">Antalya (AYT) - Antalya Havalimanı</option>
+                        <option value="Adana">Adana (ADA) - Şakirpaşa Havalimanı</option>
+                        <option value="Trabzon">Trabzon (TZX) - Trabzon Havalimanı</option>
+                        <option value="Gaziantep">Gaziantep (GZT) - Oğuzeli Havalimanı</option>
+                        <option value="Kayseri">Kayseri (ASR) - Erkilet Havalimanı</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin: 0;">
+                    <label style="color: #333; font-weight: 600; margin-bottom: 8px; display: block;">Nereye</label>
+                    <select asp-for="ArrivalCity" id="arrivalCity" class="city-select" style="width: 100%; padding: 12px 16px; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 16px; background: white;">
+                        <option value="">Varış Şehri Seçin</option>
+                        <option value="İstanbul">İstanbul (IST) - İstanbul Havalimanı</option>
+                        <option value="Ankara">Ankara (ESB) - Esenboğa Havalimanı</option>
+                        <option value="İzmir">İzmir (ADB) - Adnan Menderes Havalimanı</option>
+                        <option value="Antalya">Antalya (AYT) - Antalya Havalimanı</option>
+                        <option value="Adana">Adana (ADA) - Şakirpaşa Havalimanı</option>
+                        <option value="Trabzon">Trabzon (TZX) - Trabzon Havalimanı</option>
+                        <option value="Gaziantep">Gaziantep (GZT) - Oğuzeli Havalimanı</option>
+                        <option value="Kayseri">Kayseri (ASR) - Erkilet Havalimanı</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin: 0;">
+                    <label style="color: #333; font-weight: 600; margin-bottom: 8px; display: block;">Tarih</label>
+                    <input asp-for="DepartureDate" type="date" style="width: 100%; padding: 12px 16px; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 16px;" />
+                </div>
+                <div class="form-group" style="margin: 0;">
+                    <label style="color: transparent; font-weight: 600; margin-bottom: 8px; display: block; user-select: none;">Ara</label>
+                    <button type="submit" class="btn btn-primary" style="padding: 12px 24px; font-size: 16px; border-radius: 12px; width: 100%; height: 48px;">
+                        🔍 Ara
+                    </button>
+                </div>
+            </form>
+            <div style="margin-top: 16px; text-align: center;">
+                <button type="button" class="btn btn-secondary" onclick="showAllFlights()" style="padding: 10px 24px; font-size: 14px; border-radius: 8px;">
+                    📋 Tüm Uçuşlar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div style="margin-top: 40px;">
+        <h2 id="flightResultsTitle" style="margin-bottom: 24px; color: white;">
+            Mevcut Uçuşlar
+        </h2>
+        
+        <div id="alternativeFlights" style="display: none;"></div>
+        
+        <div id="flightResults">
+            @if (Model?.Flights != null && Model.Flights.Any())
+            {
+                @foreach (var flight in Model.Flights)
+                {
+                    <div class="flight-card" style="background: white;">
+                        <div class="flight-header">
+                            <div>
+                                <div class="flight-route">
+                                    <div style="font-size: 18px; font-weight: bold; margin-bottom: 4px;">
+                                        @flight.DepartureCity → @flight.ArrivalCity
+                                    </div>
+                                    <div style="font-size: 12px; color: #666;">
+                                        @(GetAirportCode(flight.DepartureCity)) → @(GetAirportCode(flight.ArrivalCity))
+                                    </div>
+                                    <div style="font-size: 11px; color: #888; margin-top: 2px;">
+                                        @(GetAirportName(flight.DepartureCity)) → @(GetAirportName(flight.ArrivalCity))
+                                    </div>
+                                </div>
+                                <div style="color: #666; font-size: 14px;">@flight.Airline - @flight.FlightNumber</div>
+                            </div>
+                            <div class="flight-price">₺@flight.Price</div>
+                        </div>
+                        <div class="flight-details">
+                            <div class="detail-item">
+                                <span class="detail-label">Kalkış</span>
+                                <span class="detail-value">@flight.DepartureTime.ToString("dd.MM.yyyy HH:mm")</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Varış</span>
+                                <span class="detail-value">@flight.ArrivalTime.ToString("dd.MM.yyyy HH:mm")</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Müsait Koltuk</span>
+                                <span class="detail-value">@flight.AvailableSeats / @flight.TotalSeats</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="selectFlight(@flight.Id)" @(flight.AvailableSeats == 0 ? "disabled" : "")>
+                            @(flight.AvailableSeats == 0 ? "Dolu" : "Rezervasyon Yap")
+                        </button>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Seat Selection Modal -->
+<div id="seatModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 10000; overflow: auto;">
+    <div class="card" style="background: white; border-radius: 16px; padding: 24px; max-width: 900px; width: 100%; margin: 20px auto; max-height: 85vh; overflow: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2>🪑 Koltuk Seçimi</h2>
+            <button onclick="closeSeatModal()" style="background: none; border: none; font-size: 24px; cursor: pointer;">✕</button>
+        </div>
+        
+        <div id="seatMapContainer">
+            <div class="airplane-layout">
+                <div class="airplane-nose">✈️ Uçak Önü</div>
+                <div id="seatMap" class="seat-map"></div>
+                <div class="airplane-tail">Uçak Arkası</div>
+            </div>
+        </div>
+        
+        <div class="seat-legend" style="margin: 20px 0; display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+            <div class="legend-item">
+                <div class="seat available"></div>
+                <span>Müsait</span>
+            </div>
+            <div class="legend-item">
+                <div class="seat occupied"></div>
+                <span>Dolu</span>
+            </div>
+            <div class="legend-item">
+                <div class="seat selected"></div>
+                <span>Seçili</span>
+            </div>
+            <div class="legend-item">
+                <div class="seat exit-row"></div>
+                <span>Acil Çıkış</span>
+            </div>
+        </div>
+        
+        <div id="selectedSeatsInfo" style="margin: 20px 0; padding: 16px; background: #f8f9fa; border-radius: 8px;">
+            <h4>Seçilen Koltuklar:</h4>
+            <div id="selectedSeatsList">Henüz koltuk seçilmedi</div>
+        </div>
+        
+        <div style="text-align: center;">
+            <button onclick="confirmSeatSelection()" class="btn btn-success" style="margin-right: 10px;">
+                ✅ Koltuk Seçimini Onayla
+            </button>
+            <button onclick="closeSeatModal()" class="btn btn-secondary">
+                İptal
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Membership Offer Modal -->
+<div id="membershipModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.9); z-index: 10001; overflow: auto;">
+    <div class="card" style="background: white; border-radius: 20px; padding: 32px; max-width: 600px; width: 90%; margin: 50px auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3); text-align: center;">
+        <div style="font-size: 64px; margin-bottom: 20px;">🎉</div>
+        <h2 style="color: #00bcd4; margin-bottom: 16px; font-size: 28px;">Rezervasyon Başarılı!</h2>
+        <div style="background: #e8f5e8; padding: 16px; border-radius: 12px; margin-bottom: 24px;">
+            <p style="font-size: 18px; font-weight: 600; color: #2e7d32; margin: 0;">
+                PNR: <span id="membershipPnr" style="font-family: monospace; font-size: 20px;"></span>
+            </p>
+        </div>
+        
+        <div style="background: linear-gradient(135deg, #00bcd4 0%, #00acc1 100%); color: white; padding: 24px; border-radius: 16px; margin-bottom: 24px;">
+            <h3 style="font-size: 22px; margin-bottom: 16px; font-weight: 700;">✨ Üye Olmak İster misiniz?</h3>
+            <p style="font-size: 16px; line-height: 1.6; margin-bottom: 0;">
+                Üye olarak gelecekteki rezervasyonlarınızı daha kolay yönetebilir, özel indirimlerden yararlanabilir ve puan kazanabilirsiniz!
+            </p>
+        </div>
+        
+        <div style="display: flex; gap: 16px; justify-content: center; margin-bottom: 20px;">
+            <button onclick="proceedToRegistration()" class="btn btn-success" style="padding: 12px 32px; font-size: 16px; border-radius: 12px; min-width: 120px;">
+                ✅ Evet, Üye Olmak İstiyorum
+            </button>
+            <button onclick="skipMembership()" class="btn btn-secondary" style="padding: 12px 32px; font-size: 16px; border-radius: 12px; min-width: 120px;">
+                ⏭️ Hayır, Şimdi Değil
+            </button>
+        </div>
+        
+        <div style="border-top: 1px solid #e0e0e0; padding-top: 20px;">
+            <button onclick="viewPnrDirectly()" class="btn btn-outline-primary" style="padding: 8px 24px; font-size: 14px; border-radius: 8px;">
+                📋 PNR Görüntüle
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Flight Reservation Modal -->
+<div id="reservationModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 9999; overflow: auto;">
+    <div class="card" style="background: white; border-radius: 16px; padding: 24px; max-width: 700px; width: 100%; margin: 20px auto; max-height: 85vh; overflow: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+        <h2 class="modal-title">Rezervasyon Detayları</h2>
+        <div id="flightInfo" class="flight-info-box"></div>
+        
+        <div id="guestEmailSection" style="background: linear-gradient(135deg, #00bcd4 0%, #00acc1 100%); color: white; padding: 24px; border-radius: 16px; margin-bottom: 24px;">
+            <h3 style="font-size: 20px; margin-bottom: 16px; font-weight: 700;">✨ Hızlı Rezervasyon</h3>
+            <p style="font-size: 16px; margin-bottom: 20px; line-height: 1.6;">
+                Üye olmadan rezervasyon yapabilirsiniz! Sadece e-posta adresinizi girin.
+            </p>
+            <div class="form-group" style="margin-bottom: 0;">
+                <label style="color: white;">E-posta Adresiniz</label>
+                <input type="email" id="guestEmail" placeholder="ornek@email.com" required style="background: white;" />
+                <small style="color: rgba(255,255,255,0.9); font-size: 12px;">
+                    💡 Rezervasyon bilgileriniz bu adrese gönderilecektir
+                </small>
+            </div>
+        </div>
+
+        <form id="reservationForm">
+            <div id="passengersContainer"></div>
+            
+            <button type="button" class="btn btn-secondary" onclick="addPassenger()" style="margin-right: 10px;">
+                Yolcu Ekle
+            </button>
+
+            <div id="seatSelectionSection" style="margin: 20px 0; text-align: center;">
+                <button type="button" id="seatSelectBtn" class="btn btn-primary" onclick="showSeatSelector()" style="font-size: 16px; padding: 12px 24px; width: 100%;">
+                    🪑 Koltuk Seç
+                </button>
+            </div>
+
+            <div id="confirmationSection" style="display: none;"></div>
+
+            <button type="submit" class="btn btn-success" style="margin-right: 10px;">
+                🎫 Rezervasyonu Tamamla
+            </button>
+            <button type="button" class="btn btn-secondary" onclick="closeModal()">
+                İptal
+            </button>
+        </form>
+    </div>
+</div>
+
+@functions {
+    private string GetAirportCode(string city)
+    {
+        return city switch
+        {
+            "İstanbul" => "IST",
+            "Ankara" => "ESB",
+            "İzmir" => "ADB",
+            "Antalya" => "AYT",
+            "Adana" => "ADA",
+            "Trabzon" => "TZX",
+            "Gaziantep" => "GZT",
+            "Kayseri" => "ASR",
+            _ => "N/A"
+        };
+    }
+
+    private string GetAirportName(string city)
+    {
+        return city switch
+        {
+            "İstanbul" => "İstanbul Havalimanı",
+            "Ankara" => "Esenboğa Havalimanı",
+            "İzmir" => "Adnan Menderes Havalimanı",
+            "Antalya" => "Antalya Havalimanı",
+            "Adana" => "Şakirpaşa Havalimanı",
+            "Trabzon" => "Trabzon Havalimanı",
+            "Gaziantep" => "Oğuzeli Havalimanı",
+            "Kayseri" => "Erkilet Havalimanı",
+            _ => city
+        };
+    }
+}
+
+<style>
+    /* Search Form Styles */
+    .search-form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        gap: 16px;
+        align-items: start;
+    }
+    
+    .search-form-container select,
+    .search-form-container input {
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .search-form-container select:hover,
+    .search-form-container input:hover {
+        border-color: #00bcd4 !important;
+        box-shadow: 0 4px 12px rgba(0,188,212,0.2) !important;
+        transform: translateY(-1px);
+    }
+    
+    .search-form-container select:focus,
+    .search-form-container input:focus {
+        outline: none;
+        border-color: #00bcd4 !important;
+        box-shadow: 0 0 0 3px rgba(0,188,212,0.1) !important;
+    }
+    
+    /* City Select Dropdown Styles */
+    .search-form-container .city-select {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2300bcd4' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+        background-position: right 12px center;
+        background-repeat: no-repeat;
+        background-size: 16px;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        cursor: pointer;
+        position: relative;
+    }
+
+    .search-form-container .city-select:focus {
+        outline: none;
+        border-color: #00bcd4 !important;
+        box-shadow: 0 0 0 3px rgba(0,188,212,0.15) !important;
+    }
+
+    .search-form-container .city-select option {
+        padding: 12px 16px;
+        font-size: 14px;
+        line-height: 1.4;
+        background: white;
+        color: #333;
+    }
+
+    .search-form-container .city-select option:disabled {
+        color: #ccc !important;
+        background-color: #f8f9fa !important;
+        font-style: italic;
+    }
+
+    .search-form-container .city-select option:hover:not(:disabled) {
+        background-color: #e3f2fd;
+        color: #00bcd4;
+    }
+    
+    .search-form-container button:hover {
+        background: #00acc1 !important;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0,188,212,0.3) !important;
+    }
+    
+    @@media (max-width: 768px) {
+        .search-form-grid {
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+        
+        .search-form-container {
+            padding: 24px 20px !important;
+        }
+        
+        .search-form-container button {
+            width: 100% !important;
+            padding: 16px !important;
+            font-size: 18px !important;
+            height: 56px !important;
+        }
+    }
+
+    /* Seat Selection Styles */
+    .airplane-layout {
+        max-width: 600px;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    .airplane-nose {
+        background: linear-gradient(135deg, #00bcd4 0%, #00acc1 100%);
+        color: white;
+        padding: 12px;
+        border-radius: 50px 50px 8px 8px;
+        margin-bottom: 20px;
+        font-weight: bold;
+    }
+
+    .airplane-tail {
+        background: #666;
+        color: white;
+        padding: 8px;
+        border-radius: 8px 8px 20px 20px;
+        margin-top: 20px;
+        font-size: 14px;
+    }
+
+    .seat-map {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 8px;
+        max-width: 400px;
+        margin: 0 auto;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 12px;
+        border: 2px solid #e0e0e0;
+    }
+
+    .seat-row {
+        display: contents;
+    }
+
+    .seat {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+    }
+
+    .seat.available {
+        background: #e8f5e8;
+        color: #2e7d32;
+        border-color: #4caf50;
+    }
+
+    .seat.available:hover {
+        background: #c8e6c9;
+        transform: scale(1.1);
+    }
+
+    .seat.occupied {
+        background: #ffebee;
+        color: #c62828;
+        border-color: #f44336;
+        cursor: not-allowed;
+    }
+
+    .seat.selected {
+        background: linear-gradient(135deg, #00bcd4 0%, #00acc1 100%);
+        color: white;
+        border-color: #0097a7;
+        transform: scale(1.1);
+    }
+
+    .seat.exit-row {
+        background: #fff3e0;
+        color: #ef6c00;
+        border-color: #ff9800;
+    }
+
+    .seat.exit-row:hover {
+        background: #ffe0b2;
+    }
+
+    .aisle {
+        margin-right: 20px;
+    }
+
+    .seat-legend {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin: 20px 0;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+    }
+
+    .legend-item .seat {
+        width: 20px;
+        height: 20px;
+        font-size: 10px;
+    }
+
+    .row-number {
+        grid-column: 1 / -1;
+        text-align: center;
+        font-weight: bold;
+        color: #666;
+        margin: 8px 0;
+        font-size: 14px;
+    }
+
+    @@media (max-width: 768px) {
+        .seat-map {
+            grid-template-columns: repeat(6, 1fr);
+            gap: 4px;
+            padding: 15px;
+        }
+        
+        .seat {
+            width: 35px;
+            height: 35px;
+            font-size: 11px;
+        }
+        
+        .seat-legend {
+            gap: 15px;
+        }
+    }
+</style>
+
+@section Scripts {
+    <script>
+        let selectedFlight = null;
+        let passengers = [{
+            firstName: '',
+            lastName: '',
+            identityNumber: '',
+            dateOfBirth: '',
+            gender: 'Erkek',
+            phoneNumber: '',
+            seatNumber: '',
+            seatType: ''
+        }];
+        let selectedSeats = [];
+        let allFlights = [];
+        let currentBookingData = null; // Store booking data for membership flow
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set minimum date to today and max date to 3 months from now
+            const dateInput = document.querySelector('input[name="DepartureDate"]');
+            if (dateInput) {
+                const today = new Date().toISOString().split('T')[0];
+                dateInput.min = today;
+                
+                // Set max date to 3 months from now
+                const maxDate = new Date();
+                maxDate.setMonth(maxDate.getMonth() + 3);
+                dateInput.max = maxDate.toISOString().split('T')[0];
+                
+                if (!dateInput.value) {
+                    dateInput.value = today;
+                }
+            }
+            
+            // Prevent same city selection
+            const departureSelect = document.getElementById('departureCity');
+            const arrivalSelect = document.getElementById('arrivalCity');
+            
+            function updateCityOptions() {
+                const departureValue = departureSelect.value;
+                const arrivalValue = arrivalSelect.value;
+                
+                // Reset all options to enabled
+                Array.from(departureSelect.options).forEach(option => {
+                    option.disabled = false;
+                    option.style.color = '';
+                });
+                Array.from(arrivalSelect.options).forEach(option => {
+                    option.disabled = false;
+                    option.style.color = '';
+                });
+                
+                // Disable selected city in the other dropdown
+                if (departureValue) {
+                    Array.from(arrivalSelect.options).forEach(option => {
+                        if (option.value === departureValue) {
+                            option.disabled = true;
+                            option.style.color = '#ccc';
+                        }
+                    });
+                }
+                
+                if (arrivalValue) {
+                    Array.from(departureSelect.options).forEach(option => {
+                        if (option.value === arrivalValue) {
+                            option.disabled = true;
+                            option.style.color = '#ccc';
+                        }
+                    });
+                }
+                
+                // If same city is selected, clear the second one
+                if (departureValue && arrivalValue && departureValue === arrivalValue) {
+                    arrivalSelect.value = '';
+                    alert('⚠️ Kalkış ve varış şehri aynı olamaz!');
+                }
+            }
+            
+            departureSelect.addEventListener('change', updateCityOptions);
+            arrivalSelect.addEventListener('change', updateCityOptions);
+            
+            // Add hover effects to form elements
+            const formGroups = document.querySelectorAll('.search-form-container .form-group');
+            formGroups.forEach(group => {
+                const input = group.querySelector('select, input');
+                if (input && input.type !== 'submit') {
+                    input.addEventListener('focus', () => {
+                        input.style.borderColor = '#00bcd4';
+                        input.style.boxShadow = '0 0 0 3px rgba(0,188,212,0.1)';
+                    });
+                    
+                    input.addEventListener('blur', () => {
+                        input.style.borderColor = '#e0e0e0';
+                        input.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+                    });
+                }
+            });
+            
+            // Load flights on page load
+            @if (ViewBag.ShowAllFlights != true)
+            {
+                <text>loadTodaysFlights();</text>
+            }
+            else
+            {
+                <text>
+                // Server-side loaded flights, populate allFlights array for JavaScript
+                allFlights = @Html.Raw(Json.Serialize(Model.Flights.Select(f => new {
+                    id = f.Id,
+                    flightNumber = f.FlightNumber,
+                    airline = f.Airline,
+                    departureCity = f.DepartureCity,
+                    arrivalCity = f.ArrivalCity,
+                    departureTime = f.DepartureTime,
+                    arrivalTime = f.ArrivalTime,
+                    price = f.Price,
+                    totalSeats = f.TotalSeats,
+                    availableSeats = f.AvailableSeats
+                })));
+                console.log('Server-side loaded flights:', allFlights.length, allFlights);
+                </text>
+            }
+        });
+
+        async function loadAllFlights() {
+            try {
+                const response = await fetch('/Flight/GetFlights');
+                allFlights = await response.json();
+                console.log('Loaded flights:', allFlights.length, allFlights);
+                displayFlights(allFlights);
+                updateResultsTitle(allFlights.length);
+            } catch (error) {
+                console.error('Uçuşlar yüklenemedi:', error);
+            }
+        }
+
+        async function loadTodaysFlights() {
+            try {
+                const today = new Date().toISOString().split('T')[0];
+                const response = await fetch(`/Flight/GetFlights?departureDate=${today}`);
+                allFlights = await response.json();
+                console.log('Loaded today\'s flights:', allFlights.length, allFlights);
+                
+                if (allFlights.length > 0) {
+                    displayFlights(allFlights);
+                    updateResultsTitle(allFlights.length, `Bugünkü Uçuşlar (${new Date().toLocaleDateString('tr-TR')})`);
+                } else {
+                    // If no flights today, show next few days
+                    await loadUpcomingFlights();
+                }
+            } catch (error) {
+                console.error('Bugünkü uçuşlar yüklenemedi:', error);
+                // Fallback to all flights
+                await loadAllFlights();
+            }
+        }
+
+        async function loadUpcomingFlights() {
+            try {
+                // Try next 7 days
+                for (let i = 1; i <= 7; i++) {
+                    const date = new Date();
+                    date.setDate(date.getDate() + i);
+                    const dateStr = date.toISOString().split('T')[0];
+                    
+                    const response = await fetch(`/Flight/GetFlights?departureDate=${dateStr}`);
+                    const flights = await response.json();
+                    
+                    if (flights.length > 0) {
+                        allFlights = flights;
+                        displayFlights(flights);
+                        updateResultsTitle(flights.length, `Yaklaşan Uçuşlar (${date.toLocaleDateString('tr-TR')})`);
+                        return;
+                    }
+                }
+                
+                // If no flights in next 7 days, show all flights
+                await loadAllFlights();
+            } catch (error) {
+                console.error('Yaklaşan uçuşlar yüklenemedi:', error);
+                await loadAllFlights();
+            }
+        }
+
+        async function showAllFlights() {
+            document.getElementById('flightSearchForm').reset();
+            const today = new Date().toISOString().split('T')[0];
+            document.querySelector('input[name="DepartureDate"]').value = today;
+            
+            await loadAllFlights();
+        }
+
+        function displayFlights(flights) {
+            const container = document.getElementById('flightResults');
+            
+            if (flights.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: white;">
+                        <i class="fas fa-plane-slash" style="font-size: 4rem; margin-bottom: 20px; opacity: 0.7;"></i>
+                        <h4>Aradığınız Kriterlerde Uçuş Bulunamadı</h4>
+                        <p>Farklı tarih veya şehir seçenekleri deneyebilirsiniz.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = flights.map(flight => `
+                <div class="flight-card" style="background: white; ${flight.alternativeType ? 'border-left: 4px solid #ff9800;' : ''}">
+                    ${flight.alternativeType ? `<div style="background: #fff3e0; color: #f57c00; padding: 8px 16px; font-size: 12px; font-weight: 600; border-radius: 4px 4px 0 0;">${flight.alternativeType}</div>` : ''}
+                    <div class="flight-header">
+                        <div>
+                            <div class="flight-route">
+                                <div style="font-size: 18px; font-weight: bold; margin-bottom: 4px;">
+                                    ${flight.departureCity} → ${flight.arrivalCity}
+                                </div>
+                                <div style="font-size: 12px; color: #666;">
+                                    ${getAirportCode(flight.departureCity)} → ${getAirportCode(flight.arrivalCity)}
+                                </div>
+                                <div style="font-size: 11px; color: #888; margin-top: 2px;">
+                                    ${getAirportName(flight.departureCity)} → ${getAirportName(flight.arrivalCity)}
+                                </div>
+                            </div>
+                            <div style="color: #666; font-size: 14px;">${flight.airline} - ${flight.flightNumber}</div>
+                        </div>
+                        <div class="flight-price">₺${flight.price}</div>
+                    </div>
+                    <div class="flight-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Kalkış</span>
+                            <span class="detail-value">${new Date(flight.departureTime).toLocaleString('tr-TR')}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Varış</span>
+                            <span class="detail-value">${new Date(flight.arrivalTime).toLocaleString('tr-TR')}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Müsait Koltuk</span>
+                            <span class="detail-value">${flight.availableSeats} / ${flight.totalSeats}</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="selectFlight(${flight.id})" ${flight.availableSeats === 0 ? 'disabled' : ''}>
+                        ${flight.availableSeats === 0 ? 'Dolu' : 'Rezervasyon Yap'}
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function updateResultsTitle(count, prefix = 'Mevcut Uçuşlar') {
+            const title = document.getElementById('flightResultsTitle');
+            title.textContent = count > 0 ? `${prefix} (${count})` : 'Aradığınız Kriterlerde Uçuş Bulunamadı';
+        }
+
+        function getAirportCode(city) {
+            const codes = {
+                'İstanbul': 'IST',
+                'Ankara': 'ESB',
+                'İzmir': 'ADB',
+                'Antalya': 'AYT',
+                'Adana': 'ADA',
+                'Trabzon': 'TZX',
+                'Gaziantep': 'GZT',
+                'Kayseri': 'ASR'
+            };
+            return codes[city] || 'N/A';
+        }
+
+        function getAirportName(city) {
+            const names = {
+                'İstanbul': 'İstanbul Havalimanı',
+                'Ankara': 'Esenboğa Havalimanı',
+                'İzmir': 'Adnan Menderes Havalimanı',
+                'Antalya': 'Antalya Havalimanı',
+                'Adana': 'Şakirpaşa Havalimanı',
+                'Trabzon': 'Trabzon Havalimanı',
+                'Gaziantep': 'Oğuzeli Havalimanı',
+                'Kayseri': 'Erkilet Havalimanı'
+            };
+            return names[city] || city;
+        }
+
+        function selectFlight(flightId) {
+            console.log('selectFlight called with ID:', flightId);
+            console.log('allFlights array:', allFlights);
+            
+            selectedFlight = allFlights.find(f => f.id === flightId);
+            console.log('selectedFlight found:', selectedFlight);
+            
+            if (selectedFlight) {
+                showReservationModal();
+            } else {
+                alert('⚠️ Uçuş bulunamadı. Lütfen sayfayı yenileyin.');
+                console.error('Flight not found in allFlights array');
+            }
+        }
+
+        function showReservationModal() {
+            const modal = document.getElementById('reservationModal');
+            const flightInfo = document.getElementById('flightInfo');
+            
+            flightInfo.innerHTML = `
+                <p class="flight-info-item">
+                    <strong>Uçuş:</strong> ${selectedFlight.departureCity} (${getAirportCode(selectedFlight.departureCity)}) → ${selectedFlight.arrivalCity} (${getAirportCode(selectedFlight.arrivalCity)})
+                </p>
+                <p class="flight-info-item" style="font-size: 12px; color: #666; margin-top: 4px;">
+                    ${getAirportName(selectedFlight.departureCity)} → ${getAirportName(selectedFlight.arrivalCity)}
+                </p>
+                <p class="flight-info-item"><strong>Uçuş No:</strong> ${selectedFlight.flightNumber} - ${selectedFlight.airline}</p>
+                <p class="flight-info-item"><strong>Kalkış Tarihi:</strong> ${new Date(selectedFlight.departureTime).toLocaleDateString('tr-TR')}</p>
+                <p class="flight-info-item"><strong>Kalkış Saati:</strong> ${new Date(selectedFlight.departureTime).toLocaleTimeString('tr-TR', {hour: '2-digit', minute: '2-digit'})}</p>
+                <p class="flight-info-item-last"><strong>Fiyat:</strong> ₺${selectedFlight.price} x ${passengers.length} = ₺${selectedFlight.price * passengers.length}</p>
+            `;
+            
+            renderPassengers();
+            modal.style.display = 'flex';
+            modal.style.alignItems = 'center';
+            modal.style.justifyContent = 'center';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('reservationModal').style.display = 'none';
+            document.body.style.overflow = 'unset';
+            selectedFlight = null;
+            passengers = [{
+                firstName: '',
+                lastName: '',
+                identityNumber: '',
+                dateOfBirth: '',
+                gender: 'Erkek',
+                phoneNumber: '',
+                seatNumber: '',
+                seatType: ''
+            }];
+            selectedSeats = [];
+        }
+
+        function renderPassengers() {
+            const container = document.getElementById('passengersContainer');
+            container.innerHTML = passengers.map((passenger, index) => `
+                <div style="border: 1px solid #e0e0e0; padding: 16px; margin-bottom: 16px; border-radius: 8px;">
+                    <h3>
+                        Yolcu ${index + 1}
+                        ${passenger.seatNumber ? `<span style="margin-left: 10px; font-size: 14px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 4px 12px; border-radius: 12px;">🪑 Koltuk: ${passenger.seatNumber}</span>` : ''}
+                    </h3>
+                    <div class="form-group">
+                        <label>Ad</label>
+                        <input type="text" placeholder="Ad" value="${passenger.firstName}" onchange="updatePassenger(${index}, 'firstName', this.value)" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Soyad</label>
+                        <input type="text" placeholder="Soyad" value="${passenger.lastName}" onchange="updatePassenger(${index}, 'lastName', this.value)" required />
+                    </div>
+                    <div class="form-group">
+                        <label>TC Kimlik No</label>
+                        <input type="text" placeholder="TC Kimlik No (11 hane)" value="${passenger.identityNumber}" 
+                               onchange="updatePassenger(${index}, 'identityNumber', this.value)" 
+                               oninput="validateTCKimlik(this, ${index})" 
+                               maxlength="11" pattern="[0-9]{11}" required />
+                        <small id="tcError${index}" style="color: red; display: none; font-size: 12px;">Geçerli bir TC Kimlik numarası girin (11 hane)</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Telefon Numarası</label>
+                        <input type="tel" placeholder="0555 123 45 67" value="${passenger.phoneNumber}" 
+                               onchange="updatePassenger(${index}, 'phoneNumber', this.value)" 
+                               oninput="formatPhoneNumber(this, ${index})" 
+                               maxlength="14" pattern="0[0-9]{3} [0-9]{3} [0-9]{2} [0-9]{2}" required />
+                        <small style="color: #666; font-size: 12px;">Format: 0555 123 45 67</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Doğum Tarihi</label>
+                        <input type="date" value="${passenger.dateOfBirth}" onchange="updatePassenger(${index}, 'dateOfBirth', this.value)" max="${new Date().toISOString().split('T')[0]}" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Cinsiyet</label>
+                        <select onchange="updatePassenger(${index}, 'gender', this.value)">
+                            <option value="Erkek" ${passenger.gender === 'Erkek' ? 'selected' : ''}>Erkek</option>
+                            <option value="Kadın" ${passenger.gender === 'Kadın' ? 'selected' : ''}>Kadın</option>
+                        </select>
+                    </div>
+                    ${passengers.length > 1 ? `<button type="button" class="btn btn-danger" onclick="removePassenger(${index})">Yolcuyu Kaldır</button>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function updatePassenger(index, field, value) {
+            passengers[index][field] = value;
+            
+            // Update price display
+            const flightInfo = document.getElementById('flightInfo');
+            const priceElement = flightInfo.querySelector('.flight-info-item-last');
+            if (priceElement) {
+                priceElement.innerHTML = `<strong>Fiyat:</strong> ₺${selectedFlight.price} x ${passengers.length} = ₺${selectedFlight.price * passengers.length}`;
+            }
+        }
+
+        function validateTCKimlik(input, index) {
+            const value = input.value.replace(/\D/g, ''); // Sadece rakamları al
+            input.value = value;
+            
+            const errorElement = document.getElementById(`tcError${index}`);
+            
+            if (value.length === 0) {
+                errorElement.style.display = 'none';
+                return;
+            }
+            
+            if (value.length !== 11) {
+                errorElement.textContent = 'TC Kimlik numarası 11 hane olmalıdır';
+                errorElement.style.display = 'block';
+                return;
+            }
+            
+            // TC Kimlik numarası algoritması kontrolü
+            if (!isValidTCKimlik(value)) {
+                errorElement.textContent = 'Geçersiz TC Kimlik numarası';
+                errorElement.style.display = 'block';
+                return;
+            }
+            
+            errorElement.style.display = 'none';
+            updatePassenger(index, 'identityNumber', value);
+        }
+
+        function isValidTCKimlik(tc) {
+            if (tc.length !== 11) return false;
+            if (tc[0] === '0') return false; // İlk hane 0 olamaz
+            if (tc === '11111111111') return false; // Tüm haneler aynı olamaz
+            
+            const digits = tc.split('').map(Number);
+            
+            // 10. hane kontrolü
+            const sum1 = digits[0] + digits[2] + digits[4] + digits[6] + digits[8];
+            const sum2 = digits[1] + digits[3] + digits[5] + digits[7];
+            const check1 = ((sum1 * 7) - sum2) % 10;
+            
+            if (check1 !== digits[9]) return false;
+            
+            // 11. hane kontrolü
+            const sum3 = digits.slice(0, 10).reduce((a, b) => a + b, 0);
+            const check2 = sum3 % 10;
+            
+            return check2 === digits[10];
+        }
+
+        function formatPhoneNumber(input, index) {
+            let value = input.value.replace(/\D/g, ''); // Sadece rakamları al
+            
+            // 0 ile başlamazsa başına 0 ekle
+            if (value.length > 0 && value[0] !== '0') {
+                value = '0' + value;
+            }
+            
+            // Maksimum 11 hane
+            if (value.length > 11) {
+                value = value.substring(0, 11);
+            }
+            
+            // Format: 0555 123 45 67
+            let formatted = value;
+            if (value.length > 4) {
+                formatted = value.substring(0, 4) + ' ' + value.substring(4);
+            }
+            if (value.length > 7) {
+                formatted = value.substring(0, 4) + ' ' + value.substring(4, 7) + ' ' + value.substring(7);
+            }
+            if (value.length > 9) {
+                formatted = value.substring(0, 4) + ' ' + value.substring(4, 7) + ' ' + value.substring(7, 9) + ' ' + value.substring(9);
+            }
+            
+            input.value = formatted;
+            updatePassenger(index, 'phoneNumber', value); // Sadece rakamları kaydet
+        }
+
+        function addPassenger() {
+            passengers.push({
+                firstName: '',
+                lastName: '',
+                identityNumber: '',
+                dateOfBirth: '',
+                gender: 'Erkek',
+                phoneNumber: '',
+                seatNumber: '',
+                seatType: ''
+            });
+            renderPassengers();
+            selectedSeats = [];
+            updateSeatButton();
+        }
+
+        function removePassenger(index) {
+            passengers.splice(index, 1);
+            renderPassengers();
+            selectedSeats = [];
+            updateSeatButton();
+        }
+
+        function updateSeatButton() {
+            const btn = document.getElementById('seatSelectBtn');
+            btn.textContent = selectedSeats.length === passengers.length 
+                ? `✅ Koltuklar Seçildi (${selectedSeats.length}/${passengers.length})` 
+                : `🪑 Koltuk Seç (${selectedSeats.length}/${passengers.length})`;
+            btn.className = selectedSeats.length === passengers.length ? 'btn btn-success' : 'btn btn-primary';
+        }
+
+        function showSeatSelector() {
+            if (!selectedFlight) {
+                alert('⚠️ Önce bir uçuş seçin');
+                return;
+            }
+            
+            generateSeatMap();
+            document.getElementById('seatModal').style.display = 'flex';
+            document.getElementById('seatModal').style.alignItems = 'center';
+            document.getElementById('seatModal').style.justifyContent = 'center';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSeatModal() {
+            document.getElementById('seatModal').style.display = 'none';
+            document.body.style.overflow = 'unset';
+        }
+
+        function generateSeatMap() {
+            const seatMap = document.getElementById('seatMap');
+            const totalRows = Math.ceil(selectedFlight.totalSeats / 6);
+            const seatLetters = ['A', 'B', 'C', 'D', 'E', 'F'];
+            
+            seatMap.innerHTML = '';
+            
+            for (let row = 1; row <= totalRows; row++) {
+                // Add row number every 5 rows
+                if (row % 5 === 1) {
+                    const rowLabel = document.createElement('div');
+                    rowLabel.className = 'row-number';
+                    rowLabel.textContent = `Sıra ${row}-${Math.min(row + 4, totalRows)}`;
+                    seatMap.appendChild(rowLabel);
+                }
+                
+                for (let col = 0; col < 6; col++) {
+                    const seatNumber = `${row}${seatLetters[col]}`;
+                    const seat = document.createElement('div');
+                    seat.className = 'seat';
+                    seat.textContent = seatNumber;
+                    seat.dataset.seatNumber = seatNumber;
+                    seat.dataset.row = row;
+                    seat.dataset.column = seatLetters[col];
+                    
+                    // Determine seat type
+                    let seatType = 'Middle';
+                    if (col === 0 || col === 5) seatType = 'Window';
+                    else if (col === 2 || col === 3) seatType = 'Aisle';
+                    
+                    seat.dataset.seatType = seatType;
+                    
+                    // Add aisle space
+                    if (col === 2) {
+                        seat.classList.add('aisle');
+                    }
+                    
+                    // Mark exit rows
+                    if (row === 1 || row === 10 || row === 20 || row === 30) {
+                        seat.classList.add('exit-row');
+                    }
+                    
+                    // Random occupied seats (simulate real booking)
+                    const isOccupied = Math.random() < 0.3; // 30% occupied
+                    if (isOccupied) {
+                        seat.classList.add('occupied');
+                    } else {
+                        seat.classList.add('available');
+                        seat.addEventListener('click', () => selectSeat(seat));
+                    }
+                    
+                    seatMap.appendChild(seat);
+                }
+            }
+        }
+
+        function selectSeat(seatElement) {
+            const seatNumber = seatElement.dataset.seatNumber;
+            const seatType = seatElement.dataset.seatType;
+            
+            if (seatElement.classList.contains('selected')) {
+                // Deselect seat
+                seatElement.classList.remove('selected');
+                seatElement.classList.add('available');
+                selectedSeats = selectedSeats.filter(s => s.seatNumber !== seatNumber);
+            } else {
+                // Check if we can select more seats
+                if (selectedSeats.length >= passengers.length) {
+                    alert(`⚠️ En fazla ${passengers.length} koltuk seçebilirsiniz`);
+                    return;
+                }
+                
+                // Select seat
+                seatElement.classList.remove('available');
+                seatElement.classList.add('selected');
+                selectedSeats.push({
+                    seatNumber: seatNumber,
+                    seatType: seatType
+                });
+            }
+            
+            updateSelectedSeatsDisplay();
+        }
+
+        function updateSelectedSeatsDisplay() {
+            const selectedSeatsList = document.getElementById('selectedSeatsList');
+            
+            if (selectedSeats.length === 0) {
+                selectedSeatsList.textContent = 'Henüz koltuk seçilmedi';
+            } else {
+                selectedSeatsList.innerHTML = selectedSeats.map((seat, index) => 
+                    `<span style="display: inline-block; margin: 4px 8px; padding: 4px 8px; background: #00bcd4; color: white; border-radius: 4px;">
+                        Yolcu ${index + 1}: ${seat.seatNumber} (${seat.seatType})
+                    </span>`
+                ).join('');
+            }
+        }
+
+        function confirmSeatSelection() {
+            if (selectedSeats.length !== passengers.length) {
+                alert(`⚠️ Lütfen ${passengers.length} koltuk seçin`);
+                return;
+            }
+            
+            // Assign seats to passengers
+            passengers.forEach((passenger, index) => {
+                if (selectedSeats[index]) {
+                    passenger.seatNumber = selectedSeats[index].seatNumber;
+                    passenger.seatType = selectedSeats[index].seatType;
+                }
+            });
+            
+            closeSeatModal();
+            renderPassengers();
+            updateSeatButton();
+            
+            alert('✅ Koltuk seçimi tamamlandı!');
+        }
+
+        // Form submission
+        document.getElementById('reservationForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const guestEmail = document.getElementById('guestEmail').value;
+            if (!guestEmail) {
+                alert('⚠️ Lütfen e-posta adresinizi girin');
+                return;
+            }
+
+            // Validate passengers
+            for (let i = 0; i < passengers.length; i++) {
+                const passenger = passengers[i];
+                
+                if (!passenger.firstName || !passenger.lastName || !passenger.identityNumber || 
+                    !passenger.phoneNumber || !passenger.dateOfBirth) {
+                    alert(`⚠️ Lütfen ${i + 1}. yolcu için tüm bilgileri doldurun`);
+                    return;
+                }
+                
+                if (passenger.identityNumber.length !== 11) {
+                    alert(`⚠️ ${i + 1}. yolcu için TC Kimlik numarası 11 hane olmalıdır`);
+                    return;
+                }
+                
+                if (!isValidTCKimlik(passenger.identityNumber)) {
+                    alert(`⚠️ ${i + 1}. yolcu için geçerli bir TC Kimlik numarası girin`);
+                    return;
+                }
+                
+                if (passenger.phoneNumber.length !== 11 || !passenger.phoneNumber.startsWith('0')) {
+                    alert(`⚠️ ${i + 1}. yolcu için geçerli bir telefon numarası girin (0555 123 45 67)`);
+                    return;
+                }
+            }
+
+            if (selectedSeats.length !== passengers.length) {
+                alert('⚠️ Lütfen tüm yolcular için koltuk seçin');
+                return;
+            }
+
+            try {
+                // Create booking
+                const response = await fetch('/api/bookings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        flightId: selectedFlight.id,
+                        passengers: passengers,
+                        guestEmail: guestEmail
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (response.ok) {
+                    // Store booking data for membership flow
+                    currentBookingData = {
+                        pnr: result.bookingReference,
+                        email: guestEmail,
+                        passengers: passengers
+                    };
+                    
+                    closeModal();
+                    showMembershipModal();
+                } else {
+                    alert('❌ ' + (result.message || 'Rezervasyon yapılırken bir hata oluştu'));
+                }
+            } catch (error) {
+                console.error('Booking error:', error);
+                alert('❌ Bağlantı hatası. Lütfen tekrar deneyin.');
+            }
+        });
+
+        // Search form submission
+        document.getElementById('flightSearchForm').addEventListener('submit', async function(e) {
+            e.preventDefault(); // Prevent default form submission
+            
+            const departureCity = document.getElementById('departureCity').value;
+            const arrivalCity = document.getElementById('arrivalCity').value;
+            const departureDate = document.querySelector('input[name="DepartureDate"]').value;
+            
+            // Basic validation - at least one search criteria must be provided
+            if (!departureCity && !arrivalCity && !departureDate) {
+                alert('⚠️ Lütfen en az bir arama kriteri girin (şehir veya tarih)');
+                return;
+            }
+            
+            // If both cities are selected, they must be different
+            if (departureCity && arrivalCity && departureCity === arrivalCity) {
+                alert('⚠️ Kalkış ve varış şehri aynı olamaz');
+                return;
+            }
+            
+            // If only one city is selected, require the other or date
+            if ((departureCity && !arrivalCity && !departureDate) || (!departureCity && arrivalCity && !departureDate)) {
+                alert('⚠️ Şehir seçtiyseniz diğer şehri de seçin veya tarih belirtin');
+                return;
+            }
+            
+            // Show loading state
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = '🔄 Aranıyor...';
+            submitBtn.disabled = true;
+            
+            try {
+                // Build search URL with only provided parameters
+                let searchUrl = '/Flight/GetFlights?';
+                const params = [];
+                
+                if (departureCity) params.push(`departureCity=${encodeURIComponent(departureCity)}`);
+                if (arrivalCity) params.push(`arrivalCity=${encodeURIComponent(arrivalCity)}`);
+                if (departureDate) params.push(`departureDate=${departureDate}`);
+                
+                searchUrl += params.join('&');
+                
+                // Search for specific flights
+                const response = await fetch(searchUrl);
+                const flights = await response.json();
+                
+                if (flights.length > 0) {
+                    // Found matching flights
+                    displayFlights(flights);
+                    updateResultsTitle(flights.length, `Arama Sonuçları`);
+                    document.getElementById('alternativeFlights').style.display = 'none';
+                } else {
+                    // No matching flights found, show alternatives
+                    await showAlternativeFlights(departureCity, arrivalCity, departureDate);
+                }
+            } catch (error) {
+                console.error('Arama hatası:', error);
+                alert('❌ Arama sırasında bir hata oluştu. Lütfen tekrar deneyin.');
+            } finally {
+                // Reset button
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Membership Modal Functions
+        function showMembershipModal() {
+            if (!currentBookingData) return;
+            
+            document.getElementById('membershipPnr').textContent = currentBookingData.pnr;
+            document.getElementById('membershipModal').style.display = 'flex';
+            document.getElementById('membershipModal').style.alignItems = 'center';
+            document.getElementById('membershipModal').style.justifyContent = 'center';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMembershipModal() {
+            document.getElementById('membershipModal').style.display = 'none';
+            document.body.style.overflow = 'unset';
+        }
+
+        function proceedToRegistration() {
+            if (!currentBookingData) return;
+            
+            // Get first passenger data for pre-filling registration form
+            const firstPassenger = currentBookingData.passengers[0];
+            
+            // Create URL with pre-filled data
+            const params = new URLSearchParams({
+                email: currentBookingData.email,
+                firstName: firstPassenger.firstName || '',
+                lastName: firstPassenger.lastName || '',
+                identityNumber: firstPassenger.identityNumber || '',
+                phoneNumber: firstPassenger.phoneNumber || '',
+                dateOfBirth: firstPassenger.dateOfBirth || '',
+                gender: firstPassenger.gender || 'Erkek',
+                fromBooking: 'true',
+                pnr: currentBookingData.pnr
+            });
+            
+            closeMembershipModal();
+            window.location.href = `/Auth/Register?${params.toString()}`;
+        }
+
+        function skipMembership() {
+            if (!currentBookingData) return;
+            
+            closeMembershipModal();
+            window.location.href = `/Booking/Manage?pnr=${currentBookingData.pnr}&email=${encodeURIComponent(currentBookingData.email)}`;
+        }
+
+        function viewPnrDirectly() {
+            if (!currentBookingData) return;
+            
+            closeMembershipModal();
+            window.location.href = `/Booking/Query?pnr=${currentBookingData.pnr}&email=${encodeURIComponent(currentBookingData.email)}`;
+        }
+
+        async function showAlternativeFlights(departureCity, arrivalCity, departureDate) {
+            try {
+                // Try to find alternative flights
+                const alternativeContainer = document.getElementById('alternativeFlights');
+                const resultsContainer = document.getElementById('flightResults');
+                
+                // Show message about no direct flights
+                alternativeContainer.innerHTML = `
+                    <div style="background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%); color: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; text-align: center;">
+                        <h3 style="margin-bottom: 10px;">⚠️ Aradığınız Kriterlerde Uçuş Bulunamadı</h3>
+                        <p style="margin-bottom: 15px;">
+                            <strong>${departureCity} → ${arrivalCity}</strong> rotasında <strong>${new Date(departureDate).toLocaleDateString('tr-TR')}</strong> tarihinde uçuş bulunmamaktadır.
+                        </p>
+                        <p style="font-size: 14px; opacity: 0.9;">
+                            Aşağıda alternatif uçuşları inceleyebilirsiniz:
+                        </p>
+                    </div>
+                `;
+                alternativeContainer.style.display = 'block';
+                
+                let alternatives = [];
+                
+                // 1. Same route, different dates (most relevant)
+                if (departureCity && arrivalCity) {
+                    try {
+                        const sameCityDifferentDate = await fetch(`/Flight/GetFlights?departureCity=${encodeURIComponent(departureCity)}&arrivalCity=${encodeURIComponent(arrivalCity)}`).then(r => r.json());
+                        if (sameCityDifferentDate.length > 0) {
+                            alternatives = alternatives.concat(sameCityDifferentDate.slice(0, 4).map(f => ({
+                                ...f,
+                                alternativeType: 'Aynı Rota - Farklı Tarih'
+                            })));
+                        }
+                    } catch (error) {
+                        console.error('Same route different date error:', error);
+                    }
+                }
+                
+                // 2. Same departure city, different destinations (if not enough alternatives)
+                if (alternatives.length < 3 && departureCity) {
+                    try {
+                        const sameDepartureCity = await fetch(`/Flight/GetFlights?departureCity=${encodeURIComponent(departureCity)}`).then(r => r.json());
+                        const filteredSameDeparture = sameDepartureCity.filter(f => 
+                            f.arrivalCity !== arrivalCity && // Different destination
+                            !alternatives.some(alt => alt.id === f.id) // Not already added
+                        );
+                        
+                        if (filteredSameDeparture.length > 0) {
+                            alternatives = alternatives.concat(filteredSameDeparture.slice(0, 3).map(f => ({
+                                ...f,
+                                alternativeType: `${departureCity} Çıkışlı Diğer Uçuşlar`
+                            })));
+                        }
+                    } catch (error) {
+                        console.error('Same departure city error:', error);
+                    }
+                }
+                
+                // 3. Same arrival city, different departures (if still not enough)
+                if (alternatives.length < 3 && arrivalCity) {
+                    try {
+                        const sameArrivalCity = await fetch(`/Flight/GetFlights?arrivalCity=${encodeURIComponent(arrivalCity)}`).then(r => r.json());
+                        const filteredSameArrival = sameArrivalCity.filter(f => 
+                            f.departureCity !== departureCity && // Different departure
+                            !alternatives.some(alt => alt.id === f.id) // Not already added
+                        );
+                        
+                        if (filteredSameArrival.length > 0) {
+                            alternatives = alternatives.concat(filteredSameArrival.slice(0, 3).map(f => ({
+                                ...f,
+                                alternativeType: `${arrivalCity} Varışlı Diğer Uçuşlar`
+                            })));
+                        }
+                    } catch (error) {
+                        console.error('Same arrival city error:', error);
+                    }
+                }
+                
+                // 4. Same date, popular routes (last resort)
+                if (alternatives.length < 3 && departureDate) {
+                    try {
+                        const sameDateFlights = await fetch(`/Flight/GetFlights?departureDate=${departureDate}`).then(r => r.json());
+                        const popularRoutes = ['İstanbul', 'Ankara', 'İzmir', 'Antalya']; // Popular cities
+                        
+                        const filteredSameDate = sameDateFlights.filter(f => 
+                            (popularRoutes.includes(f.departureCity) || popularRoutes.includes(f.arrivalCity)) &&
+                            !alternatives.some(alt => alt.id === f.id) // Not already added
+                        );
+                        
+                        if (filteredSameDate.length > 0) {
+                            alternatives = alternatives.concat(filteredSameDate.slice(0, 2).map(f => ({
+                                ...f,
+                                alternativeType: 'Aynı Tarih - Popüler Rotalar'
+                            })));
+                        }
+                    } catch (error) {
+                        console.error('Same date popular routes error:', error);
+                    }
+                }
+                
+                if (alternatives.length > 0) {
+                    displayFlights(alternatives);
+                    updateResultsTitle(alternatives.length, 'Alternatif Uçuşlar');
+                } else {
+                    // Show all available flights
+                    await loadAllFlights();
+                    updateResultsTitle(allFlights.length, 'Tüm Mevcut Uçuşlar');
+                }
+                
+            } catch (error) {
+                console.error('Alternatif uçuş arama hatası:', error);
+                await loadAllFlights();
+            }
+        }
+    </script>
+}

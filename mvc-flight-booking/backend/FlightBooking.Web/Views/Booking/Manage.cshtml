@@ -1,0 +1,376 @@
+@{
+    ViewData["Title"] = "PNR Sorgula - BULUTBİLET.COM";
+}
+
+<div class="container">
+    <div class="search-form">
+        <h2 style="margin-bottom: 32px; font-size: 32px; font-weight: 800; color: #37474f;">
+            🎫 PNR Sorgula
+        </h2>
+        <p style="margin-bottom: 24px; color: #666; font-size: 16px;">
+            Rezervasyon numaranız (PNR) ve e-posta adresinizle rezervasyonunuzu sorgulayabilirsiniz.
+        </p>
+        
+        <form id="pnrSearchForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="pnr">PNR (Rezervasyon Numarası)</label>
+                    <input type="text" id="pnr" name="pnr" placeholder="Örn: ABC123" required style="text-transform: uppercase;" />
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">E-posta Adresi</label>
+                    <input type="email" id="email" name="email" placeholder="ornek@email.com" required />
+                </div>
+                
+                <div class="form-group" style="display: flex; align-items: end;">
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">
+                        <i class="fas fa-search" style="margin-right: 8px;"></i>
+                        Rezervasyon Sorgula
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div id="searchResults" style="margin-top: 40px; display: none;">
+        <h2 style="margin-bottom: 24px; color: white;">Rezervasyon Detayları</h2>
+        <div id="bookingDetails"></div>
+    </div>
+
+    <div id="noResults" style="display: none; text-align: center; margin-top: 40px; color: white;">
+        <i class="fas fa-search" style="font-size: 4rem; margin-bottom: 20px; opacity: 0.7;"></i>
+        <h3>Rezervasyon Bulunamadı</h3>
+        <p>PNR numaranızı ve e-posta adresinizi kontrol ederek tekrar deneyin.</p>
+    </div>
+
+    <div class="card" style="margin-top: 40px;">
+        <h3>💡 Bilgi</h3>
+        <ul style="margin: 0; padding-left: 20px;">
+            <li>PNR numaranız rezervasyon onayı e-postanızda bulunmaktadır</li>
+            <li>Rezervasyonunuzu uçuştan 24 saat öncesine kadar iptal edebilirsiniz</li>
+            <li>Ödeme yapmadığınız rezervasyonlar otomatik olarak iptal edilebilir</li>
+            <li>Herhangi bir sorun yaşarsanız müşteri hizmetlerimizle iletişime geçin</li>
+        </ul>
+    </div>
+</div>
+
+<!-- Payment Modal -->
+<div id="paymentModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 9999; overflow: auto;">
+    <div class="card" style="background: white; border-radius: 16px; padding: 24px; max-width: 500px; width: 100%; margin: 20px auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+        <h2 style="margin-bottom: 20px; color: #333;">💳 Ödeme Yap</h2>
+        
+        <div id="paymentInfo" style="background: #f8f9ff; padding: 16px; border-radius: 12px; margin-bottom: 20px;"></div>
+        
+        <div style="background: linear-gradient(135deg, #00bcd4 0%, #00acc1 100%); color: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; text-align: center;">
+            <h3 style="margin-bottom: 10px;">🎉 Demo Ödeme Sistemi</h3>
+            <p style="margin: 0; font-size: 14px;">
+                Bu bir demo uygulamasıdır. Gerçek ödeme yapılmayacaktır.
+            </p>
+        </div>
+        
+        <div style="display: flex; gap: 12px; justify-content: center;">
+            <button id="confirmPayment" class="btn btn-success" style="font-size: 16px; padding: 12px 24px;">
+                ✅ Ödemeyi Onayla
+            </button>
+            <button onclick="closePaymentModal()" class="btn btn-secondary" style="font-size: 16px; padding: 12px 24px;">
+                İptal
+            </button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let currentBooking = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check URL parameters for auto-search
+            const urlParams = new URLSearchParams(window.location.search);
+            const pnr = urlParams.get('pnr');
+            const email = urlParams.get('email');
+            
+            if (pnr && email) {
+                document.getElementById('pnr').value = pnr;
+                document.getElementById('email').value = email;
+                searchBooking(pnr, email);
+            }
+
+            // PNR input formatting
+            const pnrInput = document.getElementById('pnr');
+            pnrInput.addEventListener('input', function(e) {
+                e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+                if (e.target.value.length > 6) {
+                    e.target.value = e.target.value.slice(0, 6);
+                }
+            });
+        });
+
+        document.getElementById('pnrSearchForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const pnr = document.getElementById('pnr').value.trim();
+            const email = document.getElementById('email').value.trim();
+            
+            if (!pnr || !email) {
+                alert('⚠️ Lütfen PNR ve e-posta adresini girin');
+                return;
+            }
+            
+            searchBooking(pnr, email);
+        });
+
+        async function searchBooking(pnr, email) {
+            try {
+                const formData = new FormData();
+                formData.append('pnr', pnr);
+                formData.append('email', email);
+
+                const response = await fetch('/Booking/SearchBooking', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    currentBooking = result;
+                    displayBookingDetails(result);
+                    document.getElementById('searchResults').style.display = 'block';
+                    document.getElementById('noResults').style.display = 'none';
+                } else {
+                    document.getElementById('searchResults').style.display = 'none';
+                    document.getElementById('noResults').style.display = 'block';
+                    alert('❌ ' + result.message);
+                }
+            } catch (error) {
+                console.error('Search error:', error);
+                alert('❌ Arama sırasında bir hata oluştu');
+            }
+        }
+
+        function displayBookingDetails(result) {
+            const container = document.getElementById('bookingDetails');
+            const booking = result.booking;
+            const flight = result.flight;
+            const passengers = result.passengers;
+
+            const statusColor = booking.status === 'Confirmed' ? '#4caf50' : 
+                               booking.status === 'Cancelled' ? '#f44336' : '#ff9800';
+            
+            const paymentStatus = booking.isPaid ? 
+                '<span style="color: #4caf50; font-weight: bold;">✅ Ödendi</span>' : 
+                '<span style="color: #ff9800; font-weight: bold;">⏳ Ödeme Bekleniyor</span>';
+
+            container.innerHTML = `
+                <div class="booking-card">
+                    <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 20px;">
+                        <h3 style="margin: 0; color: #333;">Rezervasyon: ${booking.bookingReference}</h3>
+                        <span class="booking-status" style="background: ${statusColor}; color: white; padding: 6px 16px; border-radius: 25px; font-size: 13px; font-weight: 700;">
+                            ${booking.status}
+                        </span>
+                    </div>
+
+                    <div style="background: #f8f9ff; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                        <h4 style="margin-bottom: 15px; color: #00bcd4;">✈️ Uçuş Bilgileri</h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                            <div>
+                                <strong>Uçuş Numarası:</strong><br>
+                                ${flight.flightNumber} - ${flight.airline}
+                            </div>
+                            <div>
+                                <strong>Rota:</strong><br>
+                                ${flight.departureCity} → ${flight.arrivalCity}
+                            </div>
+                            <div>
+                                <strong>Kalkış:</strong><br>
+                                ${new Date(flight.departureTime).toLocaleString('tr-TR')}
+                            </div>
+                            <div>
+                                <strong>Varış:</strong><br>
+                                ${new Date(flight.arrivalTime).toLocaleString('tr-TR')}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background: #f0f8ff; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                        <h4 style="margin-bottom: 15px; color: #00bcd4;">👥 Yolcu Bilgileri (${booking.passengerCount} kişi)</h4>
+                        <div style="display: grid; gap: 10px;">
+                            ${passengers.map((passenger, index) => `
+                                <div style="background: white; padding: 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                                    <span><strong>Yolcu ${index + 1}:</strong> ${passenger.firstName} ${passenger.lastName}</span>
+                                    <span style="color: #666;">🪑 ${passenger.seatNumber} (${getSeatTypeText(passenger.seatType)})</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div style="background: #fff8e1; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                        <h4 style="margin-bottom: 15px; color: #00bcd4;">💰 Ödeme Bilgileri</h4>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <span><strong>Toplam Tutar:</strong></span>
+                            <span style="font-size: 24px; font-weight: bold; color: #00bcd4;">₺${booking.totalPrice.toLocaleString('tr-TR')}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <span><strong>Ödeme Durumu:</strong></span>
+                            ${paymentStatus}
+                        </div>
+                        <div style="font-size: 12px; color: #666;">
+                            <strong>Rezervasyon Tarihi:</strong> ${new Date(booking.bookingDate).toLocaleString('tr-TR')}
+                            ${booking.paymentDate ? `<br><strong>Ödeme Tarihi:</strong> ${new Date(booking.paymentDate).toLocaleString('tr-TR')}` : ''}
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                        ${!booking.isPaid && booking.status === 'Confirmed' ? `
+                            <button onclick="showPaymentModal()" class="btn btn-success" style="font-size: 16px; padding: 12px 24px;">
+                                💳 Ödeme Yap
+                            </button>
+                        ` : ''}
+                        
+                        ${booking.status === 'Confirmed' && canCancelBooking(flight.departureTime) ? `
+                            <button onclick="cancelBooking()" class="btn btn-danger" style="font-size: 16px; padding: 12px 24px;">
+                                ❌ Rezervasyonu İptal Et
+                            </button>
+                        ` : ''}
+                        
+                        <button onclick="printBooking()" class="btn btn-secondary" style="font-size: 16px; padding: 12px 24px;">
+                            🖨️ Yazdır
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getSeatTypeText(seatType) {
+            switch(seatType) {
+                case 'Window': return '🪟 Cam';
+                case 'Aisle': return '🚶 Koridor';
+                case 'Middle': return '💺 Orta';
+                default: return seatType;
+            }
+        }
+
+        function canCancelBooking(departureTime) {
+            const departure = new Date(departureTime);
+            const now = new Date();
+            const hoursUntilDeparture = (departure - now) / (1000 * 60 * 60);
+            return hoursUntilDeparture > 24;
+        }
+
+        function showPaymentModal() {
+            const modal = document.getElementById('paymentModal');
+            const paymentInfo = document.getElementById('paymentInfo');
+            
+            paymentInfo.innerHTML = `
+                <h4 style="margin-bottom: 10px; color: #333;">Ödeme Özeti</h4>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                    <span>PNR:</span>
+                    <span><strong>${currentBooking.booking.bookingReference}</strong></span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                    <span>Yolcu Sayısı:</span>
+                    <span>${currentBooking.booking.passengerCount} kişi</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 18px; font-weight: bold; color: #00bcd4; border-top: 1px solid #ddd; padding-top: 10px;">
+                    <span>Toplam:</span>
+                    <span>₺${currentBooking.booking.totalPrice.toLocaleString('tr-TR')}</span>
+                </div>
+            `;
+            
+            modal.style.display = 'flex';
+            modal.style.alignItems = 'center';
+            modal.style.justifyContent = 'center';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePaymentModal() {
+            document.getElementById('paymentModal').style.display = 'none';
+            document.body.style.overflow = 'unset';
+        }
+
+        document.getElementById('confirmPayment').addEventListener('click', async function() {
+            try {
+                const formData = new FormData();
+                formData.append('pnr', currentBooking.booking.bookingReference);
+                formData.append('email', document.getElementById('email').value);
+
+                const response = await fetch('/Booking/ProcessPayment', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('🎉 ' + result.message);
+                    closePaymentModal();
+                    // Refresh booking details
+                    searchBooking(currentBooking.booking.bookingReference, document.getElementById('email').value);
+                } else {
+                    alert('❌ ' + result.message);
+                }
+            } catch (error) {
+                console.error('Payment error:', error);
+                alert('❌ Ödeme işlemi sırasında bir hata oluştu');
+            }
+        });
+
+        async function cancelBooking() {
+            if (!confirm('⚠️ Rezervasyonunuzu iptal etmek istediğinizden emin misiniz?')) {
+                return;
+            }
+
+            try {
+                const formData = new FormData();
+                formData.append('pnr', currentBooking.booking.bookingReference);
+                formData.append('email', document.getElementById('email').value);
+
+                const response = await fetch('/Booking/CancelBooking', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('✅ ' + result.message);
+                    // Refresh booking details
+                    searchBooking(currentBooking.booking.bookingReference, document.getElementById('email').value);
+                } else {
+                    alert('❌ ' + result.message);
+                }
+            } catch (error) {
+                console.error('Cancel error:', error);
+                alert('❌ İptal işlemi sırasında bir hata oluştu');
+            }
+        }
+
+        function printBooking() {
+            const printContent = document.getElementById('bookingDetails').innerHTML;
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                    <head>
+                        <title>Rezervasyon Detayları - ${currentBooking.booking.bookingReference}</title>
+                        <style>
+                            body { font-family: Arial, sans-serif; margin: 20px; }
+                            .booking-card { border: 1px solid #ddd; padding: 20px; border-radius: 8px; }
+                            .booking-status { display: inline-block; padding: 4px 12px; border-radius: 4px; font-weight: bold; }
+                            button { display: none; }
+                        </style>
+                    </head>
+                    <body>
+                        <h1>BULUTBİLET.COM - Rezervasyon Detayları</h1>
+                        ${printContent}
+                        <p style="margin-top: 30px; font-size: 12px; color: #666;">
+                            Yazdırma Tarihi: ${new Date().toLocaleString('tr-TR')}
+                        </p>
+                    </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+        }
+    </script>
+}
