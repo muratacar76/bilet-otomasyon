@@ -10,6 +10,58 @@ const getStatusText = (status, isPaid) => {
   return status
 }
 
+// E-posta ile sorgulama bileşeni
+function EmailSearchForm({ onBookingsFound }) {
+  const [searchEmail, setSearchEmail] = useState('')
+  const [emailLoading, setEmailLoading] = useState(false)
+  const [emailError, setEmailError] = useState('')
+
+  const handleEmailSearch = async (e) => {
+    e.preventDefault()
+    setEmailError('')
+    setEmailLoading(true)
+
+    try {
+      const response = await axios.get(`/api/bookings/email/${encodeURIComponent(searchEmail)}`)
+      if (response.data.length === 0) {
+        setEmailError('Bu e-posta adresine ait rezervasyon bulunamadı')
+        onBookingsFound([])
+      } else {
+        onBookingsFound(response.data)
+      }
+    } catch (err) {
+      setEmailError(err.response?.data?.message || 'Rezervasyonlar yüklenirken hata oluştu')
+      onBookingsFound([])
+    } finally {
+      setEmailLoading(false)
+    }
+  }
+
+  return (
+    <form onSubmit={handleEmailSearch}>
+      <div className="form-group">
+        <label>E-posta Adresi</label>
+        <input
+          type="email"
+          value={searchEmail}
+          onChange={(e) => setSearchEmail(e.target.value)}
+          placeholder="ornek@email.com"
+          required
+        />
+        <small style={{ color: '#666', fontSize: '12px' }}>
+          Rezervasyon yaparken kullandığınız e-posta adresini girin
+        </small>
+      </div>
+
+      {emailError && <div className="error">{emailError}</div>}
+
+      <button type="submit" className="btn btn-primary" disabled={emailLoading} style={{ width: '100%' }}>
+        {emailLoading ? '📧 Aranıyor...' : '📧 E-posta ile Ara'}
+      </button>
+    </form>
+  )
+}
+
 // Türkiye havalimanları mapping
 const airportMapping = {
   'İstanbul': { code: 'IST', name: 'İstanbul Havalimanı' },
@@ -36,6 +88,7 @@ function GuestBooking({ user }) {
   const [pnr, setPnr] = useState('')
   const [email, setEmail] = useState('')
   const [booking, setBooking] = useState(null)
+  const [bookings, setBookings] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [showPaymentModal, setShowPaymentModal] = useState(false)
@@ -174,6 +227,7 @@ function GuestBooking({ user }) {
         )
         
         if (wantToRegister) {
+          // Kayıt sayfasına yönlendir, otomatik kayıt yapma
           window.location.href = '/register?email=' + encodeURIComponent(email)
         }
       }
@@ -264,6 +318,27 @@ function GuestBooking({ user }) {
             {loading ? '🔍 Aranıyor...' : '🔍 Rezervasyonu Bul'}
           </button>
         </form>
+      </div>
+
+      {/* E-posta ile Sorgulama */}
+      <div className="card" style={{ maxWidth: '600px', margin: '20px auto' }}>
+        <div style={{
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          color: 'white',
+          padding: '24px',
+          borderRadius: '16px',
+          marginBottom: '24px',
+          textAlign: 'center'
+        }}>
+          <h2 style={{ fontSize: '24px', marginBottom: '8px', fontWeight: '700' }}>
+            📧 E-posta ile Sorgulama
+          </h2>
+          <p style={{ fontSize: '14px', opacity: '0.9' }}>
+            PNR numaranızı unuttuysanız, sadece e-posta adresinizle tüm rezervasyonlarınızı görüntüleyebilirsiniz
+          </p>
+        </div>
+
+        <EmailSearchForm onBookingsFound={(bookings) => setBookings(bookings)} />
       </div>
 
       {booking && (
@@ -402,6 +477,103 @@ function GuestBooking({ user }) {
               </p>
             </div>
           )}
+        </div>
+      )}
+
+      {/* E-posta ile Bulunan Rezervasyonlar */}
+      {bookings && bookings.length > 0 && (
+        <div className="card" style={{ maxWidth: '1000px', margin: '20px auto' }}>
+          <div style={{
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            color: 'white',
+            padding: '24px',
+            borderRadius: '20px',
+            marginBottom: '32px',
+            textAlign: 'center'
+          }}>
+            <h2 style={{ fontSize: '28px', marginBottom: '12px', fontWeight: '800' }}>📧 E-posta Rezervasyonları</h2>
+            <p style={{ fontSize: '16px', fontWeight: '500' }}>{bookings.length} rezervasyon bulundu</p>
+          </div>
+
+          <div style={{ display: 'grid', gap: '20px' }}>
+            {bookings.map((emailBooking, index) => (
+              <div key={index} style={{
+                border: '2px solid #e0e0e0',
+                borderRadius: '16px',
+                padding: '24px',
+                background: 'linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%)'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
+                  <div>
+                    <h3 style={{ fontSize: '24px', fontWeight: 'bold', color: '#333', marginBottom: '4px' }}>
+                      PNR: {emailBooking.bookingReference}
+                    </h3>
+                    <div style={{ fontSize: '16px', color: '#666' }}>
+                      {emailBooking.flight.flightNumber} - {emailBooking.flight.airline}
+                    </div>
+                  </div>
+                  <div style={{
+                    padding: '8px 16px',
+                    borderRadius: '20px',
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                    background: emailBooking.isPaid ? '#4caf50' : emailBooking.status === 'Cancelled' ? '#f44336' : '#ff9800',
+                    color: 'white'
+                  }}>
+                    {getStatusText(emailBooking.status, emailBooking.isPaid)}
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '16px' }}>
+                  <div style={{ padding: '12px', background: 'rgba(255,255,255,0.7)', borderRadius: '8px' }}>
+                    <div style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>Rota</div>
+                    <div style={{ fontSize: '14px', fontWeight: 'bold' }}>
+                      {emailBooking.flight.departureCity} → {emailBooking.flight.arrivalCity}
+                    </div>
+                  </div>
+                  <div style={{ padding: '12px', background: 'rgba(255,255,255,0.7)', borderRadius: '8px' }}>
+                    <div style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>Kalkış</div>
+                    <div style={{ fontSize: '14px', fontWeight: 'bold' }}>
+                      {new Date(emailBooking.flight.departureTime).toLocaleDateString('tr-TR')}
+                    </div>
+                  </div>
+                  <div style={{ padding: '12px', background: 'rgba(255,255,255,0.7)', borderRadius: '8px' }}>
+                    <div style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>Yolcu</div>
+                    <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{emailBooking.passengerCount} kişi</div>
+                  </div>
+                  <div style={{ padding: '12px', background: 'rgba(255,255,255,0.7)', borderRadius: '8px' }}>
+                    <div style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>Tutar</div>
+                    <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#667eea' }}>₺{emailBooking.totalPrice}</div>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => {
+                      // PNR detayına git
+                      window.location.href = `/guest-booking?pnr=${emailBooking.bookingReference}&email=${encodeURIComponent(emailBooking.email)}`
+                    }}
+                    style={{ fontSize: '14px', padding: '8px 16px' }}
+                  >
+                    🔍 Detay Görüntüle
+                  </button>
+                  {!emailBooking.isPaid && emailBooking.status === 'Confirmed' && (
+                    <button
+                      className="btn btn-success"
+                      onClick={() => {
+                        // Ödeme sayfasına git
+                        window.location.href = `/guest-booking?pnr=${emailBooking.bookingReference}&email=${encodeURIComponent(emailBooking.email)}`
+                      }}
+                      style={{ fontSize: '14px', padding: '8px 16px' }}
+                    >
+                      💳 Ödeme Yap
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 

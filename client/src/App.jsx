@@ -1,11 +1,13 @@
 import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
+import axios from 'axios'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Flights from './pages/Flights'
 import Bookings from './pages/Bookings'
 import AdminDashboard from './pages/AdminDashboard'
+import AdminUsers from './pages/AdminUsers'
 import GuestBooking from './pages/GuestBooking'
 import Privacy from './pages/Privacy'
 import Terms from './pages/Terms'
@@ -21,6 +23,42 @@ function App() {
     const userData = localStorage.getItem('user')
     if (token && userData) {
       setUser(JSON.parse(userData))
+    }
+
+    // Axios interceptor - her istekte otomatik olarak token ekle (sadece bir kez)
+    const requestInterceptor = axios.interceptors.request.use(
+      (config) => {
+        const token = localStorage.getItem('token')
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`
+        }
+        return config
+      },
+      (error) => {
+        return Promise.reject(error)
+      }
+    )
+
+    // Response interceptor - 401 hatalarını yakala (sadece bir kez)
+    const responseInterceptor = axios.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        if (error.response?.status === 401) {
+          // Token geçersiz, kullanıcıyı çıkış yap
+          localStorage.removeItem('token')
+          localStorage.removeItem('user')
+          setUser(null)
+          alert('⚠️ Oturumunuzun süresi doldu. Lütfen tekrar giriş yapın.')
+          window.location.href = '/login'
+        }
+        return Promise.reject(error)
+      }
+    )
+
+    // Cleanup function - component unmount olduğunda interceptor'ları temizle
+    return () => {
+      axios.interceptors.request.eject(requestInterceptor)
+      axios.interceptors.response.eject(responseInterceptor)
     }
   }, [])
 
@@ -67,6 +105,7 @@ function App() {
         <Route path="/guest-booking" element={<GuestBooking user={user} />} />
         <Route path="/bookings" element={user ? <Bookings /> : <Navigate to="/login" />} />
         <Route path="/admin" element={user?.isAdmin ? <AdminDashboard /> : <Navigate to="/" />} />
+        <Route path="/admin/users" element={user?.isAdmin ? <AdminUsers /> : <Navigate to="/" />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/cookies" element={<Cookies />} />

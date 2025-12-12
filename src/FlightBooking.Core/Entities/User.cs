@@ -8,6 +8,9 @@ public class User
     public string Email { get; set; } = string.Empty;
     public string? PasswordHash { get; set; }
     public string? PhoneNumber { get; set; }
+    public string? IdentityNumber { get; set; }
+    public DateTime? DateOfBirth { get; set; }
+    public string? Gender { get; set; }
     public bool IsGuest { get; set; }
     public bool IsAdmin { get; set; }
     public DateTime CreatedAt { get; set; }

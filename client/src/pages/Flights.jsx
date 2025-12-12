@@ -50,6 +50,7 @@ function Flights({ user }) {
     identityNumber: '',
     dateOfBirth: '',
     gender: 'Erkek',
+    phoneNumber: '',
     seatNumber: '',
     seatType: ''
   }])
@@ -64,6 +65,20 @@ function Flights({ user }) {
   useEffect(() => {
     fetchFlights()
   }, [])
+
+  // Modal açıldığında body scroll'unu engelle
+  useEffect(() => {
+    if (showSuccessModal) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+
+    // Cleanup function
+    return () => {
+      document.body.style.overflow = 'unset'
+    }
+  }, [showSuccessModal])
 
   // Modal açıldığında body scroll'unu engelle ve modal'ı en üste kaydır
   useEffect(() => {
@@ -271,6 +286,21 @@ function Flights({ user }) {
           }
         }
       }
+    } 
+    // Telefon numarası için özel kontrol
+    else if (field === 'phoneNumber') {
+      // Sadece rakam kabul et
+      let numericValue = value.replace(/\D/g, '')
+      
+      // Eğer 0 ile başlamıyorsa ve boş değilse 0 ekle
+      if (numericValue.length > 0 && !numericValue.startsWith('0')) {
+        numericValue = '0' + numericValue
+      }
+      
+      // Maksimum 11 hane
+      if (numericValue.length <= 11) {
+        newPassengers[index][field] = numericValue
+      }
     } else {
       newPassengers[index][field] = value
     }
@@ -298,6 +328,7 @@ function Flights({ user }) {
       identityNumber: '',
       dateOfBirth: '',
       gender: 'Erkek',
+      phoneNumber: '',
       seatNumber: '',
       seatType: ''
     }])
@@ -349,11 +380,7 @@ function Flights({ user }) {
       return
     }
 
-    // Koltuk seçimi kontrolü
-    if (selectedSeats.length !== passengers.length) {
-      alert('⚠️ Lütfen tüm yolcular için koltuk seçin')
-      return
-    }
+
 
     // TC kimlik numarası kontrolü
     const invalidTcNumbers = passengers.filter(p => p.identityNumber.length !== 11)
@@ -394,7 +421,7 @@ function Flights({ user }) {
           headers: { 'Content-Type': 'application/json' }
         })
         bookingToken = guestResponse.data.token
-        localStorage.setItem('token', bookingToken)
+        // localStorage'a kaydetme, sadece bu işlem için kullan
       }
 
       console.log('Gönderilen veri:', {
@@ -416,21 +443,13 @@ function Flights({ user }) {
         pnr: pnr,
         email: user?.email || guestEmail,
         flight: selectedFlight,
-        passengerCount: passengers.length
+        passengerCount: passengers.length,
+        passengers: passengers // Yolcu bilgilerini de sakla
       })
       setShowSuccessModal(true)
       
-      // Form verilerini temizle
+      // Form verilerini temizleme işlemini modal kapatıldığında yap
       setSelectedFlight(null)
-      setPassengers([{
-        firstName: '',
-        lastName: '',
-        identityNumber: '',
-        dateOfBirth: '',
-        gender: 'Erkek',
-        seatNumber: '',
-        seatType: ''
-      }])
       setSelectedSeats([])
       setShowSeatSelector(false)
       setShowConfirmation(false)
@@ -677,20 +696,15 @@ function Flights({ user }) {
             overflow: 'hidden'
           }}>
           <div className="card" style={{ 
-            width: '100vw',
-            height: '100vh',
-            maxWidth: 'none', 
-            maxHeight: 'none', 
+            background: 'white',
+            borderRadius: '16px',
+            padding: '24px',
+            maxWidth: '700px',
+            width: '100%',
+            maxHeight: '85vh',
             overflow: 'auto',
-            margin: '0',
-            padding: '0',
-            boxSizing: 'border-box',
-            position: 'relative',
-            backgroundColor: 'white',
-            borderRadius: '0',
-            boxShadow: 'none'
+            boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
           }}>
-            <div style={{ padding: '20px' }}>
             <h2 className="modal-title">Rezervasyon Detayları</h2>
             <div className="flight-info-box">
               <p className="flight-info-item">
@@ -809,6 +823,16 @@ function Flights({ user }) {
                         ❌ Bu TC Kimlik numarası başka bir yolcu tarafından kullanılıyor
                       </small>
                     )}
+                  </div>
+                  <div className="form-group">
+                    <label>Telefon Numarası</label>
+                    <input
+                      type="tel"
+                      placeholder="0555 123 45 67"
+                      value={passenger.phoneNumber}
+                      onChange={(e) => handlePassengerChange(index, 'phoneNumber', e.target.value)}
+                      required
+                    />
                   </div>
                   <div className="form-group">
                     <label>Doğum Tarihi</label>
@@ -954,14 +978,9 @@ function Flights({ user }) {
               <button 
                 type="submit" 
                 className="btn btn-success" 
-                style={{ 
-                  marginRight: '10px',
-                  opacity: selectedSeats.length === passengers.length ? 1 : 0.6,
-                  cursor: selectedSeats.length === passengers.length ? 'pointer' : 'not-allowed'
-                }}
-                disabled={selectedSeats.length !== passengers.length}
+                style={{ marginRight: '10px' }}
               >
-                {selectedSeats.length === passengers.length ? '🎫 Rezervasyonu Tamamla' : 'Önce Koltuk Seçin'}
+                🎫 Rezervasyonu Tamamla
               </button>
               <button type="button" className="btn btn-secondary" onClick={() => {
                 setSelectedFlight(null)
@@ -972,7 +991,6 @@ function Flights({ user }) {
                 İptal
               </button>
             </form>
-            </div>
           </div>
         </div>
       )}
@@ -991,34 +1009,38 @@ function Flights({ user }) {
           justifyContent: 'center',
           zIndex: 10000,
           padding: '20px',
-          boxSizing: 'border-box'
+          boxSizing: 'border-box',
+          overflow: 'auto'
         }}>
           <div style={{
             background: 'white',
-            borderRadius: '20px',
-            padding: '40px',
-            maxWidth: '500px',
+            borderRadius: '16px',
+            padding: '24px',
+            maxWidth: '450px',
             width: '100%',
             textAlign: 'center',
-            boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
+            boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+            maxHeight: '90vh',
+            overflow: 'auto',
+            margin: 'auto'
           }}>
             <div style={{
               background: 'linear-gradient(135deg, #4caf50 0%, #388e3c 100%)',
               color: 'white',
-              padding: '24px',
-              borderRadius: '20px',
-              marginBottom: '32px'
+              padding: '20px',
+              borderRadius: '16px',
+              marginBottom: '20px'
             }}>
-              <div style={{ fontSize: '56px', marginBottom: '16px' }}>🎉</div>
-              <h2 style={{ fontSize: '28px', marginBottom: '12px', fontWeight: '800' }}>Rezervasyon Tamamlandı!</h2>
-              <p style={{ fontSize: '18px', fontWeight: '500' }}>Biletiniz başarıyla rezerve edildi</p>
+              <div style={{ fontSize: '48px', marginBottom: '12px' }}>🎉</div>
+              <h2 style={{ fontSize: '24px', marginBottom: '8px', fontWeight: '800' }}>Rezervasyon Tamamlandı!</h2>
+              <p style={{ fontSize: '16px', fontWeight: '500' }}>Biletiniz başarıyla rezerve edildi</p>
             </div>
 
             <div style={{
               background: '#f8f9ff',
-              padding: '20px',
+              padding: '16px',
               borderRadius: '12px',
-              marginBottom: '24px',
+              marginBottom: '16px',
               textAlign: 'left'
             }}>
               <h3 style={{ marginBottom: '16px', color: '#333' }}>📋 Rezervasyon Bilgileri</h3>
@@ -1052,19 +1074,105 @@ function Flights({ user }) {
               background: '#fff3cd',
               border: '1px solid #ffeaa7',
               color: '#856404',
-              padding: '16px',
+              padding: '12px',
               borderRadius: '8px',
-              marginBottom: '24px',
-              fontSize: '14px'
+              marginBottom: '16px',
+              fontSize: '13px'
             }}>
               💡 Rezervasyonunuz onaylandı. Ödeme yapmak için PNR sorgulama sayfasını kullanabilirsiniz.
             </div>
+
+            {!user && (
+              <div style={{
+                background: 'linear-gradient(135deg, #00bcd4 0%, #00acc1 100%)',
+                color: 'white',
+                padding: '16px',
+                borderRadius: '12px',
+                marginBottom: '16px',
+                textAlign: 'center'
+              }}>
+                <h4 style={{ fontSize: '16px', marginBottom: '8px', fontWeight: '700' }}>✨ Üye Olmak İster Misiniz?</h4>
+                <p style={{ fontSize: '13px', marginBottom: '12px', lineHeight: '1.4' }}>
+                  Üye olarak rezervasyonlarınızı takip edebilir, hızlı rezervasyon yapabilir ve özel fırsatlardan yararlanabilirsiniz!
+                </p>
+                <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                  <button 
+                    className="btn btn-success"
+                    onClick={() => {
+                      // Yolcu bilgilerini al (ilk yolcunun bilgileri)
+                      const firstPassenger = completedBooking.passengers?.[0] || {}
+                      navigate('/register', { 
+                        state: { 
+                          email: completedBooking.email,
+                          firstName: firstPassenger.firstName || '',
+                          lastName: firstPassenger.lastName || '',
+                          phoneNumber: firstPassenger.phoneNumber || '',
+                          identityNumber: firstPassenger.identityNumber || '',
+                          dateOfBirth: firstPassenger.dateOfBirth || '',
+                          gender: firstPassenger.gender || 'Erkek'
+                        } 
+                      })
+                      // Form verilerini temizle
+                      setPassengers([{
+                        firstName: '',
+                        lastName: '',
+                        identityNumber: '',
+                        dateOfBirth: '',
+                        gender: 'Erkek',
+                        phoneNumber: '',
+                        seatNumber: '',
+                        seatType: ''
+                      }])
+                      setShowSuccessModal(false)
+                      setCompletedBooking(null)
+                    }}
+                    style={{ fontSize: '14px', padding: '8px 16px', background: 'white', color: '#00bcd4' }}
+                  >
+                    ✅ Evet, Üye Olmak İstiyorum
+                  </button>
+                  <button 
+                    className="btn btn-secondary"
+                    onClick={() => {
+                      // Üye olmak istemiyorsa direkt PNR sayfasına yönlendir
+                      navigate(`/guest-booking?pnr=${completedBooking.pnr}&email=${encodeURIComponent(completedBooking.email)}`)
+                      // Form verilerini temizle
+                      setPassengers([{
+                        firstName: '',
+                        lastName: '',
+                        identityNumber: '',
+                        dateOfBirth: '',
+                        gender: 'Erkek',
+                        phoneNumber: '',
+                        seatNumber: '',
+                        seatType: ''
+                      }])
+                      setShowSuccessModal(false)
+                      setCompletedBooking(null)
+                    }}
+                    style={{ fontSize: '14px', padding: '8px 16px', background: 'rgba(255,255,255,0.2)', color: 'white' }}
+                  >
+                    Hayır, Şimdi Değil
+                  </button>
+                </div>
+              </div>
+            )}
 
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
               <button 
                 className="btn btn-primary"
                 onClick={() => {
                   navigate(`/guest-booking?pnr=${completedBooking.pnr}&email=${encodeURIComponent(completedBooking.email)}`)
+                  // Form verilerini temizle
+                  setPassengers([{
+                    firstName: '',
+                    lastName: '',
+                    identityNumber: '',
+                    dateOfBirth: '',
+                    gender: 'Erkek',
+                    phoneNumber: '',
+                    seatNumber: '',
+                    seatType: ''
+                  }])
                   setShowSuccessModal(false)
                   setCompletedBooking(null)
                 }}
@@ -1075,6 +1183,17 @@ function Flights({ user }) {
               <button 
                 className="btn btn-secondary"
                 onClick={() => {
+                  // Form verilerini temizle
+                  setPassengers([{
+                    firstName: '',
+                    lastName: '',
+                    identityNumber: '',
+                    dateOfBirth: '',
+                    gender: 'Erkek',
+                    phoneNumber: '',
+                    seatNumber: '',
+                    seatType: ''
+                  }])
                   setShowSuccessModal(false)
                   setCompletedBooking(null)
                   navigate('/')

@@ -1,20 +1,24 @@
 import { useState, useEffect } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom'
 import axios from 'axios'
 
 function Register({ setUser }) {
   const location = useLocation()
+  const [searchParams] = useSearchParams()
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: location.state?.email || '',
+    firstName: location.state?.firstName || '',
+    lastName: location.state?.lastName || '',
+    email: location.state?.email || searchParams.get('email') || '',
     password: '',
     confirmPassword: '',
-    phoneNumber: ''
+    phoneNumber: location.state?.phoneNumber || '',
+    identityNumber: location.state?.identityNumber || '',
+    dateOfBirth: location.state?.dateOfBirth || '',
+    gender: location.state?.gender || 'Erkek'
   })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const [showWelcome, setShowWelcome] = useState(!!location.state?.email)
+  const [showWelcome] = useState(!!(location.state?.email || location.state?.firstName || location.state?.lastName || location.state?.phoneNumber || location.state?.identityNumber || location.state?.dateOfBirth || location.state?.gender || searchParams.get('email')))
   const navigate = useNavigate()
 
   const handleChange = (e) => {
@@ -26,9 +30,30 @@ function Register({ setUser }) {
     setError('')
     setLoading(true)
 
-    // Şifre kontrolü
+    // Şifre boş kontrolü
+    if (!formData.password || formData.password.length < 4) {
+      setError('Şifre en az 4 karakter olmalıdır')
+      setLoading(false)
+      return
+    }
+
+    // Şifre eşleşme kontrolü
     if (formData.password !== formData.confirmPassword) {
       setError('Şifreler eşleşmiyor')
+      setLoading(false)
+      return
+    }
+
+    // Şifre tekrarı boş kontrolü
+    if (!formData.confirmPassword) {
+      setError('Şifre tekrarını giriniz')
+      setLoading(false)
+      return
+    }
+
+    // Zorunlu alanların dolu olup olmadığını kontrol et
+    if (!formData.firstName || !formData.lastName || !formData.email) {
+      setError('Ad, soyad ve e-posta alanları zorunludur')
       setLoading(false)
       return
     }
@@ -78,7 +103,14 @@ function Register({ setUser }) {
               value={formData.firstName}
               onChange={handleChange}
               required
+              readOnly={!!location.state?.firstName}
+              style={location.state?.firstName ? { background: '#f0f0f0', cursor: 'not-allowed' } : {}}
             />
+            {location.state?.firstName && (
+              <small style={{ color: '#666', fontSize: '12px' }}>
+                ✅ Rezervasyon bilgilerinizden alındı
+              </small>
+            )}
           </div>
           <div className="form-group">
             <label>Soyad</label>
@@ -88,22 +120,30 @@ function Register({ setUser }) {
               value={formData.lastName}
               onChange={handleChange}
               required
+              readOnly={!!location.state?.lastName}
+              style={location.state?.lastName ? { background: '#f0f0f0', cursor: 'not-allowed' } : {}}
             />
+            {location.state?.lastName && (
+              <small style={{ color: '#666', fontSize: '12px' }}>
+                ✅ Rezervasyon bilgilerinizden alındı
+              </small>
+            )}
           </div>
           <div className="form-group">
-            <label>E-posta</label>
+            <label>TC Kimlik Numarası</label>
             <input
-              type="email"
-              name="email"
-              value={formData.email}
+              type="text"
+              name="identityNumber"
+              value={formData.identityNumber}
               onChange={handleChange}
-              required
-              readOnly={!!location.state?.email}
-              style={location.state?.email ? { background: '#f0f0f0', cursor: 'not-allowed' } : {}}
+              maxLength="11"
+              placeholder="TC Kimlik No (11 hane)"
+              readOnly={!!location.state?.identityNumber}
+              style={location.state?.identityNumber ? { background: '#f0f0f0', cursor: 'not-allowed' } : {}}
             />
-            {location.state?.email && (
+            {location.state?.identityNumber && (
               <small style={{ color: '#666', fontSize: '12px' }}>
-                ✅ Rezervasyon yaptığınız e-posta adresi
+                ✅ Rezervasyon bilgilerinizden alındı
               </small>
             )}
           </div>
@@ -114,7 +154,66 @@ function Register({ setUser }) {
               name="phoneNumber"
               value={formData.phoneNumber}
               onChange={handleChange}
+              readOnly={!!location.state?.phoneNumber}
+              style={location.state?.phoneNumber ? { background: '#f0f0f0', cursor: 'not-allowed' } : {}}
             />
+            {location.state?.phoneNumber && (
+              <small style={{ color: '#666', fontSize: '12px' }}>
+                ✅ Rezervasyon bilgilerinizden alındı
+              </small>
+            )}
+          </div>
+          <div className="form-group">
+            <label>Doğum Tarihi</label>
+            <input
+              type="date"
+              name="dateOfBirth"
+              value={formData.dateOfBirth}
+              onChange={handleChange}
+              max={new Date().toISOString().split('T')[0]}
+              readOnly={!!location.state?.dateOfBirth}
+              style={location.state?.dateOfBirth ? { background: '#f0f0f0', cursor: 'not-allowed' } : {}}
+            />
+            {location.state?.dateOfBirth && (
+              <small style={{ color: '#666', fontSize: '12px' }}>
+                ✅ Rezervasyon bilgilerinizden alındı
+              </small>
+            )}
+          </div>
+          <div className="form-group">
+            <label>Cinsiyet</label>
+            <select
+              name="gender"
+              value={formData.gender}
+              onChange={handleChange}
+              disabled={!!location.state?.gender}
+              style={location.state?.gender ? { background: '#f0f0f0', cursor: 'not-allowed' } : {}}
+            >
+              <option value="Erkek">Erkek</option>
+              <option value="Kadın">Kadın</option>
+            </select>
+            {location.state?.gender && (
+              <small style={{ color: '#666', fontSize: '12px' }}>
+                ✅ Rezervasyon bilgilerinizden alındı
+              </small>
+            )}
+          </div>
+          <div className="form-group">
+            <label>E-posta</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              readOnly={!!(location.state?.email || searchParams.get('email'))}
+              style={(location.state?.email || searchParams.get('email')) ? { background: '#f0f0f0', cursor: 'not-allowed' } : {}}
+            />
+            {(location.state?.email || searchParams.get('email')) && (
+              <small style={{ color: '#666', fontSize: '12px' }}>
+                ✅ Rezervasyon yaptığınız e-posta adresi
+              </small>
+            )}
           </div>
           <div className="form-group">
             <label>Şifre</label>
@@ -125,7 +224,22 @@ function Register({ setUser }) {
               onChange={handleChange}
               required
               minLength="4"
+              placeholder="En az 4 karakter"
+              style={{
+                borderColor: formData.password && formData.password.length < 4 ? '#dc3545' : 
+                           formData.password && formData.password.length >= 4 ? '#28a745' : ''
+              }}
             />
+            {formData.password && formData.password.length < 4 && (
+              <small style={{ color: '#dc3545', fontSize: '12px' }}>
+                ❌ Şifre en az 4 karakter olmalıdır ({formData.password.length}/4)
+              </small>
+            )}
+            {formData.password && formData.password.length >= 4 && (
+              <small style={{ color: '#28a745', fontSize: '12px' }}>
+                ✅ Şifre uygun
+              </small>
+            )}
           </div>
           <div className="form-group">
             <label>Şifre Tekrarı</label>
@@ -152,7 +266,15 @@ function Register({ setUser }) {
             )}
           </div>
           {error && <div className="error">{error}</div>}
-          <button type="submit" className="btn btn-primary" disabled={loading} style={{ width: '100%' }}>
+          <button 
+            type="submit" 
+            className="btn btn-primary" 
+            disabled={loading || !formData.password || !formData.confirmPassword || formData.password !== formData.confirmPassword || formData.password.length < 4} 
+            style={{ 
+              width: '100%',
+              opacity: (loading || !formData.password || !formData.confirmPassword || formData.password !== formData.confirmPassword || formData.password.length < 4) ? 0.6 : 1
+            }}
+          >
             {loading ? 'Kayıt yapılıyor...' : 'Kayıt Ol'}
           </button>
         </form>

@@ -23,9 +23,36 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterRequest request)
     {
-        if (await _context.Users.AnyAsync(u => u.Email == request.Email))
-            return BadRequest(new { message = "Bu e-posta adresi zaten kullanılıyor" });
+        // Önce mevcut misafir kullanıcı var mı kontrol et
+        var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+        
+        if (existingUser != null)
+        {
+            // Eğer misafir kullanıcıysa, tam üyeliğe dönüştür
+            if (existingUser.IsGuest)
+            {
+                existingUser.FirstName = request.FirstName;
+                existingUser.LastName = request.LastName;
+                existingUser.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
+                existingUser.PhoneNumber = request.PhoneNumber;
+                existingUser.IdentityNumber = request.IdentityNumber;
+                existingUser.DateOfBirth = request.DateOfBirth;
+                existingUser.Gender = request.Gender;
+                existingUser.IsGuest = false;
+                
+                await _context.SaveChangesAsync();
+                
+                var userToken = _jwtService.GenerateToken(existingUser);
+                return Ok(new { token = userToken, user = new { existingUser.Id, existingUser.Email, existingUser.FirstName, existingUser.LastName } });
+            }
+            else
+            {
+                // Tam üye ise hata döndür
+                return BadRequest(new { message = "Bu e-posta adresi zaten kullanılıyor" });
+            }
+        }
 
+        // Hiç kullanıcı yoksa yeni oluştur
         var user = new User
         {
             FirstName = request.FirstName,
@@ -33,6 +60,9 @@ public class AuthController : ControllerBase
             Email = request.Email,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
             PhoneNumber = request.PhoneNumber,
+            IdentityNumber = request.IdentityNumber,
+            DateOfBirth = request.DateOfBirth,
+            Gender = request.Gender,
             IsGuest = false,
             IsAdmin = false,
             CreatedAt = DateTime.UtcNow
@@ -85,4 +115,6 @@ public class AuthController : ControllerBase
         var token = _jwtService.GenerateToken(user);
         return Ok(new { token, user = new { user.Id, user.Email } });
     }
+
+
 }

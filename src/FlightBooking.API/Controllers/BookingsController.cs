@@ -315,6 +315,49 @@ public class BookingsController : ControllerBase
         return Ok(booking);
     }
 
+    [AllowAnonymous]
+    [HttpGet("email/{email}")]
+    public async Task<IActionResult> GetBookingsByEmail(string email)
+    {
+        if (string.IsNullOrEmpty(email))
+            return BadRequest(new { message = "E-posta adresi gereklidir" });
+
+        var normalizedEmail = email.ToLower().Trim();
+
+        var bookings = await _context.Bookings
+            .Include(b => b.Flight)
+            .Include(b => b.Passengers)
+            .Include(b => b.User)
+            .Where(b => b.User != null && b.User.Email.ToLower() == normalizedEmail)
+            .OrderByDescending(b => b.BookingDate)
+            .Select(b => new
+            {
+                b.Id,
+                b.BookingReference,
+                b.PassengerCount,
+                b.TotalPrice,
+                b.Status,
+                b.IsPaid,
+                b.BookingDate,
+                b.PaymentDate,
+                Email = b.User.Email,
+                Flight = new
+                {
+                    b.Flight.Id,
+                    b.Flight.FlightNumber,
+                    b.Flight.Airline,
+                    b.Flight.DepartureCity,
+                    b.Flight.ArrivalCity,
+                    b.Flight.DepartureTime,
+                    b.Flight.ArrivalTime,
+                    b.Flight.Price
+                }
+            })
+            .ToListAsync();
+
+        return Ok(bookings);
+    }
+
     private string GenerateBookingReference()
     {
         // PNR formatı: 6 karakterli benzersiz kod (örn: ABC123)

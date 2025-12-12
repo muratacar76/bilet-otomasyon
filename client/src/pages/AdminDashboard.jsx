@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import axios from 'axios'
 
 // Rezervasyon durumu çevirisi
@@ -172,6 +173,48 @@ function AdminDashboard() {
       <h2 style={{ color: 'white', marginBottom: '32px', fontSize: '32px', fontWeight: '800' }}>
         BULUTBİLET<span style={{ color: '#00e5ff' }}>.COM</span> - Admin Paneli
       </h2>
+
+      {/* Admin Menü */}
+      <div style={{ 
+        display: 'flex', 
+        gap: '16px', 
+        marginBottom: '32px', 
+        flexWrap: 'wrap',
+        justifyContent: 'center'
+      }}>
+        <Link 
+          to="/admin" 
+          style={{ 
+            padding: '12px 24px', 
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', 
+            color: 'white', 
+            textDecoration: 'none', 
+            borderRadius: '12px',
+            fontWeight: 'bold',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}
+        >
+          ✈️ Uçuş & Rezervasyon Yönetimi
+        </Link>
+        <Link 
+          to="/admin/users" 
+          style={{ 
+            padding: '12px 24px', 
+            background: 'linear-gradient(135deg, #4caf50 0%, #388e3c 100%)', 
+            color: 'white', 
+            textDecoration: 'none', 
+            borderRadius: '12px',
+            fontWeight: 'bold',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}
+        >
+          👥 Kullanıcı Yönetimi
+        </Link>
+      </div>
 
       <div className="card">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
