@@ -3,6 +3,30 @@
 }
 
 <div class="container">
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger" style="background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%); color: white; padding: 16px; border-radius: 12px; margin-bottom: 24px; border: none;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="font-size: 24px;">⚠️</div>
+                <div>
+                    <strong>Hata:</strong> @TempData["Error"]
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success" style="background: linear-gradient(135deg, #4caf50 0%, #45a049 100%); color: white; padding: 16px; border-radius: 12px; margin-bottom: 24px; border: none;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="font-size: 24px;">✅</div>
+                <div>
+                    <strong>Başarılı:</strong> @TempData["Success"]
+                </div>
+            </div>
+        </div>
+    }
+
     <div class="card">
         <h2>🔍 PNR Sorgula</h2>
         <p>Rezervasyon numaranız (PNR) ve e-posta adresinizle biletinizi sorgulayabilirsiniz.</p>
@@ -11,7 +35,7 @@
             <div class="form-group">
                 <label for="pnr">PNR (Rezervasyon Numarası)</label>
                 <input type="text" name="pnr" id="pnr" placeholder="6 haneli PNR kodunuzu girin" 
-                       maxlength="6" style="text-transform: uppercase;" required />
+                       maxlength="6" style="text-transform: uppercase;" value="@ViewBag.PNR" required />
                 <small>Örnek: ABC123</small>
             </div>
             
@@ -24,64 +48,7 @@
             <button type="submit" class="btn btn-primary">🔍 Sorgula</button>
         </form>
 
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                // Get URL parameters
-                const urlParams = new URLSearchParams(window.location.search);
-                const pnr = urlParams.get('pnr');
-                const email = urlParams.get('email');
-                
-                // Pre-fill form if parameters exist
-                if (pnr) {
-                    document.getElementById('pnr').value = pnr.toUpperCase();
-                }
-                
-                if (email) {
-                    document.getElementById('email').value = decodeURIComponent(email);
-                }
-                
-                // Show a message if form is pre-filled
-                if (pnr && email) {
-                    // Add visual feedback that form is pre-filled
-                    const submitBtn = document.querySelector('button[type="submit"]');
-                    submitBtn.style.background = 'linear-gradient(135deg, #00bcd4 0%, #00acc1 100%)';
-                    submitBtn.style.transform = 'scale(1.05)';
-                    submitBtn.style.boxShadow = '0 8px 25px rgba(0,188,212,0.3)';
-                    
-                    // Add a notification
-                    const notification = document.createElement('div');
-                    notification.style.cssText = `
-                        position: fixed;
-                        top: 20px;
-                        right: 20px;
-                        background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
-                        color: white;
-                        padding: 16px 24px;
-                        border-radius: 12px;
-                        box-shadow: 0 8px 25px rgba(76,175,80,0.3);
-                        z-index: 1000;
-                        font-size: 14px;
-                        font-weight: 600;
-                        animation: slideInRight 0.5s ease-out;
-                    `;
-                    notification.innerHTML = '✅ Form otomatik dolduruldu! "Sorgula" butonuna basın.';
-                    document.body.appendChild(notification);
-                    
-                    // Remove notification after 5 seconds
-                    setTimeout(() => {
-                        notification.style.animation = 'slideOutRight 0.5s ease-in';
-                        setTimeout(() => {
-                            if (notification.parentNode) {
-                                notification.parentNode.removeChild(notification);
-                            }
-                        }, 500);
-                    }, 5000);
-                    
-                    // Focus on submit button
-                    submitBtn.focus();
-                }
-            });
-        </script>
+
         
         <style>
             @@keyframes slideInRight {
@@ -131,29 +98,25 @@
     </div>
 
     <div class="card">
-        <h3>🎫 Hızlı İşlemler</h3>
-        <div class="grid">
-            <div class="quick-action">
-                <h4>✈️ Yeni Rezervasyon</h4>
-                <p>Yeni bir uçuş rezervasyonu yapmak istiyorsanız</p>
-                <a asp-controller="Flight" asp-action="Search" class="btn btn-primary">Uçuş Ara</a>
+        <h3>📧 E-posta ile Sorgulama</h3>
+        <p>PNR numaranızı hatırlamıyorsanız, e-posta adresiniz ve TC kimlik numaranızla tüm rezervasyonlarınızı görüntüleyebilirsiniz.</p>
+        
+        <form asp-action="SearchByEmail" method="get" style="margin-top: 20px;">
+            <div class="form-group">
+                <label for="emailOnly">E-posta Adresi</label>
+                <input type="email" name="email" id="emailOnly" placeholder="ornek@email.com" required />
+                <small>Bu e-posta adresine kayıtlı tüm rezervasyonlarınızı gösterecektir</small>
             </div>
-            <div class="quick-action">
-                <h4>📱 Mobil Bilet</h4>
-                <p>Mobil biletinizi indirin</p>
-                <button class="btn btn-secondary" onclick="alert('PNR sorgulama sonrasında mobil bilet indirme seçeneği aktif olacaktır.')">İndir</button>
+            
+            <div class="form-group">
+                <label for="identityNumberOnly">TC Kimlik Numarası</label>
+                <input type="text" name="identityNumber" id="identityNumberOnly" placeholder="12345678901" 
+                       maxlength="11" pattern="[0-9]{11}" required />
+                <small>Güvenlik için TC kimlik numarası zorunludur</small>
             </div>
-            <div class="quick-action">
-                <h4>🏠 Ana Sayfa</h4>
-                <p>Ana sayfaya dönmek için</p>
-                <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Ana Sayfa</a>
-            </div>
-            <div class="quick-action">
-                <h4>📞 Destek</h4>
-                <p>Yardıma mı ihtiyacınız var?</p>
-                <button class="btn btn-success" onclick="alert('Destek: +90 (212) 123 45 67\nE-posta: info@bulutbilet.com')">İletişim</button>
-            </div>
-        </div>
+            
+            <button type="submit" class="btn btn-secondary">📧 E-posta ile Sorgula</button>
+        </form>
     </div>
 </div>
 
@@ -194,56 +157,55 @@
     margin-top: 4px;
     display: block;
 }
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
 </style>
 
 @section Scripts {
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Get URL parameters for pre-filling
+            const urlParams = new URLSearchParams(window.location.search);
+            const pnr = urlParams.get('pnr');
+            const email = urlParams.get('email');
+            
+            if (pnr) {
+                document.getElementById('pnr').value = pnr.toUpperCase();
+            }
+            
+            if (email) {
+                document.getElementById('email').value = decodeURIComponent(email);
+            }
+            
+            // PNR input formatting
             const pnrInput = document.getElementById('pnr');
-            const form = document.getElementById('pnrQueryForm');
+            if (pnrInput) {
+                pnrInput.addEventListener('input', function(e) {
+                    let value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+                    if (value.length > 6) {
+                        value = value.substring(0, 6);
+                    }
+                    e.target.value = value;
+                });
+                pnrInput.focus();
+            }
             
-            // Auto-format PNR input
-            pnrInput.addEventListener('input', function(e) {
-                let value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
-                if (value.length > 6) {
-                    value = value.substring(0, 6);
-                }
-                e.target.value = value;
-            });
-            
-            // Form validation
-            form.addEventListener('submit', function(e) {
-                const pnr = pnrInput.value.trim();
-                const email = document.getElementById('email').value.trim();
-                
-                if (pnr.length !== 6) {
-                    e.preventDefault();
-                    alert('⚠️ PNR numarası 6 hane olmalıdır!');
-                    pnrInput.focus();
-                    return false;
-                }
-                
-                if (!email || email.indexOf('@@') === -1) {
-                    e.preventDefault();
-                    alert('⚠️ Geçerli bir e-posta adresi girin!');
-                    document.getElementById('email').focus();
-                    return false;
-                }
-                
-                // Show loading state
-                const submitBtn = form.querySelector('button[type="submit"]');
-                submitBtn.disabled = true;
-                submitBtn.textContent = 'Sorgulanıyor...';
-                
-                // Re-enable after 5 seconds as fallback
-                setTimeout(() => {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = '🔍 Sorgula';
-                }, 5000);
-            });
-            
-            // Auto-focus on PNR input
-            pnrInput.focus();
+            // TC kimlik numarası formatting
+            const identityInput = document.getElementById('identityNumberOnly');
+            if (identityInput) {
+                identityInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/[^0-9]/g, '');
+                    if (value.length > 11) {
+                        value = value.substring(0, 11);
+                    }
+                    e.target.value = value;
+                });
+            }
         });
     </script>
 }

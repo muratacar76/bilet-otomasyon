@@ -1,0 +1,20 @@
+@{
+    ViewData["Title"] = "Hata - BULUTBİLET.COM";
+}
+
+<div class="container">
+    <div class="card" style="text-align: center; padding: 60px 20px;">
+        <div style="font-size: 4rem; margin-bottom: 20px; opacity: 0.5;">⚠️</div>
+        <h2>Bir Hata Oluştu</h2>
+        <p>Üzgünüz, bir sistem hatası meydana geldi. Lütfen daha sonra tekrar deneyin.</p>
+        
+        <div style="margin-top: 30px;">
+            <a asp-controller="Home" asp-action="Index" class="btn btn-primary" style="margin-right: 10px;">
+                🏠 Ana Sayfa
+            </a>
+            <button onclick="history.back()" class="btn btn-secondary">
+                ← Geri Dön
+            </button>
+        </div>
+    </div>
+</div>

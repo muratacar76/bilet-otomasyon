@@ -1,0 +1,444 @@
+@model dynamic?
+
+@{
+    ViewData["Title"] = "Ödeme - BULUTBİLET.COM";
+}
+
+<div class="container">
+    <div class="payment-header">
+        <h1>💳 Ödeme</h1>
+        <p>Güvenli ödeme ile rezervasyonunuzu tamamlayın</p>
+    </div>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">
+            <strong>Hata:</strong> @TempData["Error"]
+        </div>
+    }
+
+    @if (Model != null)
+    {
+        var modelType = Model.GetType();
+        var bookingObj = modelType.GetProperty("Booking")?.GetValue(Model);
+        var flight = modelType.GetProperty("Flight")?.GetValue(Model);
+        
+        var bookingType = bookingObj?.GetType();
+        var bookingReference = bookingType?.GetProperty("BookingReference")?.GetValue(bookingObj)?.ToString() ?? "N/A";
+        var totalPrice = bookingType?.GetProperty("TotalPrice")?.GetValue(bookingObj)?.ToString() ?? "0";
+
+        <div class="payment-container">
+            <!-- Rezervasyon Özeti -->
+            <div class="booking-summary">
+                <h3>📋 Rezervasyon Özeti</h3>
+                <div class="summary-item">
+                    <span>PNR:</span>
+                    <strong>@bookingReference</strong>
+                </div>
+                <div class="summary-item">
+                    <span>Uçuş:</span>
+                    <strong>@flight.FlightNumber - @flight.Airline</strong>
+                </div>
+                <div class="summary-item">
+                    <span>Rota:</span>
+                    <strong>@flight.DepartureCity → @flight.ArrivalCity</strong>
+                </div>
+                <div class="summary-item">
+                    <span>Tarih:</span>
+                    <strong>@((DateTime)flight.DepartureTime).ToString("dd.MM.yyyy HH:mm")</strong>
+                </div>
+                <div class="summary-total">
+                    <span>Toplam Tutar:</span>
+                    <strong>@totalPrice TL</strong>
+                </div>
+            </div>
+
+            <!-- Ödeme Formu -->
+            <div class="payment-form">
+                <h3>💳 Kart Bilgileri</h3>
+                <form id="paymentForm">
+                    <input type="hidden" id="pnr" value="@bookingReference" />
+                    
+                    <div class="form-group">
+                        <label for="cardNumber">Kart Numarası</label>
+                        <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" required />
+                        <div class="card-icons">
+                            <span class="visa">💳</span>
+                            <span class="mastercard">💳</span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="expiryDate">Son Kullanma Tarihi</label>
+                            <input type="text" id="expiryDate" placeholder="MM/YY" maxlength="5" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="cvv">CVV</label>
+                            <input type="text" id="cvv" placeholder="123" maxlength="3" required />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cardHolder">Kart Sahibi Adı</label>
+                        <input type="text" id="cardHolder" placeholder="AD SOYAD" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="installments">Taksit Seçeneği</label>
+                        <select id="installments">
+                            <option value="1">Tek Çekim</option>
+                            <option value="2">2 Taksit</option>
+                            <option value="3">3 Taksit</option>
+                            <option value="6">6 Taksit</option>
+                            <option value="9">9 Taksit</option>
+                            <option value="12">12 Taksit</option>
+                        </select>
+                    </div>
+
+                    <div class="security-info">
+                        <div class="security-item">
+                            <span class="icon">🔒</span>
+                            <span>256-bit SSL ile güvenli ödeme</span>
+                        </div>
+                        <div class="security-item">
+                            <span class="icon">🛡️</span>
+                            <span>3D Secure doğrulama</span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="pay-button">
+                        <span class="icon">💳</span>
+                        <span>@totalPrice TL Öde</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+.payment-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 30px 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 16px;
+}
+
+.payment-header h1 {
+    font-size: 2.5rem;
+    margin: 0 0 10px 0;
+    font-weight: 700;
+}
+
+.payment-container {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.booking-summary {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    height: fit-content;
+}
+
+.booking-summary h3 {
+    margin: 0 0 20px 0;
+    color: #333;
+    font-size: 1.3rem;
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.summary-total {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 0 0 0;
+    margin-top: 15px;
+    border-top: 2px solid #667eea;
+    font-size: 1.2rem;
+    color: #667eea;
+}
+
+.payment-form {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+}
+
+.payment-form h3 {
+    margin: 0 0 25px 0;
+    color: #333;
+    font-size: 1.3rem;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.card-icons {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    gap: 5px;
+}
+
+.form-group:first-of-type {
+    position: relative;
+}
+
+.security-info {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 25px 0;
+}
+
+.security-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #666;
+}
+
+.security-item:last-child {
+    margin-bottom: 0;
+}
+
+.security-item .icon {
+    font-size: 16px;
+}
+
+.pay-button {
+    width: 100%;
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    border: none;
+    padding: 16px 24px;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.pay-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+}
+
+.pay-button:active {
+    transform: translateY(0);
+}
+
+.alert {
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+    color: white;
+}
+
+@@media (max-width: 768px) {
+    .payment-container {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .payment-header h1 {
+        font-size: 2rem;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const cardNumber = document.getElementById('cardNumber');
+    const expiryDate = document.getElementById('expiryDate');
+    const cvv = document.getElementById('cvv');
+    const cardHolder = document.getElementById('cardHolder');
+    const paymentForm = document.getElementById('paymentForm');
+
+    // Kart numarası formatı
+    cardNumber.addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/gi, '');
+        let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+        if (formattedValue.length > 19) formattedValue = formattedValue.substr(0, 19);
+        e.target.value = formattedValue;
+    });
+
+    // Son kullanma tarihi formatı
+    expiryDate.addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length >= 2) {
+            value = value.substring(0, 2) + '/' + value.substring(2, 4);
+        }
+        e.target.value = value;
+    });
+
+    // CVV sadece rakam
+    cvv.addEventListener('input', function(e) {
+        e.target.value = e.target.value.replace(/[^0-9]/g, '');
+    });
+
+    // Kart sahibi sadece harf
+    cardHolder.addEventListener('input', function(e) {
+        e.target.value = e.target.value.toUpperCase().replace(/[^A-Z\s]/g, '');
+    });
+
+    // Form gönderimi
+    paymentForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const pnr = document.getElementById('pnr').value;
+        const cardNum = cardNumber.value.replace(/\s/g, '');
+        const expiry = expiryDate.value;
+        const cvvValue = cvv.value;
+        const holder = cardHolder.value;
+        const installments = document.getElementById('installments').value;
+
+        // Validasyon
+        if (cardNum.length < 16) {
+            alert('❌ Kart numarası 16 haneli olmalıdır.');
+            return;
+        }
+
+        if (expiry.length < 5) {
+            alert('❌ Son kullanma tarihi MM/YY formatında olmalıdır.');
+            return;
+        }
+
+        if (cvvValue.length < 3) {
+            alert('❌ CVV 3 haneli olmalıdır.');
+            return;
+        }
+
+        if (holder.length < 3) {
+            alert('❌ Kart sahibi adını giriniz.');
+            return;
+        }
+
+        // Ödeme işlemi
+        processPayment(pnr, {
+            cardNumber: cardNum,
+            expiryDate: expiry,
+            cvv: cvvValue,
+            cardHolder: holder,
+            installments: installments
+        });
+    });
+});
+
+function processPayment(pnr, cardData) {
+    const payButton = document.querySelector('.pay-button');
+    const originalText = payButton.innerHTML;
+    
+    payButton.innerHTML = '<span class="icon">⏳</span><span>İşleniyor...</span>';
+    payButton.disabled = true;
+
+    // 3D Secure simülasyonu
+    setTimeout(() => {
+        if (confirm('🔐 3D Secure Doğrulama\n\nBankacılık uygulamanızdan gelen SMS kodunu girin:\n\n(Demo için herhangi bir kod girebilirsiniz)')) {
+            const smsCode = prompt('SMS Kodu:');
+            if (smsCode && smsCode.length > 0) {
+                // Gerçek ödeme işlemi
+                fetch('/Booking/ProcessPayment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
+                    },
+                    body: 'pnr=' + encodeURIComponent(pnr) + '&email=@(User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value ?? "")'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('✅ ' + data.message + '\n\n🎉 Ödemeniz başarıyla tamamlandı!');
+                        window.location.href = '/Booking/MyBookings';
+                    } else {
+                        alert('❌ ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('❌ Ödeme işlemi sırasında bir hata oluştu.');
+                })
+                .finally(() => {
+                    payButton.innerHTML = originalText;
+                    payButton.disabled = false;
+                });
+            } else {
+                alert('❌ SMS kodu gereklidir.');
+                payButton.innerHTML = originalText;
+                payButton.disabled = false;
+            }
+        } else {
+            payButton.innerHTML = originalText;
+            payButton.disabled = false;
+        }
+    }, 1500);
+}
+</script>
+
+<form method="post" style="display: none;">
+    @Html.AntiForgeryToken()
+</form>

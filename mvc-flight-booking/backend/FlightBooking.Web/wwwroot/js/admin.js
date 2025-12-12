@@ -76,7 +76,32 @@ class AdminAPI {
 
     // User operations
     static async getUsers() {
-        return this.request('/users');
+        console.log('AdminAPI.getUsers called');
+        try {
+            const response = await fetch('/api/users', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'same-origin'
+            });
+            
+            console.log('Response status:', response.status);
+            console.log('Response headers:', [...response.headers.entries()]);
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('API Error:', response.status, errorText);
+                throw new Error(`HTTP ${response.status}: ${errorText}`);
+            }
+            
+            const result = await response.json();
+            console.log('AdminAPI.getUsers result:', result);
+            return result;
+        } catch (error) {
+            console.error('AdminAPI.getUsers error:', error);
+            throw error;
+        }
     }
 
     static async createUser(userData) {
@@ -373,24 +398,77 @@ class UserManager {
 
     async loadUsers() {
         try {
+            console.log('Loading users...');
             this.users = await AdminAPI.getUsers();
+            console.log('Users loaded:', this.users);
             this.renderUsers();
             this.updateStats();
         } catch (error) {
             console.error('Kullanıcılar yüklenemedi:', error);
-            this.showAlert('Kullanıcılar yüklenirken hata oluştu', 'error');
+            this.showAlert('Kullanıcılar yüklenirken hata oluştu: ' + error.message, 'error');
+            
+            // Show empty state with detailed error
+            const tbody = document.getElementById('users-tbody');
+            if (tbody) {
+                let errorDetails = error.message;
+                if (error.message.includes('Forbid') || error.message.includes('403')) {
+                    errorDetails = 'Admin yetkisi gerekli. Lütfen admin hesabıyla giriş yapın.';
+                } else if (error.message.includes('401')) {
+                    errorDetails = 'Oturum süresi dolmuş. Lütfen tekrar giriş yapın.';
+                }
+                
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 40px; color: #666;">
+                            <div style="font-size: 2rem; margin-bottom: 16px; opacity: 0.5;">⚠️</div>
+                            <div style="font-weight: 600; margin-bottom: 8px;">Kullanıcılar yüklenirken hata oluştu</div>
+                            <div style="font-size: 14px; margin-bottom: 16px; color: #f44336;">${errorDetails}</div>
+                            <div style="display: flex; gap: 12px; justify-content: center;">
+                                <button onclick="userManager.loadUsers()" style="padding: 8px 16px; background: #00bcd4; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                                    🔄 Tekrar Dene
+                                </button>
+                                <button onclick="window.location.href='/Auth/Login'" style="padding: 8px 16px; background: #f44336; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                                    🔑 Giriş Yap
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }
         }
     }
 
     renderUsers() {
         const tbody = document.getElementById('users-tbody');
-        if (!tbody) return;
+        if (!tbody) {
+            console.error('users-tbody element not found');
+            return;
+        }
 
         tbody.innerHTML = '';
 
+        if (!this.users || this.users.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="8" style="text-align: center; padding: 40px; color: #666;">
+                        <div style="font-size: 2rem; margin-bottom: 16px; opacity: 0.5;">👥</div>
+                        <div>Henüz kullanıcı bulunmuyor</div>
+                        <button onclick="showCreateModal()" style="margin-top: 16px; padding: 8px 16px; background: #00bcd4; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                            ➕ İlk Kullanıcıyı Ekle
+                        </button>
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
         this.users.forEach(user => {
-            const row = this.createUserRow(user);
-            tbody.appendChild(row);
+            try {
+                const row = this.createUserRow(user);
+                tbody.appendChild(row);
+            } catch (error) {
+                console.error('Error creating user row:', error, user);
+            }
         });
     }
 
@@ -542,6 +620,8 @@ let flightManager, bookingManager, userManager;
 
 // Initialize admin functionality
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('Admin.js loaded, current path:', window.location.pathname);
+    
     // Initialize managers
     flightManager = new FlightManager();
     bookingManager = new BookingManager();
@@ -554,12 +634,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initialize based on current page
     const currentPath = window.location.pathname;
+    console.log('Initializing for path:', currentPath);
     
-    if (currentPath.includes('/Admin/Index') || currentPath.includes('/Admin')) {
+    if (currentPath.includes('/Admin/Index') || (currentPath.includes('/Admin') && !currentPath.includes('/Users') && !currentPath.includes('/Bookings'))) {
+        console.log('Loading flights and bookings...');
         flightManager.loadFlights();
         bookingManager.loadBookings();
     } else if (currentPath.includes('/Admin/Users')) {
-        userManager.loadUsers();
+        console.log('Loading users...');
+        // Add a small delay to ensure page is fully loaded
+        setTimeout(() => {
+            userManager.loadUsers();
+        }, 500);
     }
 });
 

@@ -63,6 +63,32 @@
             Mevcut Uçuşlar
         </h2>
         
+        @if (Model?.HasSearched == true && !string.IsNullOrEmpty(Model.SearchMessage))
+        {
+            <div style="background: linear-gradient(135deg, #00bcd4 0%, #00acc1 100%); color: white; padding: 20px; border-radius: 16px; margin-bottom: 24px; text-align: center;">
+                <div style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">
+                    @if (Model.TotalResults == 0)
+                    {
+                        <span>❌ @Model.SearchMessage</span>
+                    }
+                    else if (Model.SearchMessage.Contains("benzer sefer"))
+                    {
+                        <span>💡 @Model.SearchMessage</span>
+                    }
+                    else
+                    {
+                        <span>✅ @Model.SearchMessage</span>
+                    }
+                </div>
+                @if (Model.TotalResults > 0 && Model.SearchMessage.Contains("benzer sefer"))
+                {
+                    <div style="font-size: 14px; opacity: 0.9; margin-top: 8px;">
+                        Aradığınız rotada direkt uçuş bulunmadığı için size en uygun alternatifleri gösteriyoruz.
+                    </div>
+                }
+            </div>
+        }
+        
         <div id="alternativeFlights" style="display: none;"></div>
         
         <div id="flightResults">
@@ -204,19 +230,31 @@
         <h2 class="modal-title">Rezervasyon Detayları</h2>
         <div id="flightInfo" class="flight-info-box"></div>
         
-        <div id="guestEmailSection" style="background: linear-gradient(135deg, #00bcd4 0%, #00acc1 100%); color: white; padding: 24px; border-radius: 16px; margin-bottom: 24px;">
-            <h3 style="font-size: 20px; margin-bottom: 16px; font-weight: 700;">✨ Hızlı Rezervasyon</h3>
-            <p style="font-size: 16px; margin-bottom: 20px; line-height: 1.6;">
-                Üye olmadan rezervasyon yapabilirsiniz! Sadece e-posta adresinizi girin.
-            </p>
-            <div class="form-group" style="margin-bottom: 0;">
-                <label style="color: white;">E-posta Adresiniz</label>
-                <input type="email" id="guestEmail" placeholder="ornek@email.com" required style="background: white;" />
-                <small style="color: rgba(255,255,255,0.9); font-size: 12px;">
-                    💡 Rezervasyon bilgileriniz bu adrese gönderilecektir
-                </small>
+        @if (!User.Identity.IsAuthenticated)
+        {
+            <div id="guestEmailSection" style="background: linear-gradient(135deg, #00bcd4 0%, #00acc1 100%); color: white; padding: 24px; border-radius: 16px; margin-bottom: 24px;">
+                <h3 style="font-size: 20px; margin-bottom: 16px; font-weight: 700;">✨ Hızlı Rezervasyon</h3>
+                <p style="font-size: 16px; margin-bottom: 20px; line-height: 1.6;">
+                    Üye olmadan rezervasyon yapabilirsiniz! Sadece e-posta adresinizi girin.
+                </p>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label style="color: white;">E-posta Adresiniz</label>
+                    <input type="email" id="guestEmail" placeholder="ornek@email.com" required style="background: white;" />
+                    <small style="color: rgba(255,255,255,0.9); font-size: 12px;">
+                        💡 Rezervasyon bilgileriniz bu adrese gönderilecektir
+                    </small>
+                </div>
             </div>
-        </div>
+        }
+        else
+        {
+            <div style="background: linear-gradient(135deg, #4caf50 0%, #45a049 100%); color: white; padding: 20px; border-radius: 16px; margin-bottom: 24px; text-align: center;">
+                <h3 style="font-size: 18px; margin-bottom: 8px; font-weight: 700;">👋 Hoş Geldiniz, @User.Identity.Name!</h3>
+                <p style="font-size: 14px; margin: 0; opacity: 0.9;">
+                    Üye olarak rezervasyon yapıyorsunuz. Rezervasyon bilgileriniz hesabınıza kaydedilecektir.
+                </p>
+            </div>
+        }
 
         <form id="reservationForm">
             <div id="passengersContainer"></div>
@@ -873,11 +911,10 @@
                     </div>
                     <div class="form-group">
                         <label>Telefon Numarası</label>
-                        <input type="tel" placeholder="0555 123 45 67" value="${passenger.phoneNumber}" 
+                        <input type="tel" placeholder="Telefon numaranızı girin" value="${passenger.phoneNumber}" 
                                onchange="updatePassenger(${index}, 'phoneNumber', this.value)" 
-                               oninput="formatPhoneNumber(this, ${index})" 
-                               maxlength="14" pattern="0[0-9]{3} [0-9]{3} [0-9]{2} [0-9]{2}" required />
-                        <small style="color: #666; font-size: 12px;">Format: 0555 123 45 67</small>
+                               required />
+                        <small style="color: #666; font-size: 12px;">Herhangi bir formatta girebilirsiniz</small>
                     </div>
                     <div class="form-group">
                         <label>Doğum Tarihi</label>
@@ -1156,10 +1193,16 @@
         document.getElementById('reservationForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            const guestEmail = document.getElementById('guestEmail').value;
-            if (!guestEmail) {
-                alert('⚠️ Lütfen e-posta adresinizi girin');
-                return;
+            // Check if user is authenticated
+            const isAuthenticated = @Json.Serialize(User.Identity.IsAuthenticated);
+            let guestEmail = null;
+            
+            if (!isAuthenticated) {
+                guestEmail = document.getElementById('guestEmail').value;
+                if (!guestEmail) {
+                    alert('⚠️ Lütfen e-posta adresinizi girin');
+                    return;
+                }
             }
 
             // Validate passengers
@@ -1182,8 +1225,8 @@
                     return;
                 }
                 
-                if (passenger.phoneNumber.length !== 11 || !passenger.phoneNumber.startsWith('0')) {
-                    alert(`⚠️ ${i + 1}. yolcu için geçerli bir telefon numarası girin (0555 123 45 67)`);
+                if (!passenger.phoneNumber || passenger.phoneNumber.trim() === '') {
+                    alert(`⚠️ ${i + 1}. yolcu için telefon numarası girin`);
                     return;
                 }
             }
@@ -1195,16 +1238,22 @@
 
             try {
                 // Create booking
+                const bookingData = {
+                    flightId: selectedFlight.id,
+                    passengers: passengers
+                };
+                
+                // Only add guestEmail if user is not authenticated
+                if (!isAuthenticated && guestEmail) {
+                    bookingData.guestEmail = guestEmail;
+                }
+                
                 const response = await fetch('/api/bookings', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({
-                        flightId: selectedFlight.id,
-                        passengers: passengers,
-                        guestEmail: guestEmail
-                    })
+                    body: JSON.stringify(bookingData)
                 });
 
                 const result = await response.json();
@@ -1218,7 +1267,14 @@
                     };
                     
                     closeModal();
-                    showMembershipModal();
+                    
+                    // Only show membership modal if user is not authenticated
+                    if (!isAuthenticated) {
+                        showMembershipModal();
+                    } else {
+                        // If user is authenticated, redirect directly to their bookings
+                        window.location.href = '/Booking/MyBookings';
+                    }
                 } else {
                     alert('❌ ' + (result.message || 'Rezervasyon yapılırken bir hata oluştu'));
                 }

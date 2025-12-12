@@ -111,6 +111,9 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+// Map API controllers
+app.MapControllers();
+
 // Seed database
 using (var scope = app.Services.CreateScope())
 {

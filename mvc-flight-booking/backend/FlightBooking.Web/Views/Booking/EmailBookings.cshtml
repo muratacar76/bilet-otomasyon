@@ -1,0 +1,430 @@
+@model List<dynamic>
+
+@{
+    ViewData["Title"] = "E-posta ile Rezervasyon Sorgulama - BULUTBİLET.COM";
+}
+
+<div class="container">
+    <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+            <h2>📧 E-posta ile Rezervasyon Sorgulama</h2>
+            <a asp-action="Query" class="btn btn-secondary">🔍 Yeni Sorgulama</a>
+        </div>
+
+        <div style="background: linear-gradient(135deg, #00bcd4 0%, #00acc1 100%); color: white; padding: 16px; border-radius: 12px; margin-bottom: 24px;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="font-size: 24px;">📧</div>
+                <div>
+                    <strong>@ViewBag.SearchEmail</strong> e-posta adresi ve <strong>@ViewBag.SearchIdentityNumber</strong> TC kimlik numarası ile eşleşen <strong>@Model.Count</strong> rezervasyon bulundu
+                </div>
+            </div>
+        </div>
+
+        @if (Model != null && Model.Any())
+        {
+            <div style="background: #e3f2fd; padding: 12px; border-radius: 8px; margin-bottom: 16px; font-size: 14px;">
+                <strong>Debug:</strong> @Model.Count rezervasyon bulundu
+            </div>
+            
+            <div class="bookings-grid" style="display: grid; gap: 24px;">
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    try
+                    {
+                        var item = Model[i];
+                        if (item != null)
+                        {
+                            dynamic bookingData = item.Booking;
+                            dynamic flightData = item.Flight;
+                            dynamic passengersData = item.Passengers;
+                            dynamic userData = item.User;
+
+                            <div class="booking-card" style="border: 1px solid #e0e0e0; border-radius: 16px; padding: 24px; background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(240,248,255,0.95) 100%); box-shadow: 0 4px 16px rgba(0,188,212,0.1); transition: all 0.3s ease;">
+                                <!-- PNR ve Durum -->
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                                    <div>
+                                        <div style="font-size: 24px; font-weight: 800; font-family: monospace; color: #00bcd4; letter-spacing: 2px;">
+                                            @bookingData.BookingReference
+                                        </div>
+                                        <div style="font-size: 12px; color: #666; margin-top: 4px;">
+                                            @((DateTime)bookingData.BookingDate).ToString("dd.MM.yyyy HH:mm")
+                                        </div>
+                                    </div>
+                                    <div style="display: flex; flex-direction: column; align-items: end; gap: 8px;">
+                                        <div style="background: linear-gradient(135deg, #4caf50 0%, #45a049 100%); color: white; padding: 4px 12px; border-radius: 16px; font-size: 12px; font-weight: 600;">
+                                            ✅ @bookingData.Status
+                                        </div>
+                                        @if ((bool)bookingData.IsPaid)
+                                        {
+                                            <div style="background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%); color: white; padding: 4px 12px; border-radius: 16px; font-size: 12px; font-weight: 600;">
+                                                💳 Ödendi
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div style="background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%); color: white; padding: 4px 12px; border-radius: 16px; font-size: 12px; font-weight: 600;">
+                                                ⏳ Ödeme Bekliyor
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+
+                                <!-- Uçuş Bilgileri -->
+                                <div style="background: rgba(0,188,212,0.05); padding: 16px; border-radius: 12px; margin-bottom: 16px;">
+                                    <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 12px;">
+                                        <h4 style="color: #00bcd4; margin: 0; font-size: 16px;">✈️ @flightData.FlightNumber - @flightData.Airline</h4>
+                                    </div>
+                                    <div style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 16px; align-items: center;">
+                                        <div style="text-align: left;">
+                                            <div style="font-size: 18px; font-weight: 600; color: #333;">@flightData.DepartureCity</div>
+                                            <div style="font-size: 14px; color: #666;">@((DateTime)flightData.DepartureTime).ToString("dd.MM.yyyy")</div>
+                                            <div style="font-size: 14px; color: #666;">@((DateTime)flightData.DepartureTime).ToString("HH:mm")</div>
+                                        </div>
+                                        <div style="text-align: center; color: #00bcd4;">
+                                            <div style="font-size: 24px;">→</div>
+                                            <div style="font-size: 12px; color: #666;">
+                                                @{
+                                                    var duration = (DateTime)flightData.ArrivalTime - (DateTime)flightData.DepartureTime;
+                                                }
+                                                @duration.Hours s @duration.Minutes dk
+                                            </div>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <div style="font-size: 18px; font-weight: 600; color: #333;">@flightData.ArrivalCity</div>
+                                            <div style="font-size: 14px; color: #666;">@((DateTime)flightData.ArrivalTime).ToString("dd.MM.yyyy")</div>
+                                            <div style="font-size: 14px; color: #666;">@((DateTime)flightData.ArrivalTime).ToString("HH:mm")</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Yolcu Bilgileri -->
+                                <div style="margin-bottom: 16px;">
+                                    @{
+                                        var passengerCount = passengersData?.Count ?? 0;
+                                    }
+                                    <h5 style="color: #333; margin-bottom: 12px; font-size: 16px; font-weight: 600;">👥 Yolcu Bilgileri (@passengerCount Kişi)</h5>
+                                    @if (passengersData != null && passengersData.Count > 0)
+                                    {
+                                        <div style="display: grid; gap: 12px;">
+                                            @foreach (var passenger in passengersData)
+                                            {
+                                                <div style="background: rgba(0,188,212,0.08); padding: 16px; border-radius: 12px; border-left: 4px solid #00bcd4;">
+                                                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                                                        <div>
+                                                            <div style="font-weight: 600; font-size: 16px; color: #333; margin-bottom: 4px;">
+                                                                @passenger.FirstName @passenger.LastName
+                                                            </div>
+                                                            @if (!string.IsNullOrEmpty((string)passenger.IdentityNumber))
+                                                            {
+                                                                <div style="font-size: 12px; color: #666; margin-bottom: 2px;">
+                                                                    🆔 TC: @passenger.IdentityNumber
+                                                                </div>
+                                                            }
+                                                            @if (!string.IsNullOrEmpty((string)passenger.PhoneNumber))
+                                                            {
+                                                                <div style="font-size: 12px; color: #666; margin-bottom: 2px;">
+                                                                    📞 @passenger.PhoneNumber
+                                                                </div>
+                                                            }
+                                                            @if (passenger.DateOfBirth != null)
+                                                            {
+                                                                <div style="font-size: 12px; color: #666; margin-bottom: 2px;">
+                                                                    🎂 @((DateTime)passenger.DateOfBirth).ToString("dd.MM.yyyy")
+                                                                </div>
+                                                            }
+                                                            @if (!string.IsNullOrEmpty((string)passenger.Gender))
+                                                            {
+                                                                <div style="font-size: 12px; color: #666;">
+                                                                    @(passenger.Gender == "Erkek" ? "👨" : "👩") @passenger.Gender
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                        <div style="display: flex; gap: 8px; align-items: center;">
+                                                            @if (!string.IsNullOrEmpty((string)passenger.SeatNumber) && passenger.SeatNumber != "TBD")
+                                                            {
+                                                                <span style="background: #00bcd4; color: white; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600;">
+                                                                    🪑 @passenger.SeatNumber
+                                                                </span>
+                                                            }
+                                                            @if (!string.IsNullOrEmpty((string)passenger.SeatType))
+                                                            {
+                                                                <span style="background: #4caf50; color: white; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600;">
+                                                                    ✈️ @passenger.SeatType
+                                                                </span>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div style="color: #666; font-style: italic; text-align: center; padding: 20px;">
+                                            <div style="font-size: 2rem; margin-bottom: 8px; opacity: 0.5;">👥</div>
+                                            Yolcu bilgileri yükleniyor...
+                                        </div>
+                                    }
+                                </div>
+
+                                <!-- Rezervasyon Detayları -->
+                                <div style="background: rgba(0,188,212,0.03); padding: 16px; border-radius: 12px; margin-bottom: 16px;">
+                                    <h5 style="color: #333; margin-bottom: 12px; font-size: 14px; font-weight: 600;">📋 Rezervasyon Detayları</h5>
+                                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+                                        <div style="display: flex; align-items: center; gap: 8px;">
+                                            <span style="font-size: 12px;">📅</span>
+                                            <div>
+                                                <div style="font-size: 11px; color: #666;">Rezervasyon Tarihi</div>
+                                                <div style="font-size: 12px; font-weight: 600;">@((DateTime)bookingData.BookingDate).ToString("dd.MM.yyyy HH:mm")</div>
+                                            </div>
+                                        </div>
+                                        <div style="display: flex; align-items: center; gap: 8px;">
+                                            <span style="font-size: 12px;">👥</span>
+                                            <div>
+                                                <div style="font-size: 11px; color: #666;">Yolcu Sayısı</div>
+                                                <div style="font-size: 12px; font-weight: 600;">@bookingData.PassengerCount Kişi</div>
+                                            </div>
+                                        </div>
+                                        @if (bookingData.PaymentDate != null)
+                                        {
+                                            <div style="display: flex; align-items: center; gap: 8px;">
+                                                <span style="font-size: 12px;">💳</span>
+                                                <div>
+                                                    <div style="font-size: 11px; color: #666;">Ödeme Tarihi</div>
+                                                    <div style="font-size: 12px; font-weight: 600;">@((DateTime)bookingData.PaymentDate).ToString("dd.MM.yyyy HH:mm")</div>
+                                                </div>
+                                            </div>
+                                        }
+                                        <div style="display: flex; align-items: center; gap: 8px;">
+                                            <span style="font-size: 12px;">📧</span>
+                                            <div>
+                                                <div style="font-size: 11px; color: #666;">İletişim E-posta</div>
+                                                <div style="font-size: 12px; font-weight: 600;">@userData.Email</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Fiyat ve İşlemler -->
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 16px; border-top: 1px solid #e0e0e0;">
+                                    <div>
+                                        <div style="font-size: 20px; font-weight: 700; color: #00bcd4;">₺@bookingData.TotalPrice</div>
+                                        <div style="font-size: 12px; color: #666;">Toplam Tutar (@bookingData.PassengerCount kişi)</div>
+                                        @if (bookingData.PassengerCount > 1)
+                                        {
+                                            <div style="font-size: 11px; color: #999; margin-top: 2px;">
+                                                Kişi başı: ₺@(((decimal)bookingData.TotalPrice / bookingData.PassengerCount).ToString("F2"))
+                                            </div>
+                                        }
+                                    </div>
+                                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                        <a asp-action="Manage" asp-route-pnr="@bookingData.BookingReference" asp-route-email="@userData.Email" 
+                                           class="btn btn-primary" style="padding: 8px 16px; font-size: 14px;">
+                                            📋 Detaylar
+                                        </a>
+                                        @if (!(bool)bookingData.IsPaid)
+                                        {
+                                            <button class="btn btn-success" onclick="processPayment('@bookingData.BookingReference')" 
+                                                    style="padding: 8px 16px; font-size: 14px;">
+                                                💳 Öde
+                                            </button>
+                                        }
+                                        @if (bookingData.Status == "Onaylandı" && ((DateTime)flightData.DepartureTime) > DateTime.Now.AddHours(24))
+                                        {
+                                            <button class="btn btn-danger" onclick="cancelBooking('@bookingData.BookingReference', '@userData.Email')" 
+                                                    style="padding: 8px 16px; font-size: 14px;">
+                                                ❌ İptal Et
+                                            </button>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        <!-- Booking rendering error, skip this item -->
+                    }
+                }
+            </div>
+        }
+        else
+        {
+            <div style="text-align: center; padding: 40px; color: #666;">
+                <div style="font-size: 4rem; margin-bottom: 20px; opacity: 0.5;">📧</div>
+                <h4>Rezervasyon Bulunamadı</h4>
+                <p>
+                    <strong>@ViewBag.SearchEmail</strong> e-posta adresi ve <strong>@ViewBag.SearchIdentityNumber</strong> TC kimlik numarası ile eşleşen rezervasyon bulunmamaktadır.
+                </p>
+                <div style="margin-top: 20px;">
+                    <a asp-action="Query" class="btn btn-primary">🔍 Yeni Sorgulama Yap</a>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    function processPayment(pnr) {
+        if (confirm(`💳 ${pnr} numaralı rezervasyon için ödeme yapmak istediğinizden emin misiniz?`)) {
+            // Simulate payment process
+            const button = event.target;
+            button.disabled = true;
+            button.textContent = 'İşleniyor...';
+            
+            setTimeout(() => {
+                alert('✅ Ödeme başarıyla tamamlandı!\nPNR: ' + pnr);
+                location.reload();
+            }, 2000);
+        }
+    }
+    
+    function cancelBooking(pnr, email) {
+        if (confirm(`⚠️ ${pnr} numaralı rezervasyonu iptal etmek istediğinizden emin misiniz?\n\nBu işlem geri alınamaz!`)) {
+            // Send cancel request
+            fetch('/Booking/CancelBooking', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
+                },
+                body: JSON.stringify({ pnr: pnr, email: email })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('✅ ' + data.message);
+                    location.reload();
+                } else {
+                    alert('❌ ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('❌ İptal işlemi sırasında bir hata oluştu.');
+            });
+        }
+    }
+    
+    // Add hover effects and animations
+    document.addEventListener('DOMContentLoaded', function() {
+        const bookingCards = document.querySelectorAll('.booking-card');
+        bookingCards.forEach((card, index) => {
+            // Staggered animation on load
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                card.style.transition = 'all 0.5s ease';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 100);
+            
+            // Hover effects
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-4px)';
+                this.style.boxShadow = '0 8px 32px rgba(0,188,212,0.2)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '0 4px 16px rgba(0,188,212,0.1)';
+            });
+        });
+        
+        // Add print functionality
+        const printButton = document.createElement('button');
+        printButton.innerHTML = '🖨️ Yazdır';
+        printButton.className = 'btn btn-secondary';
+        printButton.style.cssText = 'position: fixed; bottom: 20px; right: 20px; z-index: 1000; padding: 12px 20px; border-radius: 50px; box-shadow: 0 4px 16px rgba(0,0,0,0.2);';
+        printButton.onclick = () => window.print();
+        document.body.appendChild(printButton);
+    });
+</script>
+
+<style>
+    @@media (max-width: 768px) {
+        .booking-card {
+            padding: 16px !important;
+        }
+        
+        .booking-card > div:first-child {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 12px !important;
+        }
+        
+        .booking-card > div:first-child > div:last-child {
+            align-items: flex-start !important;
+            flex-direction: row !important;
+        }
+        
+        .booking-card .grid {
+            grid-template-columns: 1fr !important;
+            text-align: center !important;
+        }
+        
+        .booking-card .grid > div:nth-child(2) {
+            order: -1;
+        }
+    }
+    
+    /* Print styles */
+    @@media print {
+        body * {
+            visibility: hidden;
+        }
+        
+        .container, .container * {
+            visibility: visible;
+        }
+        
+        .container {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+        }
+        
+        .booking-card {
+            break-inside: avoid;
+            margin-bottom: 20px !important;
+            box-shadow: none !important;
+            border: 2px solid #00bcd4 !important;
+        }
+        
+        .btn {
+            display: none !important;
+        }
+        
+        button {
+            display: none !important;
+        }
+        
+        .card h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    }
+    
+    /* Enhanced visual effects */
+    .booking-card {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .booking-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+        transition: left 0.5s;
+    }
+    
+    .booking-card:hover::before {
+        left: 100%;
+    }
+</style>

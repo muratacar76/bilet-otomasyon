@@ -11,7 +11,7 @@ public class Booking
     public int FlightId { get; set; }
     public int PassengerCount { get; set; }
     public decimal TotalPrice { get; set; }
-    public string Status { get; set; } = "Confirmed"; // Confirmed, Cancelled, Pending
+    public string Status { get; set; } = "Onaylandı"; // Onaylandı, İptal Edildi, Beklemede
     public DateTime BookingDate { get; set; } = DateTime.UtcNow;
     public bool IsPaid { get; set; } = false;
     public DateTime? PaymentDate { get; set; }
@@ -24,15 +24,15 @@ public class Booking
     public virtual ICollection<Passenger> Passengers { get; set; } = new List<Passenger>();
     
     // Computed properties
-    public bool CanBeCancelled => Status == "Confirmed" && 
+    public bool CanBeCancelled => Status == "Onaylandı" && 
                                   Flight?.DepartureTime > DateTime.UtcNow.AddHours(24);
     public decimal PricePerPassenger => PassengerCount > 0 ? TotalPrice / PassengerCount : 0;
     public string StatusDisplay => Status switch
     {
-        "Confirmed" when IsPaid => "Ödendi",
-        "Confirmed" when !IsPaid => "Onaylandı",
-        "Cancelled" => "İptal Edildi",
-        "Pending" => "Beklemede",
+        "Onaylandı" when IsPaid => "Ödendi",
+        "Onaylandı" when !IsPaid => "Onaylandı",
+        "İptal Edildi" => "İptal Edildi",
+        "Beklemede" => "Beklemede",
         _ => Status
     };
 }

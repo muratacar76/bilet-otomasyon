@@ -28,8 +28,7 @@ public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
             .Matches(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)").WithMessage("Şifre en az bir büyük harf, bir küçük harf ve bir rakam içermelidir");
 
         RuleFor(x => x.PhoneNumber)
-            .NotEmpty().WithMessage("Telefon numarası zorunludur")
-            .Matches(@"^0[0-9]{10}$").WithMessage("Geçerli bir telefon numarası giriniz (0XXXXXXXXXX)");
+            .NotEmpty().WithMessage("Telefon numarası zorunludur");
 
         RuleFor(x => x.IdentityNumber)
             .NotEmpty().WithMessage("TC Kimlik numarası zorunludur")

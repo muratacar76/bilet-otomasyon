@@ -150,7 +150,28 @@ public class AuthController : Controller
             model.FirstName = firstName ?? "";
             model.LastName = lastName ?? "";
             model.IdentityNumber = identityNumber ?? "";
-            model.PhoneNumber = phoneNumber ?? "";
+            
+            // Format phone number properly
+            var phone = phoneNumber ?? "";
+            if (!string.IsNullOrEmpty(phone))
+            {
+                // Remove all non-digits
+                phone = new string(phone.Where(char.IsDigit).ToArray());
+                
+                // Add 0 prefix if not present
+                if (phone.Length > 0 && phone[0] != '0')
+                {
+                    phone = "0" + phone;
+                }
+                
+                // Format: 0555 123 45 67
+                if (phone.Length == 11)
+                {
+                    phone = $"{phone.Substring(0, 4)} {phone.Substring(4, 3)} {phone.Substring(7, 2)} {phone.Substring(9, 2)}";
+                }
+            }
+            model.PhoneNumber = phone;
+            
             model.Gender = gender ?? "Erkek";
             
             if (DateTime.TryParse(dateOfBirth, out var parsedDate))
@@ -175,17 +196,32 @@ public class AuthController : Controller
     {
         ViewData["Title"] = "Kayıt Ol - Bulut Bilet.com";
 
+        _logger.LogInformation("Register POST called for email: {Email}", model?.Email ?? "null");
+
+        // Manual AcceptTerms validation
+        if (!model.AcceptTerms)
+        {
+            ModelState.AddModelError("AcceptTerms", "Kullanım şartlarını kabul etmelisiniz");
+        }
+
         if (!ModelState.IsValid)
         {
+            _logger.LogWarning("Model validation failed for registration. Errors: {Errors}", 
+                string.Join(", ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)));
             return View(model);
         }
 
         try
         {
+            _logger.LogInformation("Starting registration process for email: {Email}", model.Email);
+            
             // Check if email already exists
             var existingUser = await _userRepository.GetByEmailAsync(model.Email);
+            _logger.LogInformation("Existing user check result: {ExistingUser}", existingUser != null ? "Found" : "Not found");
+            
             if (existingUser != null && !existingUser.IsGuest)
             {
+                _logger.LogWarning("Email already exists for non-guest user: {Email}", model.Email);
                 ModelState.AddModelError("Email", "Bu e-posta adresi zaten kullanılıyor");
                 return View(model);
             }
@@ -195,6 +231,7 @@ public class AuthController : Controller
             
             if (existingUser?.IsGuest == true)
             {
+                _logger.LogInformation("Converting guest user to registered user: {Email}", model.Email);
                 // Convert guest user to registered user
                 user = existingUser;
                 user.FirstName = model.FirstName;
@@ -205,12 +242,15 @@ public class AuthController : Controller
                 user.DateOfBirth = model.DateOfBirth;
                 user.Gender = model.Gender;
                 user.IsGuest = false;
+                user.IsActive = true;
                 user.UpdatedAt = DateTime.UtcNow;
                 
                 await _userRepository.UpdateAsync(user);
+                _logger.LogInformation("Guest user converted successfully: {Email}", model.Email);
             }
             else
             {
+                _logger.LogInformation("Creating new user: {Email}", model.Email);
                 // Create new user
                 user = new Core.Entities.User
                 {
@@ -224,10 +264,12 @@ public class AuthController : Controller
                     Gender = model.Gender,
                     IsGuest = false,
                     IsAdmin = false,
+                    IsActive = true,
                     CreatedAt = DateTime.UtcNow
                 };
 
                 await _userRepository.AddAsync(user);
+                _logger.LogInformation("New user created successfully: {Email} with ID: {UserId}", model.Email, user.Id);
             }
 
             _logger.LogInformation("User {Email} registered successfully", user.Email);

@@ -62,7 +62,7 @@ public class ApplicationDbContext : DbContext
         {
             entity.HasKey(e => e.Id);
             entity.Property(e => e.BookingReference).IsRequired().HasMaxLength(10);
-            entity.Property(e => e.Status).HasMaxLength(20).HasDefaultValue("Confirmed");
+            entity.Property(e => e.Status).HasMaxLength(20).HasDefaultValue("Onaylandı");
             entity.Property(e => e.TotalPrice).HasColumnType("decimal(18,2)");
             entity.Property(e => e.BookingDate).IsRequired();
             entity.Property(e => e.CancellationReason).HasMaxLength(500);

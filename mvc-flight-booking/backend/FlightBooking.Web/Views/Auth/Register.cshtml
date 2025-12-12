@@ -33,6 +33,7 @@
         }
 
         <form asp-action="Register" method="post">
+            @Html.AntiForgeryToken()
             @if (ViewBag.FromBooking == true && !string.IsNullOrEmpty(ViewBag.PNR))
             {
                 <input type="hidden" name="pnr" value="@ViewBag.PNR" />
@@ -65,7 +66,7 @@
                 <input asp-for="PhoneNumber" type="tel" placeholder="0555 123 45 67" 
                        oninput="formatPhoneNumberRegister(this)" maxlength="14" />
                 <span asp-validation-for="PhoneNumber" class="field-validation-error"></span>
-                <small style="color: #666; font-size: 12px;">Format: 0555 123 45 67</small>
+                <small style="color: #666; font-size: 12px;">Herhangi bir format girebilirsiniz</small>
             </div>
 
             <div class="form-group">
@@ -122,7 +123,7 @@
 
             <div class="form-group" style="background: linear-gradient(135deg, rgba(0, 188, 212, 0.1), rgba(0, 172, 193, 0.1)); padding: 16px; border-radius: 12px; border: 1px solid rgba(0, 188, 212, 0.2);">
                 <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                    <input asp-for="AcceptTerms" type="checkbox" style="width: auto; margin: 0;" required />
+                    <input asp-for="AcceptTerms" type="checkbox" style="width: auto; margin: 0;" />
                     <label asp-for="AcceptTerms" style="margin: 0; font-weight: 600;">Kullanım şartlarını kabul ediyorum</label>
                 </div>
                 <span asp-validation-for="AcceptTerms" class="field-validation-error"></span>
@@ -161,6 +162,14 @@
 
 @section Scripts {
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Format phone number on page load if pre-filled
+            const phoneInput = document.querySelector('input[name="PhoneNumber"]');
+            if (phoneInput && phoneInput.value) {
+                formatPhoneNumberRegister(phoneInput);
+            }
+        });
+
         function formatPhoneNumberRegister(input) {
             let value = input.value.replace(/\D/g, ''); // Sadece rakamları al
             
@@ -251,14 +260,14 @@
         }
     </script>
     <script>
-        function togglePassword(inputId) {
-            const passwordInput = document.getElementById(inputId);
+        function togglePassword(inputName) {
+            const passwordInput = document.querySelector(`input[name="${inputName}"]`);
             const toggleBtn = event.target;
             
-            if (passwordInput.type === 'password') {
+            if (passwordInput && passwordInput.type === 'password') {
                 passwordInput.type = 'text';
                 toggleBtn.textContent = '🙈';
-            } else {
+            } else if (passwordInput) {
                 passwordInput.type = 'password';
                 toggleBtn.textContent = '👁️';
             }
@@ -266,40 +275,48 @@
 
         // Form validation and enhancements
         document.addEventListener('DOMContentLoaded', function() {
-            const form = document.querySelector('form[asp-action="Register"]');
+            const form = document.querySelector('form');
             
             if (form) {
                 form.addEventListener('submit', function(e) {
-                    const password = document.getElementById('Password').value;
-                    const confirmPassword = document.getElementById('ConfirmPassword').value;
-                    const acceptTerms = document.getElementById('AcceptTerms').checked;
+                    const password = document.querySelector('input[name="Password"]');
+                    const confirmPassword = document.querySelector('input[name="ConfirmPassword"]');
+                    const acceptTerms = document.querySelector('input[name="AcceptTerms"]');
                     
-                    if (password !== confirmPassword) {
+                    if (!password || !confirmPassword || !acceptTerms) {
+                        console.log('Form elements not found');
+                        return true; // Let server-side validation handle it
+                    }
+                    
+                    if (password.value !== confirmPassword.value) {
                         e.preventDefault();
                         alert('⚠️ Şifreler eşleşmiyor!');
                         return false;
                     }
                     
-                    if (password.length < 6) {
+                    if (password.value.length < 6) {
                         e.preventDefault();
                         alert('⚠️ Şifre en az 6 karakter olmalıdır!');
                         return false;
                     }
                     
-                    if (!acceptTerms) {
+                    if (!acceptTerms.checked) {
                         e.preventDefault();
                         alert('⚠️ Kullanım şartlarını kabul etmelisiniz!');
+                        acceptTerms.focus();
                         return false;
                     }
                     
                     const submitBtn = this.querySelector('button[type="submit"]');
-                    submitBtn.innerHTML = '⏳ Kayıt yapılıyor...';
-                    submitBtn.disabled = true;
+                    if (submitBtn) {
+                        submitBtn.innerHTML = '⏳ Kayıt yapılıyor...';
+                        submitBtn.disabled = true;
+                    }
                 });
             }
             
             // Auto-format phone number
-            const phoneInput = document.getElementById('PhoneNumber');
+            const phoneInput = document.querySelector('input[name="PhoneNumber"]');
             if (phoneInput) {
                 phoneInput.addEventListener('input', function(e) {
                     let value = e.target.value.replace(/\D/g, '');
@@ -319,7 +336,7 @@
             }
             
             // Auto-focus on first name input
-            const firstNameInput = document.getElementById('FirstName');
+            const firstNameInput = document.querySelector('input[name="FirstName"]');
             if (firstNameInput) {
                 firstNameInput.focus();
             }

@@ -97,7 +97,21 @@ namespace FlightBooking.Web.Controllers
                 }
                 else
                 {
-                    model.SearchMessage = $"{flights.Count} uçuş bulundu.";
+                    // Check if we have exact matches
+                    var exactMatches = await CheckExactMatches(model);
+                    
+                    if (exactMatches > 0)
+                    {
+                        model.SearchMessage = $"{exactMatches} uçuş bulundu.";
+                        if (flights.Count > exactMatches)
+                        {
+                            model.SearchMessage += $" Ayrıca {flights.Count - exactMatches} benzer sefer önerisi gösteriliyor.";
+                        }
+                    }
+                    else
+                    {
+                        model.SearchMessage = $"Aradığınız kriterlerde direkt uçuş bulunamadı. {flights.Count} benzer sefer önerisi gösteriliyor.";
+                    }
                 }
 
                 ViewBag.SearchPerformed = true;
@@ -185,59 +199,168 @@ namespace FlightBooking.Web.Controllers
                 // Get all flights first (in a real application, this would be more optimized)
                 var allFlights = await _flightRepository.GetAllAsync();
                 
-                // Apply filters
-                var filteredFlights = allFlights.AsQueryable();
-
-                if (!string.IsNullOrEmpty(searchModel.DepartureCity))
-                {
-                    filteredFlights = filteredFlights.Where(f => 
-                        f.DepartureCity.Equals(searchModel.DepartureCity, StringComparison.OrdinalIgnoreCase));
-                }
-
-                if (!string.IsNullOrEmpty(searchModel.ArrivalCity))
-                {
-                    filteredFlights = filteredFlights.Where(f => 
-                        f.ArrivalCity.Equals(searchModel.ArrivalCity, StringComparison.OrdinalIgnoreCase));
-                }
-
-                if (searchModel.DepartureDate != default(DateTime))
-                {
-                    filteredFlights = filteredFlights.Where(f => 
-                        f.DepartureTime.Date == searchModel.DepartureDate.Date);
-                }
-
-                filteredFlights = filteredFlights.Where(f => 
+                // Apply basic filters first
+                var activeFlights = allFlights.Where(f => 
                     f.AvailableSeats >= searchModel.PassengerCount &&
-                    f.Status == "Active");
+                    f.Status == "Active").AsQueryable();
 
                 // Apply optional filters
                 if (!string.IsNullOrEmpty(searchModel.Airline))
                 {
-                    filteredFlights = filteredFlights.Where(f => 
+                    activeFlights = activeFlights.Where(f => 
                         f.Airline.Equals(searchModel.Airline, StringComparison.OrdinalIgnoreCase));
                 }
 
                 if (searchModel.MaxPrice.HasValue)
                 {
-                    filteredFlights = filteredFlights.Where(f => f.Price <= searchModel.MaxPrice.Value);
+                    activeFlights = activeFlights.Where(f => f.Price <= searchModel.MaxPrice.Value);
                 }
 
-                var result = filteredFlights.ToList();
+                // Try exact match first
+                var exactMatches = activeFlights.AsQueryable();
 
-                // Apply sorting
-                result = searchModel.SortBy?.ToLower() switch
+                if (!string.IsNullOrEmpty(searchModel.DepartureCity))
                 {
-                    "departuretime" => result.OrderBy(f => f.DepartureTime).ToList(),
-                    "duration" => result.OrderBy(f => f.ArrivalTime - f.DepartureTime).ToList(),
-                    "price" or _ => result.OrderBy(f => f.Price).ToList()
-                };
+                    exactMatches = exactMatches.Where(f => 
+                        f.DepartureCity.Equals(searchModel.DepartureCity, StringComparison.OrdinalIgnoreCase));
+                }
 
-                return result;
+                if (!string.IsNullOrEmpty(searchModel.ArrivalCity))
+                {
+                    exactMatches = exactMatches.Where(f => 
+                        f.ArrivalCity.Equals(searchModel.ArrivalCity, StringComparison.OrdinalIgnoreCase));
+                }
+
+                if (searchModel.DepartureDate != default(DateTime))
+                {
+                    exactMatches = exactMatches.Where(f => 
+                        f.DepartureTime.Date == searchModel.DepartureDate.Date);
+                }
+
+                var exactResults = exactMatches.ToList();
+
+                // If exact matches found, return them
+                if (exactResults.Any())
+                {
+                    return ApplySorting(exactResults, searchModel.SortBy);
+                }
+
+                // If no exact matches, try alternative suggestions
+                var alternativeFlights = new List<Flight>();
+
+                // 1. Try same departure city, different arrival city
+                if (!string.IsNullOrEmpty(searchModel.DepartureCity))
+                {
+                    var sameDepartureFlights = activeFlights.Where(f => 
+                        f.DepartureCity.Equals(searchModel.DepartureCity, StringComparison.OrdinalIgnoreCase));
+
+                    if (searchModel.DepartureDate != default(DateTime))
+                    {
+                        sameDepartureFlights = sameDepartureFlights.Where(f => 
+                            f.DepartureTime.Date == searchModel.DepartureDate.Date);
+                    }
+
+                    alternativeFlights.AddRange(sameDepartureFlights.Take(5));
+                }
+
+                // 2. Try same arrival city, different departure city
+                if (!string.IsNullOrEmpty(searchModel.ArrivalCity) && alternativeFlights.Count < 10)
+                {
+                    var sameArrivalFlights = activeFlights.Where(f => 
+                        f.ArrivalCity.Equals(searchModel.ArrivalCity, StringComparison.OrdinalIgnoreCase) &&
+                        !alternativeFlights.Any(af => af.Id == f.Id));
+
+                    if (searchModel.DepartureDate != default(DateTime))
+                    {
+                        sameArrivalFlights = sameArrivalFlights.Where(f => 
+                            f.DepartureTime.Date == searchModel.DepartureDate.Date);
+                    }
+
+                    alternativeFlights.AddRange(sameArrivalFlights.Take(5));
+                }
+
+                // 3. Try same route, different dates (±3 days)
+                if (!string.IsNullOrEmpty(searchModel.DepartureCity) && 
+                    !string.IsNullOrEmpty(searchModel.ArrivalCity) && 
+                    searchModel.DepartureDate != default(DateTime) && 
+                    alternativeFlights.Count < 15)
+                {
+                    var startDate = searchModel.DepartureDate.AddDays(-3);
+                    var endDate = searchModel.DepartureDate.AddDays(3);
+
+                    var sameCitiesFlights = activeFlights.Where(f => 
+                        f.DepartureCity.Equals(searchModel.DepartureCity, StringComparison.OrdinalIgnoreCase) &&
+                        f.ArrivalCity.Equals(searchModel.ArrivalCity, StringComparison.OrdinalIgnoreCase) &&
+                        f.DepartureTime.Date >= startDate.Date &&
+                        f.DepartureTime.Date <= endDate.Date &&
+                        !alternativeFlights.Any(af => af.Id == f.Id));
+
+                    alternativeFlights.AddRange(sameCitiesFlights.Take(5));
+                }
+
+                // 4. If still no results, show popular routes from departure city
+                if (alternativeFlights.Count == 0 && !string.IsNullOrEmpty(searchModel.DepartureCity))
+                {
+                    var popularFromDeparture = activeFlights.Where(f => 
+                        f.DepartureCity.Equals(searchModel.DepartureCity, StringComparison.OrdinalIgnoreCase))
+                        .OrderBy(f => f.Price)
+                        .Take(10);
+
+                    alternativeFlights.AddRange(popularFromDeparture);
+                }
+
+                return ApplySorting(alternativeFlights.Distinct().ToList(), searchModel.SortBy);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error in SearchFlightsAsync");
                 return new List<Flight>();
+            }
+        }
+
+        private List<Flight> ApplySorting(List<Flight> flights, string? sortBy)
+        {
+            return sortBy?.ToLower() switch
+            {
+                "departuretime" => flights.OrderBy(f => f.DepartureTime).ToList(),
+                "duration" => flights.OrderBy(f => f.ArrivalTime - f.DepartureTime).ToList(),
+                "price" or _ => flights.OrderBy(f => f.Price).ToList()
+            };
+        }
+
+        private async Task<int> CheckExactMatches(FlightSearchViewModel searchModel)
+        {
+            try
+            {
+                var allFlights = await _flightRepository.GetAllAsync();
+                
+                var exactMatches = allFlights.Where(f => 
+                    f.AvailableSeats >= searchModel.PassengerCount &&
+                    f.Status == "Active");
+
+                if (!string.IsNullOrEmpty(searchModel.DepartureCity))
+                {
+                    exactMatches = exactMatches.Where(f => 
+                        f.DepartureCity.Equals(searchModel.DepartureCity, StringComparison.OrdinalIgnoreCase));
+                }
+
+                if (!string.IsNullOrEmpty(searchModel.ArrivalCity))
+                {
+                    exactMatches = exactMatches.Where(f => 
+                        f.ArrivalCity.Equals(searchModel.ArrivalCity, StringComparison.OrdinalIgnoreCase));
+                }
+
+                if (searchModel.DepartureDate != default(DateTime))
+                {
+                    exactMatches = exactMatches.Where(f => 
+                        f.DepartureTime.Date == searchModel.DepartureDate.Date);
+                }
+
+                return exactMatches.Count();
+            }
+            catch
+            {
+                return 0;
             }
         }
 

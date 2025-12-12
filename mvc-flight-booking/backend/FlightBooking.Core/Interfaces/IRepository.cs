@@ -62,6 +62,7 @@ public interface IBookingRepository : IRepository<Entities.Booking>
     Task<IEnumerable<Entities.Booking>> GetPendingPaymentsAsync();
     Task<Entities.Booking?> GetByPnrAndEmailAsync(string pnr, string email);
     Task<IEnumerable<Entities.Booking>> GetByUserIdAsync(int userId);
+    Task<bool> ExistsByReferenceAsync(string bookingReference);
 }
 
 /// <summary>
@@ -71,6 +72,7 @@ public interface IPassengerRepository : IRepository<Entities.Passenger>
 {
     Task<IEnumerable<Entities.Passenger>> GetByBookingIdAsync(int bookingId);
     Task<Entities.Passenger?> GetByIdentityNumberAsync(string identityNumber);
+    Task DeleteByBookingIdAsync(int bookingId);
 }
 
 /// <summary>

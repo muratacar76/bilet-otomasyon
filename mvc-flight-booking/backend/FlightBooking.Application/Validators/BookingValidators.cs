@@ -62,8 +62,7 @@ public class PassengerDtoValidator : AbstractValidator<PassengerDto>
             .Must(x => x == "Erkek" || x == "Kadın").WithMessage("Geçerli bir cinsiyet seçiniz");
 
         RuleFor(x => x.PhoneNumber)
-            .NotEmpty().WithMessage("Telefon numarası zorunludur")
-            .Matches(@"^0[0-9]{10}$").WithMessage("Geçerli bir telefon numarası giriniz (0XXXXXXXXXX)");
+            .NotEmpty().WithMessage("Telefon numarası zorunludur");
 
         RuleFor(x => x.SeatNumber)
             .Matches(@"^[0-9]{1,2}[A-F]$").WithMessage("Geçerli bir koltuk numarası giriniz (örn: 12A)")

@@ -55,7 +55,7 @@ namespace FlightBooking.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(20)
                         .HasColumnType("TEXT")
-                        .HasDefaultValue("Confirmed");
+                        .HasDefaultValue("Onaylandı");
 
                     b.Property<decimal>("TotalPrice")
                         .HasColumnType("decimal(18,2)");

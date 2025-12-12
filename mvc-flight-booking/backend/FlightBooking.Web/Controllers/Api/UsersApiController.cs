@@ -8,7 +8,6 @@ namespace FlightBooking.Web.Controllers.Api;
 
 [ApiController]
 [Route("api/users")]
-[Authorize]
 public class UsersApiController : ControllerBase
 {
     private readonly IUserRepository _userRepository;
@@ -26,34 +25,69 @@ public class UsersApiController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize]
     public async Task<IActionResult> GetUsers()
     {
         try
         {
+            _logger.LogInformation("GetUsers API called. Authenticated: {IsAuthenticated}", User.Identity.IsAuthenticated);
+            
+            if (!User.Identity.IsAuthenticated)
+            {
+                _logger.LogWarning("Unauthenticated user attempted to access users API");
+                return Unauthorized("Giriş yapmanız gereklidir");
+            }
+            
+            // Admin kontrolü - daha esnek kontrol
+            var isAdmin = User.FindFirst("IsAdmin")?.Value == "true" || 
+                         User.IsInRole("Admin") || 
+                         User.FindFirst(ClaimTypes.Role)?.Value == "Admin";
+            
+            _logger.LogInformation("GetUsers API called. User: {UserId}, IsAdmin: {IsAdmin}, Claims: {Claims}", 
+                User.FindFirst(ClaimTypes.NameIdentifier)?.Value,
+                isAdmin,
+                string.Join(", ", User.Claims.Select(c => $"{c.Type}={c.Value}")));
+            
+            if (!isAdmin)
+            {
+                _logger.LogWarning("Non-admin user attempted to access users API: {UserId}", User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+                return StatusCode(403, "Bu işlem için admin yetkisi gereklidir");
+            }
+
+            _logger.LogInformation("Fetching users from repository...");
             var users = await _userRepository.GetAllAsync();
+            _logger.LogInformation("Found {UserCount} users", users.Count());
             
             var result = new List<object>();
             foreach (var user in users)
             {
-                var bookings = await _bookingRepository.GetByUserIdAsync(user.Id);
-                result.Add(new
+                try
                 {
-                    id = user.Id,
-                    firstName = user.FirstName,
-                    lastName = user.LastName,
-                    email = user.Email,
-                    phoneNumber = user.PhoneNumber,
-                    identityNumber = user.IdentityNumber,
-                    dateOfBirth = user.DateOfBirth,
-                    gender = user.Gender,
-                    isActive = user.IsActive,
-                    isAdmin = user.IsAdmin,
-                    isGuest = user.IsGuest,
-                    createdAt = user.CreatedAt,
-                    bookingCount = bookings.Count()
-                });
+                    var bookings = await _bookingRepository.GetByUserIdAsync(user.Id);
+                    result.Add(new
+                    {
+                        id = user.Id,
+                        firstName = user.FirstName ?? "",
+                        lastName = user.LastName ?? "",
+                        email = user.Email,
+                        phoneNumber = user.PhoneNumber ?? "",
+                        identityNumber = user.IdentityNumber ?? "",
+                        dateOfBirth = user.DateOfBirth,
+                        gender = user.Gender ?? "",
+                        isActive = user.IsActive,
+                        isAdmin = user.IsAdmin,
+                        isGuest = user.IsGuest,
+                        createdAt = user.CreatedAt,
+                        bookingCount = bookings.Count()
+                    });
+                }
+                catch (Exception userEx)
+                {
+                    _logger.LogError(userEx, "Error processing user {UserId}", user.Id);
+                }
             }
 
+            _logger.LogInformation("Returning {ResultCount} users", result.Count);
             return Ok(result);
         }
         catch (Exception ex)

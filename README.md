@@ -1,146 +1,133 @@
-# Uçak Bileti Rezervasyon Sistemi
+# BULUTBİLET.COM - Uçak Bileti Rezervasyon Sistemi
 
-Katmanlı mimari ile geliştirilmiş, modern ve profesyonel bir uçak bileti rezervasyon sistemi.
+Katmanlı mimari ile geliştirilmiş, modern ve profesyonel bir MVC Web uçak bileti rezervasyon sistemi.
 
 ## 🚀 Özellikler
 
 ### Kullanıcı Özellikleri
 - ✅ Üye olmadan misafir girişi ile rezervasyon
 - ✅ Kullanıcı kayıt ve giriş sistemi
-- ✅ Uçuş arama ve filtreleme
+- ✅ Akıllı uçuş arama ve benzer sefer önerileri
 - ✅ Online bilet rezervasyonu
 - ✅ **🪑 Görsel koltuk seçimi** - Cam kenarı/Koridor/Orta koltuk seçenekleri
 - ✅ Bilet ödeme sistemi
 - ✅ Uçuştan 24 saat öncesine kadar iptal/değişiklik
 - ✅ Rezervasyon geçmişi görüntüleme
+- ✅ PNR ile rezervasyon sorgulama
+- ✅ E-posta ile rezervasyon arama
 
 ### Admin Özellikleri
 - ✅ Uçuş ekleme, düzenleme, silme
 - ✅ Tüm rezervasyonları görüntüleme
+- ✅ Kullanıcı yönetimi
 - ✅ Rezervasyon iptal etme
 - ✅ Uçuş ve koltuk yönetimi
 
 ## 🏗️ Teknoloji Stack
 
 ### Backend
-- **ASP.NET Core 9.0** - Web API
+- **ASP.NET Core 9.0** - MVC Web Framework
 - **Entity Framework Core** - ORM
 - **SQLite** - Veritabanı
-- **JWT** - Authentication
 - **BCrypt** - Şifre hashleme
+- **Font Awesome** - İkonlar
 
 ### Frontend
-- **React 19** - UI Framework
-- **React Router** - Routing
-- **Axios** - HTTP Client
-- **Vite** - Build Tool
+- **Razor Pages** - Server-side rendering
+- **HTML5/CSS3** - Modern web standartları
+- **JavaScript** - İnteraktif özellikler
+- **Bootstrap** - Responsive tasarım
 
 ### Mimari
 - **Katmanlı Mimari (Layered Architecture)**
-  - API Layer
-  - Application Layer
-  - Core Layer (Entities)
+  - Web Layer (MVC Controllers & Views)
+  - Application Layer (DTOs, Mappings, Validators)
+  - Core Layer (Entities, Interfaces)
   - Infrastructure Layer (Services)
-  - Persistence Layer (Database)
+  - Persistence Layer (Database, Repositories)
 
 ## 📦 Kurulum
 
 ### Gereksinimler
 - .NET 9.0 SDK
-- Node.js 20+
 - SQLite (dahili - kurulum gerektirmez)
 
-### Backend Kurulumu
+### Kurulum Adımları
 
 1. Projeyi klonlayın
-2. Veritabanı otomatik oluşturulur (SQLite):
+2. MVC Web projesini çalıştırın:
 ```bash
-# SQLite veritabanı ilk çalıştırmada otomatik oluşturulur
-# Herhangi bir manuel kurulum gerektirmez
+cd mvc-flight-booking/backend
+dotnet run --project FlightBooking.Web --urls="http://localhost:5010"
 ```
 
-3. Backend'i çalıştırın:
-```bash
-dotnet run --project src/FlightBooking.API
-```
+Uygulama http://localhost:5010 adresinde çalışacaktır.
 
-Backend http://localhost:5000 adresinde çalışacaktır.
+### Veritabanı
+- SQLite veritabanı ilk çalıştırmada otomatik oluşturulur
+- Test verileri otomatik yüklenir
+- Herhangi bir manuel kurulum gerektirmez
 
-### Frontend Kurulumu
+## 👤 Test Kullanıcıları
 
-1. Client klasörüne gidin:
-```bash
-cd client
-```
+### Admin Girişi
+**E-posta:** admin@bulutbilet.com  
+**Şifre:** Admin123!
 
-2. Bağımlılıkları yükleyin (zaten yüklü):
-```bash
-npm install
-```
-
-3. Frontend'i çalıştırın:
-```bash
-npm run dev
-```
-
-Frontend http://localhost:3000 adresinde çalışacaktır.
-
-## 👤 Admin Girişi
-
-**Kullanıcı Adı:** admin@flightbooking.com  
-**Şifre:** 1234
+### Test Kullanıcısı
+**E-posta:** ahmet@test.com  
+**Şifre:** Test123!
 
 ## 📁 Proje Yapısı
 
 ```
-FlightBookingSystem/
-├── src/
-│   ├── FlightBooking.API/          # Web API katmanı
-│   │   ├── Controllers/            # API Controllers
-│   │   ├── Program.cs              # Uygulama yapılandırması
-│   │   └── appsettings.json        # Ayarlar
-│   │
-│   ├── FlightBooking.Application/  # Uygulama katmanı
-│   │   └── DTOs/                   # Data Transfer Objects
-│   │
-│   ├── FlightBooking.Core/         # Domain katmanı
-│   │   └── Entities/               # Domain modelleri
-│   │
-│   ├── FlightBooking.Infrastructure/ # Altyapı katmanı
-│   │   └── Services/               # JWT, Email vb. servisler
-│   │
-│   └── FlightBooking.Persistence/  # Veritabanı katmanı
-│       └── Data/                   # DbContext, Repositories
-│
-└── client/                         # React Frontend
-    ├── src/
-    │   ├── pages/                  # Sayfa bileşenleri
-    │   ├── App.jsx                 # Ana uygulama
-    │   └── main.jsx                # Giriş noktası
-    └── index.html
+mvc-flight-booking/
+└── backend/
+    ├── FlightBooking.Web/          # MVC Web katmanı
+    │   ├── Controllers/            # MVC Controllers & API Controllers
+    │   ├── Views/                  # Razor Views
+    │   ├── wwwroot/               # Static files (CSS, JS, images)
+    │   ├── Program.cs             # Uygulama yapılandırması
+    │   └── appsettings.json       # Ayarlar
+    │
+    ├── FlightBooking.Application/  # Uygulama katmanı
+    │   ├── DTOs/                  # Data Transfer Objects
+    │   ├── Mappings/              # AutoMapper profiles
+    │   └── Validators/            # FluentValidation
+    │
+    ├── FlightBooking.Core/         # Domain katmanı
+    │   ├── Entities/              # Domain modelleri
+    │   ├── Interfaces/            # Repository interfaces
+    │   └── Enums/                 # Enumerations
+    │
+    ├── FlightBooking.Infrastructure/ # Altyapı katmanı
+    │   └── Services/              # Email, JWT vb. servisler
+    │
+    └── FlightBooking.Persistence/  # Veritabanı katmanı
+        ├── Data/                  # DbContext, DbInitializer
+        ├── Repositories/          # Repository implementations
+        └── Migrations/            # EF Core migrations
 ```
 
-## 🔐 API Endpoints
+## 🌐 Sayfalar ve Özellikler
 
-### Authentication
-- `POST /api/auth/register` - Kullanıcı kaydı
-- `POST /api/auth/login` - Kullanıcı girişi
-- `POST /api/auth/guest` - Misafir girişi
+### Ana Sayfalar
+- `/` - Ana sayfa ve uçuş arama
+- `/Flight/Search` - Uçuş arama ve listeleme
+- `/Auth/Login` - Kullanıcı girişi
+- `/Auth/Register` - Kullanıcı kaydı
+- `/Booking/Query` - PNR ile rezervasyon sorgulama
+- `/Booking/MyBookings` - Rezervasyonlarım
 
-### Flights
-- `GET /api/flights` - Uçuşları listele/ara
-- `GET /api/flights/{id}` - Uçuş detayı
-- `POST /api/flights` - Uçuş ekle (Admin)
-- `PUT /api/flights/{id}` - Uçuş güncelle (Admin)
-- `DELETE /api/flights/{id}` - Uçuş sil (Admin)
+### Admin Sayfaları
+- `/Admin` - Admin paneli
+- `/Admin/Users` - Kullanıcı yönetimi
 
-### Bookings
-- `GET /api/bookings` - Kullanıcının rezervasyonları
-- `GET /api/bookings/{id}` - Rezervasyon detayı
+### API Endpoints (AJAX için)
+- `GET /api/flights` - Uçuş listesi
 - `POST /api/bookings` - Rezervasyon oluştur
-- `POST /api/bookings/{id}/pay` - Ödeme yap
-- `DELETE /api/bookings/{id}` - Rezervasyon iptal
-- `GET /api/bookings/all` - Tüm rezervasyonlar (Admin)
+- `GET /api/bookings/pnr/{pnr}` - PNR sorgulama
+- `GET /api/bookings/email/{email}` - E-posta ile arama
 
 ## 🎨 Özellikler Detayı
 
@@ -165,15 +152,22 @@ FlightBookingSystem/
 
 ## 🛠️ Geliştirme
 
-### Backend Geliştirme
+### Geliştirme Modu
 ```bash
-dotnet watch run --project src/FlightBooking.API
+cd mvc-flight-booking/backend
+dotnet watch run --project FlightBooking.Web --urls="http://localhost:5010"
 ```
 
-### Frontend Geliştirme
+### Veritabanı Yönetimi
 ```bash
-cd client
-npm run dev
+# Migration oluştur
+dotnet ef migrations add MigrationName --project FlightBooking.Persistence --startup-project FlightBooking.Web
+
+# Veritabanını güncelle
+dotnet ef database update --project FlightBooking.Persistence --startup-project FlightBooking.Web
+
+# Veritabanını sıfırla
+dotnet ef database drop --force --project FlightBooking.Persistence --startup-project FlightBooking.Web
 ```
 
 ## 📝 Lisans

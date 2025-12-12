@@ -13,17 +13,20 @@ public class BookingsApiController : ControllerBase
     private readonly IBookingRepository _bookingRepository;
     private readonly IFlightRepository _flightRepository;
     private readonly IUserRepository _userRepository;
+    private readonly IPassengerRepository _passengerRepository;
     private readonly ILogger<BookingsApiController> _logger;
 
     public BookingsApiController(
         IBookingRepository bookingRepository,
         IFlightRepository flightRepository,
         IUserRepository userRepository,
+        IPassengerRepository passengerRepository,
         ILogger<BookingsApiController> logger)
     {
         _bookingRepository = bookingRepository;
         _flightRepository = flightRepository;
         _userRepository = userRepository;
+        _passengerRepository = passengerRepository;
         _logger = logger;
     }
 
@@ -170,6 +173,7 @@ public class BookingsApiController : ControllerBase
                         Email = request.GuestEmail,
                         IsGuest = true,
                         IsAdmin = false,
+                        IsActive = true,
                         CreatedAt = DateTime.UtcNow
                     };
                     await _userRepository.AddAsync(user);
@@ -193,12 +197,31 @@ public class BookingsApiController : ControllerBase
                 BookingReference = GeneratePNR(),
                 PassengerCount = request.Passengers.Count,
                 TotalPrice = flight.Price * request.Passengers.Count,
-                Status = "Confirmed",
+                Status = "Onaylandı",
                 IsPaid = false,
                 BookingDate = DateTime.UtcNow
             };
 
             await _bookingRepository.AddAsync(booking);
+
+            // Create passengers
+            foreach (var passengerRequest in request.Passengers)
+            {
+                var passenger = new Passenger
+                {
+                    BookingId = booking.Id,
+                    FirstName = passengerRequest.FirstName,
+                    LastName = passengerRequest.LastName,
+                    IdentityNumber = passengerRequest.IdentityNumber,
+                    PhoneNumber = passengerRequest.PhoneNumber,
+                    DateOfBirth = passengerRequest.DateOfBirth,
+                    Gender = passengerRequest.Gender,
+                    SeatNumber = passengerRequest.SeatNumber ?? "TBD",
+                    SeatType = passengerRequest.SeatType ?? "Economy"
+                };
+
+                await _passengerRepository.AddAsync(passenger);
+            }
 
             // Update flight available seats
             flight.AvailableSeats -= request.Passengers.Count;

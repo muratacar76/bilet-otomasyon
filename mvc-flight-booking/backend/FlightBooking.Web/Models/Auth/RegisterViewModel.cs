@@ -34,7 +34,6 @@ public class RegisterViewModel
     public string ConfirmPassword { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Telefon numarası zorunludur")]
-    [Phone(ErrorMessage = "Geçerli bir telefon numarası giriniz")]
     [Display(Name = "Telefon")]
     public string PhoneNumber { get; set; } = string.Empty;
 
@@ -52,7 +51,6 @@ public class RegisterViewModel
     [Display(Name = "Cinsiyet")]
     public string Gender { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "Kullanım şartlarını kabul etmelisiniz")]
     [Display(Name = "Kullanım şartlarını kabul ediyorum")]
     public bool AcceptTerms { get; set; }
 }

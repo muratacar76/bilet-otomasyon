@@ -78,7 +78,7 @@ public class BookingRepository : Repository<Booking>, IBookingRepository
         return await _dbSet
             .Include(b => b.User)
             .Include(b => b.Flight)
-            .Where(b => b.Status == "Confirmed" && !b.IsPaid)
+            .Where(b => b.Status == "Onaylandı" && !b.IsPaid)
             .OrderBy(b => b.BookingDate)
             .ToListAsync();
     }

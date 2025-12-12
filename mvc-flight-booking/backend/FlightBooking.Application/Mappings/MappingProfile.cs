@@ -79,15 +79,15 @@ public class MappingProfile : Profile
         // Booking mappings
         CreateMap<Booking, BookingDto>()
             .ForMember(dest => dest.CanBeCancelled, opt => opt.MapFrom(src => 
-                src.Status == "Confirmed" && src.Flight != null && 
+                src.Status == "Onaylandı" && src.Flight != null && 
                 src.Flight.DepartureTime > DateTime.UtcNow.AddHours(24)))
             .ForMember(dest => dest.PricePerPassenger, opt => opt.MapFrom(src => 
                 src.PassengerCount > 0 ? src.TotalPrice / src.PassengerCount : 0))
             .ForMember(dest => dest.StatusDisplay, opt => opt.MapFrom(src => 
-                src.Status == "Confirmed" && src.IsPaid ? "Ödendi" :
-                src.Status == "Confirmed" && !src.IsPaid ? "Onaylandı" :
-                src.Status == "Cancelled" ? "İptal Edildi" :
-                src.Status == "Pending" ? "Beklemede" : src.Status));
+                src.Status == "Onaylandı" && src.IsPaid ? "Ödendi" :
+                src.Status == "Onaylandı" && !src.IsPaid ? "Onaylandı" :
+                src.Status == "İptal Edildi" ? "İptal Edildi" :
+                src.Status == "Beklemede" ? "Beklemede" : src.Status));
 
         CreateMap<BookingRequest, Booking>()
             .ForMember(dest => dest.BookingDate, opt => opt.MapFrom(src => DateTime.UtcNow))
