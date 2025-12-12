@@ -25,7 +25,7 @@ Katmanlı mimari ile geliştirilmiş, modern ve profesyonel bir uçak bileti rez
 ### Backend
 - **ASP.NET Core 9.0** - Web API
 - **Entity Framework Core** - ORM
-- **SQL Server** - Veritabanı
+- **SQLite** - Veritabanı
 - **JWT** - Authentication
 - **BCrypt** - Şifre hashleme
 
@@ -48,18 +48,15 @@ Katmanlı mimari ile geliştirilmiş, modern ve profesyonel bir uçak bileti rez
 ### Gereksinimler
 - .NET 9.0 SDK
 - Node.js 20+
-- SQL Server (LocalDB)
+- SQLite (dahili - kurulum gerektirmez)
 
 ### Backend Kurulumu
 
 1. Projeyi klonlayın
-2. Veritabanını oluşturun:
+2. Veritabanı otomatik oluşturulur (SQLite):
 ```bash
-# Not: dotnet-ef tool kurulu değilse önce kurun
-dotnet tool install --global dotnet-ef
-
-# Migration oluştur ve veritabanını güncelle
-dotnet ef database update --project src/FlightBooking.Persistence --startup-project src/FlightBooking.API
+# SQLite veritabanı ilk çalıştırmada otomatik oluşturulur
+# Herhangi bir manuel kurulum gerektirmez
 ```
 
 3. Backend'i çalıştırın:

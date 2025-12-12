@@ -7,10 +7,10 @@
 📊 SİSTEM DURUMU
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-✅ Backend API      : http://localhost:5106
-✅ Frontend Web     : http://localhost:3000
-✅ Veritabanı       : SQL Server LocalDB (Hazır)
-✅ Örnek Uçuşlar    : 8 adet yüklendi
+✅ Backend API      : http://localhost:5106 (ÇALIŞIYOR)
+✅ Frontend Web     : http://localhost:3000 (ÇALIŞIYOR)
+✅ Veritabanı       : SQLite (ÇALIŞIYOR - Otomatik oluşturuldu)
+✅ Örnek Uçuşlar    : 8 adet yüklendi (SQLite'a kaydedildi)
 ✅ Admin Kullanıcı  : Hazır
 
 🚀 HEMEN BAŞLA
@@ -19,8 +19,8 @@
 1. Tarayıcıda aç: http://localhost:3000
 
 2. Admin Girişi:
-   📧 Email : admin@flightbooking.com
-   🔑 Şifre : 1234
+   📧 Email : admin@bulutbilet.com
+   🔑 Şifre : Bulut1234
 
 3. "Admin Panel" menüsüne tıkla - TAM YETKİ!
 
@@ -94,7 +94,7 @@
 
 Backend  : ASP.NET Core 9.0
 Frontend : React 19
-Database : SQL Server LocalDB
+Database : SQLite
 Auth     : JWT + BCrypt
 Mimari   : Katmanlı (Layered Architecture)
 
