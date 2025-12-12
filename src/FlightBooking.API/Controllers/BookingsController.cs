@@ -23,72 +23,72 @@ public class BookingsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateBooking([FromBody] BookingRequest request)
     {
-        var flight = await _context.Flights
-            .Include(f => f.Bookings)
-            .ThenInclude(b => b.Passengers)
-            .FirstOrDefaultAsync(f => f.Id == request.FlightId);
-            
-        if (flight == null || flight.AvailableSeats < request.Passengers.Count)
-            return BadRequest(new { message = "Uçuş bulunamadı veya yeterli koltuk yok" });
-
-        // Seçilen koltukların dolu olup olmadığını kontrol et
-        var occupiedSeats = flight.Bookings
-            .Where(b => b.Status == "Confirmed" || b.Status == "Pending")
-            .SelectMany(b => b.Passengers)
-            .Where(p => !string.IsNullOrEmpty(p.SeatNumber))
-            .Select(p => p.SeatNumber)
-            .ToList();
-
-        var requestedSeats = request.Passengers
-            .Where(p => !string.IsNullOrEmpty(p.SeatNumber))
-            .Select(p => p.SeatNumber)
-            .ToList();
-
-        var conflictingSeats = requestedSeats.Intersect(occupiedSeats).ToList();
-        if (conflictingSeats.Any())
-            return BadRequest(new { message = $"Seçilen koltuklar dolu: {string.Join(", ", conflictingSeats)}" });
-
-        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (userIdClaim == null)
-            return Unauthorized();
-
-        var userId = int.Parse(userIdClaim);
-
-        var booking = new Booking
+        using var transaction = await _context.Database.BeginTransactionAsync();
+        
+        try
         {
-            BookingReference = GenerateBookingReference(),
-            UserId = userId,
-            FlightId = request.FlightId,
-            PassengerCount = request.Passengers.Count,
-            TotalPrice = flight.Price * request.Passengers.Count,
-            Status = "Confirmed",
-            BookingDate = DateTime.UtcNow,
-            IsPaid = false
-        };
+            var flight = await _context.Flights.FindAsync(request.FlightId);
+                
+            if (flight == null || flight.AvailableSeats < request.Passengers.Count)
+                return BadRequest(new { message = "Uçuş bulunamadı veya yeterli koltuk yok" });
 
-        _context.Bookings.Add(booking);
-        await _context.SaveChangesAsync();
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userIdClaim == null)
+                return Unauthorized();
 
-        foreach (var passengerDto in request.Passengers)
-        {
-            var passenger = new Passenger
+            var userId = int.Parse(userIdClaim);
+
+            // Kullanıcının var olduğunu kontrol et
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+                return BadRequest(new { message = "Kullanıcı bulunamadı" });
+
+            var booking = new Booking
             {
-                BookingId = booking.Id,
-                FirstName = passengerDto.FirstName,
-                LastName = passengerDto.LastName,
-                IdentityNumber = passengerDto.IdentityNumber,
-                DateOfBirth = passengerDto.DateOfBirth,
-                Gender = passengerDto.Gender,
-                SeatNumber = passengerDto.SeatNumber ?? string.Empty,
-                SeatType = passengerDto.SeatType ?? string.Empty
+                BookingReference = GenerateBookingReference(),
+                UserId = userId,
+                FlightId = request.FlightId,
+                PassengerCount = request.Passengers.Count,
+                TotalPrice = flight.Price * request.Passengers.Count,
+                Status = "Confirmed",
+                BookingDate = DateTime.UtcNow,
+                IsPaid = false
             };
-            _context.Passengers.Add(passenger);
+
+            // Booking'i ekle
+            _context.Bookings.Add(booking);
+            await _context.SaveChangesAsync();
+
+            // Passengers'ı ekle
+            foreach (var passengerDto in request.Passengers)
+            {
+                var passenger = new Passenger
+                {
+                    BookingId = booking.Id,
+                    FirstName = passengerDto.FirstName,
+                    LastName = passengerDto.LastName,
+                    IdentityNumber = passengerDto.IdentityNumber,
+                    DateOfBirth = passengerDto.DateOfBirth,
+                    Gender = passengerDto.Gender,
+                    SeatNumber = passengerDto.SeatNumber ?? string.Empty,
+                    SeatType = passengerDto.SeatType ?? string.Empty
+                };
+                _context.Passengers.Add(passenger);
+            }
+
+            // Uçuş koltuk sayısını güncelle
+            flight.AvailableSeats -= request.Passengers.Count;
+            
+            await _context.SaveChangesAsync();
+            await transaction.CommitAsync();
+
+            return Ok(new { bookingReference = booking.BookingReference });
         }
-
-        flight.AvailableSeats -= request.Passengers.Count;
-        await _context.SaveChangesAsync();
-
-        return Ok(booking);
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync();
+            return StatusCode(500, new { message = "Rezervasyon oluşturulurken bir hata oluştu", error = ex.Message });
+        }
     }
 
     [HttpGet]
@@ -99,6 +99,7 @@ public class BookingsController : ControllerBase
             return Unauthorized();
 
         var userId = int.Parse(userIdClaim);
+        
         var bookings = await _context.Bookings
             .Include(b => b.Flight)
             .Include(b => b.Passengers)
@@ -179,12 +180,13 @@ public class BookingsController : ControllerBase
         if (!isAdmin && booking.UserId != userId)
             return Forbid();
 
-        var hoursDifference = (booking.Flight.DepartureTime - DateTime.UtcNow).TotalHours;
+        var hoursDifference = (booking.Flight?.DepartureTime - DateTime.UtcNow)?.TotalHours ?? 0;
         if (hoursDifference < 24)
             return BadRequest(new { message = "Uçuştan 24 saat öncesine kadar iptal yapabilirsiniz" });
 
         booking.Status = "Cancelled";
-        booking.Flight.AvailableSeats += booking.PassengerCount;
+        if (booking.Flight != null)
+            booking.Flight.AvailableSeats += booking.PassengerCount;
         
         await _context.SaveChangesAsync();
 
@@ -205,6 +207,63 @@ public class BookingsController : ControllerBase
         return Ok(bookings);
     }
 
+    [Authorize(Roles = "Admin")]
+    [HttpDelete("all")]
+    public async Task<IActionResult> DeleteAllBookings()
+    {
+        using var transaction = await _context.Database.BeginTransactionAsync();
+        
+        try
+        {
+            // Tüm rezervasyonları al
+            var bookings = await _context.Bookings
+                .Include(b => b.Flight)
+                .ToListAsync();
+
+            if (bookings.Count == 0)
+                return Ok(new { message = "Silinecek rezervasyon bulunamadı", deletedCount = 0 });
+
+            // Uçuşlardaki koltuk sayılarını geri yükle
+            var flightUpdates = bookings
+                .Where(b => b.Flight != null && b.Status == "Confirmed")
+                .GroupBy(b => b.FlightId)
+                .ToDictionary(g => g.Key, g => g.Sum(b => b.PassengerCount));
+
+            foreach (var flightUpdate in flightUpdates)
+            {
+                var flight = await _context.Flights.FindAsync(flightUpdate.Key);
+                if (flight != null)
+                {
+                    flight.AvailableSeats += flightUpdate.Value;
+                }
+            }
+
+            // Önce passengers'ları sil
+            var allPassengers = await _context.Passengers
+                .Where(p => bookings.Select(b => b.Id).Contains(p.BookingId))
+                .ToListAsync();
+            
+            _context.Passengers.RemoveRange(allPassengers);
+
+            // Sonra bookings'leri sil
+            _context.Bookings.RemoveRange(bookings);
+
+            await _context.SaveChangesAsync();
+            await transaction.CommitAsync();
+
+            return Ok(new { 
+                message = "Tüm rezervasyonlar başarıyla silindi", 
+                deletedCount = bookings.Count,
+                deletedPassengers = allPassengers.Count
+            });
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync();
+            return StatusCode(500, new { message = "Toplu silme işlemi sırasında bir hata oluştu", error = ex.Message });
+        }
+    }
+
     [AllowAnonymous]
     [HttpGet("pnr/{pnr}")]
     public async Task<IActionResult> GetBookingByPNR(string pnr, [FromQuery] string email)
@@ -219,7 +278,8 @@ public class BookingsController : ControllerBase
             .Include(b => b.Flight)
             .Include(b => b.Passengers)
             .Include(b => b.User)
-            .FirstOrDefaultAsync(b => b.BookingReference == normalizedPnr && b.User.Email.ToLower() == normalizedEmail);
+            .FirstOrDefaultAsync(b => b.BookingReference == normalizedPnr && 
+                                    b.User != null && b.User.Email.ToLower() == normalizedEmail);
 
         if (booking == null)
             return NotFound(new { message = "PNR numarası veya e-posta adresi hatalı" });
@@ -239,7 +299,8 @@ public class BookingsController : ControllerBase
 
         var booking = await _context.Bookings
             .Include(b => b.User)
-            .FirstOrDefaultAsync(b => b.BookingReference == normalizedPnr && b.User.Email.ToLower() == normalizedEmail);
+            .FirstOrDefaultAsync(b => b.BookingReference == normalizedPnr && 
+                                    b.User != null && b.User.Email.ToLower() == normalizedEmail);
 
         if (booking == null)
             return NotFound(new { message = "PNR numarası veya e-posta adresi hatalı" });

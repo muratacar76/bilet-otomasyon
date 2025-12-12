@@ -12,5 +12,6 @@ public class User
     public bool IsAdmin { get; set; }
     public DateTime CreatedAt { get; set; }
     
-    public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
+    // Navigation properties
+    public List<Booking> Bookings { get; set; } = new();
 }

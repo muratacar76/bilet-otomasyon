@@ -17,7 +17,7 @@ builder.Services.AddEndpointsApiExplorer();
 
 // Database
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlite("Data Source=FlightBookingDB.db", o => o.CommandTimeout(30)));
 
 // JWT Configuration
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
@@ -59,7 +59,7 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline
 app.UseCors("AllowAll");
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection(); // Development için kapatıldı
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

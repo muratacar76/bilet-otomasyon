@@ -1,28 +1,85 @@
 import { useState, useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useSearchParams } from 'react-router-dom'
 import axios from 'axios'
 
-function GuestBooking() {
+// Rezervasyon durumu çevirisi
+const getStatusText = (status, isPaid) => {
+  if (status === 'Cancelled') return 'İptal Edildi'
+  if (status === 'Confirmed' && isPaid) return 'Ödendi'
+  if (status === 'Confirmed' && !isPaid) return 'Onaylandı'
+  return status
+}
+
+// Türkiye havalimanları mapping
+const airportMapping = {
+  'İstanbul': { code: 'IST', name: 'İstanbul Havalimanı' },
+  'Ankara': { code: 'ESB', name: 'Esenboğa Havalimanı' },
+  'İzmir': { code: 'ADB', name: 'Adnan Menderes Havalimanı' },
+  'Antalya': { code: 'AYT', name: 'Antalya Havalimanı' },
+  'Adana': { code: 'ADA', name: 'Şakirpaşa Havalimanı' },
+  'Trabzon': { code: 'TZX', name: 'Trabzon Havalimanı' },
+  'Gaziantep': { code: 'GZT', name: 'Oğuzeli Havalimanı' },
+  'Kayseri': { code: 'ASR', name: 'Erkilet Havalimanı' },
+  'Konya': { code: 'KYA', name: 'Konya Havalimanı' },
+  'Bursa': { code: 'YEI', name: 'Yenişehir Havalimanı' },
+  'Diyarbakır': { code: 'DIY', name: 'Diyarbakır Havalimanı' },
+  'Erzurum': { code: 'ERZ', name: 'Erzurum Havalimanı' },
+  'Samsun': { code: 'SZF', name: 'Çarşamba Havalimanı' },
+  'Denizli': { code: 'DNZ', name: 'Çardak Havalimanı' },
+  'Bodrum': { code: 'BJV', name: 'Milas-Bodrum Havalimanı' },
+  'Dalaman': { code: 'DLM', name: 'Dalaman Havalimanı' }
+}
+
+function GuestBooking({ user }) {
   const location = useLocation()
+  const [searchParams] = useSearchParams()
   const [pnr, setPnr] = useState('')
   const [email, setEmail] = useState('')
   const [booking, setBooking] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [showPaymentModal, setShowPaymentModal] = useState(false)
+  const [paymentLoading, setPaymentLoading] = useState(false)
+  const [paymentData, setPaymentData] = useState({
+    cardNumber: '',
+    expiryDate: '',
+    cvv: '',
+    cardHolder: ''
+  })
 
-  // URL state'inden PNR ve email'i al
+  // URL state'inden ve query parametrelerinden PNR ve email'i al
   useEffect(() => {
+    let pnrValue = ''
+    let emailValue = ''
+
+    // Önce location state'den kontrol et
     if (location.state?.pnr) {
-      setPnr(location.state.pnr)
+      pnrValue = location.state.pnr
+      setPnr(pnrValue)
     }
     if (location.state?.email) {
-      setEmail(location.state.email)
+      emailValue = location.state.email
+      setEmail(emailValue)
     }
+
+    // Sonra URL query parametrelerinden kontrol et
+    const urlPnr = searchParams.get('pnr')
+    const urlEmail = searchParams.get('email')
+    
+    if (urlPnr && !pnrValue) {
+      pnrValue = urlPnr
+      setPnr(pnrValue)
+    }
+    if (urlEmail && !emailValue) {
+      emailValue = urlEmail
+      setEmail(emailValue)
+    }
+
     // Eğer her ikisi de varsa otomatik sorgula
-    if (location.state?.pnr && location.state?.email) {
-      handleAutoSearch(location.state.pnr, location.state.email)
+    if (pnrValue && emailValue) {
+      handleAutoSearch(pnrValue, emailValue)
     }
-  }, [location.state])
+  }, [location.state, searchParams])
 
   const handleAutoSearch = async (pnrValue, emailValue) => {
     setError('')
@@ -55,48 +112,122 @@ function GuestBooking() {
     }
   }
 
-  const handlePayment = async () => {
-    if (!confirm('Ödemeyi onaylıyor musunuz?')) return
+  const handlePaymentClick = () => {
+    setShowPaymentModal(true)
+  }
+
+  const handlePaymentSubmit = async (e) => {
+    e.preventDefault()
+    
+    // Kart bilgilerini doğrula
+    if (!paymentData.cardNumber || paymentData.cardNumber.replace(/\s/g, '').length !== 16) {
+      alert('❌ Geçerli bir kart numarası girin (16 hane)')
+      return
+    }
+    
+    if (!paymentData.expiryDate || !/^\d{2}\/\d{2}$/.test(paymentData.expiryDate)) {
+      alert('❌ Geçerli bir son kullanma tarihi girin (AA/YY)')
+      return
+    }
+    
+    if (!paymentData.cvv || paymentData.cvv.length !== 3) {
+      alert('❌ Geçerli bir CVV girin (3 hane)')
+      return
+    }
+    
+    if (!paymentData.cardHolder.trim()) {
+      alert('❌ Kart sahibinin adını girin')
+      return
+    }
+
+    setPaymentLoading(true)
 
     try {
+      // Simüle edilmiş ödeme işlemi (2 saniye bekle)
+      await new Promise(resolve => setTimeout(resolve, 2000))
+      
       await axios.post(`/api/bookings/pnr/${pnr.toUpperCase()}/pay?email=${encodeURIComponent(email)}`)
-      alert('✅ Ödeme başarıyla tamamlandı!')
       
       // Rezervasyonu yeniden yükle
       const response = await axios.get(`/api/bookings/pnr/${pnr.toUpperCase()}?email=${encodeURIComponent(email)}`)
       setBooking(response.data)
       
-      // Üyelik teklifi
-      const wantToRegister = confirm(
-        '🎉 Ödemeniz tamamlandı!\n\n' +
-        '💡 Üye olarak daha fazla avantajdan yararlanabilirsiniz:\n' +
-        '• Tüm rezervasyonlarınızı tek yerden yönetin\n' +
-        '• Hızlı rezervasyon yapın\n' +
-        '• Özel kampanyalardan haberdar olun\n\n' +
-        'Şimdi üye olmak ister misiniz?'
-      )
+      setShowPaymentModal(false)
+      setPaymentData({ cardNumber: '', expiryDate: '', cvv: '', cardHolder: '' })
       
-      if (wantToRegister) {
-        window.location.href = '/register?email=' + encodeURIComponent(email)
+      // Başarı mesajı göster
+      if (user) {
+        alert('✅ Ödeme başarıyla tamamlandı!\n\n🎉 Biletiniz e-posta adresinize gönderilmiştir.')
+      } else {
+        alert('✅ Ödeme başarıyla tamamlandı!')
+      }
+      
+      // Üyelik teklifi - sadece misafir kullanıcılar için
+      if (!user) {
+        const wantToRegister = confirm(
+          '🎉 Ödemeniz tamamlandı!\n\n' +
+          '💡 Üye olarak daha fazla avantajdan yararlanabilirsiniz:\n' +
+          '• Tüm rezervasyonlarınızı tek yerden yönetin\n' +
+          '• Hızlı rezervasyon yapın\n' +
+          '• Özel kampanyalardan haberdar olun\n\n' +
+          'Şimdi üye olmak ister misiniz?'
+        )
+        
+        if (wantToRegister) {
+          window.location.href = '/register?email=' + encodeURIComponent(email)
+        }
       }
     } catch (err) {
       alert('❌ ' + (err.response?.data?.message || 'Ödeme yapılırken bir hata oluştu'))
+    } finally {
+      setPaymentLoading(false)
     }
+  }
+
+  const handlePaymentInputChange = (field, value) => {
+    let formattedValue = value
+
+    if (field === 'cardNumber') {
+      // Sadece rakamları al ve 4'lü gruplar halinde formatla
+      formattedValue = value.replace(/\D/g, '').replace(/(\d{4})(?=\d)/g, '$1 ').trim()
+      if (formattedValue.length > 19) formattedValue = formattedValue.slice(0, 19) // 16 rakam + 3 boşluk
+    } else if (field === 'expiryDate') {
+      // AA/YY formatında
+      formattedValue = value.replace(/\D/g, '').replace(/(\d{2})(\d)/, '$1/$2').slice(0, 5)
+    } else if (field === 'cvv') {
+      // Sadece 3 rakam
+      formattedValue = value.replace(/\D/g, '').slice(0, 3)
+    } else if (field === 'cardHolder') {
+      // Sadece harfler ve boşluk
+      formattedValue = value.replace(/[^a-zA-ZğüşıöçĞÜŞİÖÇ\s]/g, '').toUpperCase()
+    }
+
+    setPaymentData(prev => ({
+      ...prev,
+      [field]: formattedValue
+    }))
   }
 
   return (
     <div className="container">
       <div className="card" style={{ maxWidth: '600px', margin: '40px auto' }}>
         <div style={{
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          background: 'linear-gradient(135deg, #00bcd4 0%, #00acc1 100%)',
           color: 'white',
-          padding: '30px',
-          borderRadius: '20px',
-          marginBottom: '30px',
+          padding: '40px',
+          borderRadius: '24px',
+          marginBottom: '40px',
           textAlign: 'center'
         }}>
-          <h1 style={{ fontSize: '32px', marginBottom: '12px' }}>🎫 Rezervasyon Sorgula</h1>
-          <p style={{ fontSize: '16px' }}>PNR numaranız ve e-posta adresinizle rezervasyonunuzu görüntüleyin</p>
+          <h1 style={{ fontSize: '36px', marginBottom: '16px', fontWeight: '800' }}>
+            BULUTBİLET<span style={{ color: '#00e5ff' }}>.COM</span> - Rezervasyon Sorgula
+          </h1>
+          <p style={{ fontSize: '16px' }}>
+            {user 
+              ? 'PNR numaranız ve e-posta adresinizle rezervasyonunuzu görüntüleyin ve ödeme yapın'
+              : 'PNR numaranız ve e-posta adresinizle rezervasyonunuzu görüntüleyin'
+            }
+          </p>
         </div>
 
         <form onSubmit={handleSearch}>
@@ -138,14 +269,14 @@ function GuestBooking() {
       {booking && (
         <div className="card" style={{ maxWidth: '800px', margin: '0 auto' }}>
           <div style={{
-            background: 'linear-gradient(135deg, #51cf66 0%, #37b24d 100%)',
+            background: 'linear-gradient(135deg, #4caf50 0%, #388e3c 100%)',
             color: 'white',
-            padding: '20px',
-            borderRadius: '15px',
-            marginBottom: '24px'
+            padding: '24px',
+            borderRadius: '20px',
+            marginBottom: '32px'
           }}>
-            <h2 style={{ fontSize: '28px', marginBottom: '8px' }}>✅ Rezervasyon Bulundu!</h2>
-            <p style={{ fontSize: '18px', fontWeight: 'bold' }}>PNR: {booking.bookingReference}</p>
+            <h2 style={{ fontSize: '32px', marginBottom: '12px', fontWeight: '800' }}>✅ Rezervasyon Bulundu!</h2>
+            <p style={{ fontSize: '20px', fontWeight: '700' }}>PNR: {booking.bookingReference}</p>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '24px' }}>
@@ -158,7 +289,10 @@ function GuestBooking() {
             <div style={{ padding: '16px', background: '#f8f9ff', borderRadius: '12px' }}>
               <div style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>Rota</div>
               <div style={{ fontSize: '16px', fontWeight: 'bold' }}>
-                {booking.flight.departureCity} → {booking.flight.arrivalCity}
+                {booking.flight.departureCity} ({airportMapping[booking.flight.departureCity]?.code || 'N/A'}) → {booking.flight.arrivalCity} ({airportMapping[booking.flight.arrivalCity]?.code || 'N/A'})
+              </div>
+              <div style={{ fontSize: '12px', color: '#888', marginTop: '2px' }}>
+                {airportMapping[booking.flight.departureCity]?.name || booking.flight.departureCity} → {airportMapping[booking.flight.arrivalCity]?.name || booking.flight.arrivalCity}
               </div>
             </div>
 
@@ -180,9 +314,9 @@ function GuestBooking() {
             </div>
 
             <div style={{ padding: '16px', background: '#f8f9ff', borderRadius: '12px' }}>
-              <div style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>Ödeme Durumu</div>
-              <div style={{ fontSize: '16px', fontWeight: 'bold', color: booking.isPaid ? '#37b24d' : '#f03e3e' }}>
-                {booking.isPaid ? '✅ Ödendi' : '❌ Ödenmedi'}
+              <div style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>Rezervasyon Durumu</div>
+              <div style={{ fontSize: '16px', fontWeight: 'bold', color: booking.isPaid ? '#37b24d' : booking.status === 'Cancelled' ? '#f03e3e' : '#667eea' }}>
+                {getStatusText(booking.status, booking.isPaid)}
               </div>
             </div>
           </div>
@@ -234,18 +368,19 @@ function GuestBooking() {
 
           {!booking.isPaid && booking.status === 'Confirmed' && (
             <div style={{
-              background: 'linear-gradient(135deg, #ffd43b 0%, #fab005 100%)',
-              padding: '24px',
-              borderRadius: '15px',
+              background: 'linear-gradient(135deg, #ff9800 0%, #f57c00 100%)',
+              color: 'white',
+              padding: '32px',
+              borderRadius: '20px',
               textAlign: 'center'
             }}>
-              <h3 style={{ fontSize: '24px', marginBottom: '16px' }}>💳 Ödeme Yapın</h3>
-              <p style={{ fontSize: '16px', marginBottom: '20px' }}>
+              <h3 style={{ fontSize: '28px', marginBottom: '20px', fontWeight: '700' }}>💳 Ödeme Yapın</h3>
+              <p style={{ fontSize: '18px', marginBottom: '24px', fontWeight: '500' }}>
                 Rezervasyonunuzu tamamlamak için ödeme yapmanız gerekmektedir
               </p>
               <button 
                 className="btn btn-success" 
-                onClick={handlePayment}
+                onClick={handlePaymentClick}
                 style={{ fontSize: '18px', padding: '16px 48px' }}
               >
                 💳 ₺{booking.totalPrice} Öde
@@ -255,18 +390,171 @@ function GuestBooking() {
 
           {booking.isPaid && (
             <div style={{
-              background: 'linear-gradient(135deg, #51cf66 0%, #37b24d 100%)',
+              background: 'linear-gradient(135deg, #4caf50 0%, #388e3c 100%)',
               color: 'white',
-              padding: '24px',
-              borderRadius: '15px',
+              padding: '32px',
+              borderRadius: '20px',
               textAlign: 'center'
             }}>
-              <h3 style={{ fontSize: '24px', marginBottom: '8px' }}>🎉 Ödeme Tamamlandı!</h3>
-              <p style={{ fontSize: '16px' }}>
+              <h3 style={{ fontSize: '28px', marginBottom: '12px', fontWeight: '700' }}>🎉 Ödeme Tamamlandı!</h3>
+              <p style={{ fontSize: '18px', fontWeight: '500' }}>
                 Biletiniz e-posta adresinize gönderilmiştir
               </p>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Ödeme Modal */}
+      {showPaymentModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          background: 'rgba(0,0,0,0.8)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9999,
+          padding: '20px',
+          boxSizing: 'border-box'
+        }}>
+          <div style={{
+            background: 'white',
+            borderRadius: '20px',
+            padding: '30px',
+            maxWidth: '500px',
+            width: '100%',
+            maxHeight: '90vh',
+            overflow: 'auto'
+          }}>
+            <div style={{
+              background: 'linear-gradient(135deg, #00bcd4 0%, #00acc1 100%)',
+              color: 'white',
+              padding: '24px',
+              borderRadius: '20px',
+              marginBottom: '32px',
+              textAlign: 'center'
+            }}>
+              <h2 style={{ fontSize: '28px', marginBottom: '12px', fontWeight: '700' }}>💳 Ödeme Bilgileri</h2>
+              <p style={{ fontSize: '18px', fontWeight: 'bold' }}>Toplam: ₺{booking?.totalPrice}</p>
+            </div>
+
+            <form onSubmit={handlePaymentSubmit}>
+              <div className="form-group">
+                <label>Kart Numarası</label>
+                <input
+                  type="text"
+                  value={paymentData.cardNumber}
+                  onChange={(e) => handlePaymentInputChange('cardNumber', e.target.value)}
+                  placeholder="1234 5678 9012 3456"
+                  required
+                  style={{ 
+                    fontSize: '18px', 
+                    fontFamily: 'monospace',
+                    letterSpacing: '2px',
+                    textAlign: 'center'
+                  }}
+                />
+                <small style={{ color: '#666', fontSize: '12px' }}>
+                  16 haneli kart numaranızı girin
+                </small>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div className="form-group">
+                  <label>Son Kullanma Tarihi</label>
+                  <input
+                    type="text"
+                    value={paymentData.expiryDate}
+                    onChange={(e) => handlePaymentInputChange('expiryDate', e.target.value)}
+                    placeholder="MM/YY"
+                    required
+                    style={{ 
+                      fontSize: '18px', 
+                      fontFamily: 'monospace',
+                      textAlign: 'center'
+                    }}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>CVV</label>
+                  <input
+                    type="text"
+                    value={paymentData.cvv}
+                    onChange={(e) => handlePaymentInputChange('cvv', e.target.value)}
+                    placeholder="123"
+                    required
+                    style={{ 
+                      fontSize: '18px', 
+                      fontFamily: 'monospace',
+                      textAlign: 'center'
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Kart Sahibinin Adı</label>
+                <input
+                  type="text"
+                  value={paymentData.cardHolder}
+                  onChange={(e) => handlePaymentInputChange('cardHolder', e.target.value)}
+                  placeholder="AHMET YILMAZ"
+                  required
+                  style={{ 
+                    fontSize: '16px',
+                    textTransform: 'uppercase'
+                  }}
+                />
+                <small style={{ color: '#666', fontSize: '12px' }}>
+                  Kartınızda yazıldığı gibi girin
+                </small>
+              </div>
+
+              <div style={{
+                background: '#f8f9ff',
+                padding: '16px',
+                borderRadius: '12px',
+                marginBottom: '20px',
+                border: '1px solid #e0e0e0'
+              }}>
+                <h4 style={{ marginBottom: '12px', color: '#333' }}>🔒 Güvenli Ödeme</h4>
+                <p style={{ fontSize: '14px', color: '#666', marginBottom: '8px' }}>
+                  • Kart bilgileriniz SSL ile şifrelenir
+                </p>
+                <p style={{ fontSize: '14px', color: '#666', marginBottom: '8px' }}>
+                  • 3D Secure ile güvenli ödeme
+                </p>
+                <p style={{ fontSize: '14px', color: '#666' }}>
+                  • Kart bilgileriniz saklanmaz
+                </p>
+              </div>
+
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <button 
+                  type="submit" 
+                  className="btn btn-success" 
+                  disabled={paymentLoading}
+                  style={{ flex: 1, fontSize: '16px', padding: '14px' }}
+                >
+                  {paymentLoading ? '💳 Ödeme Yapılıyor...' : `💳 ₺${booking?.totalPrice} Öde`}
+                </button>
+                <button 
+                  type="button" 
+                  className="btn btn-secondary"
+                  onClick={() => setShowPaymentModal(false)}
+                  disabled={paymentLoading}
+                  style={{ fontSize: '16px', padding: '14px' }}
+                >
+                  İptal
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>

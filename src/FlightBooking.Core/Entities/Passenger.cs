@@ -9,8 +9,9 @@ public class Passenger
     public string IdentityNumber { get; set; } = string.Empty;
     public DateTime DateOfBirth { get; set; }
     public string Gender { get; set; } = string.Empty;
-    public string SeatNumber { get; set; } = string.Empty; // Örn: "12A", "15F"
-    public string SeatType { get; set; } = string.Empty; // "Window" veya "Aisle"
+    public string SeatNumber { get; set; } = string.Empty;
+    public string SeatType { get; set; } = string.Empty;
     
-    public Booking Booking { get; set; } = null!;
+    // Navigation property
+    public Booking? Booking { get; set; }
 }

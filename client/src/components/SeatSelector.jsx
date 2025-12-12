@@ -41,7 +41,6 @@ const SeatSelector = ({ flightId, passengerCount, onSeatsSelected }) => {
     }
     
     setSelectedSeats(newSelectedSeats);
-    onSeatsSelected(newSelectedSeats);
   };
 
   const getSeatClass = (seat) => {
@@ -74,8 +73,35 @@ const SeatSelector = ({ flightId, passengerCount, onSeatsSelected }) => {
   return (
     <div className="seat-selector">
       <div className="seat-selector-header">
-        <h3>Koltuk Seçimi</h3>
-        <p>Lütfen {passengerCount} koltuk seçin ({selectedSeats.length}/{passengerCount})</p>
+        <h3>Koltuk Seçimi - {passengerCount} Yolcu</h3>
+        <div style={{
+          background: selectedSeats.length === passengerCount ? 'linear-gradient(135deg, #4caf50, #388e3c)' : 'linear-gradient(135deg, #00bcd4, #00acc1)',
+          color: 'white',
+          padding: '16px 20px',
+          borderRadius: '12px',
+          textAlign: 'center',
+          marginBottom: '20px'
+        }}>
+          {selectedSeats.length === passengerCount 
+            ? `✅ Tüm yolcular için koltuk seçildi! (${passengerCount}/${passengerCount})`
+            : selectedSeats.length === 0
+              ? `🪑 ${passengerCount} yolcu için koltuk seçin`
+              : `🪑 ${selectedSeats.length}/${passengerCount} koltuk seçildi - ${passengerCount - selectedSeats.length} koltuk daha seçin`
+          }
+        </div>
+        {selectedSeats.length > 0 && selectedSeats.length < passengerCount && (
+          <div style={{
+            background: '#fff3cd',
+            border: '1px solid #ffeaa7',
+            color: '#856404',
+            padding: '8px 12px',
+            borderRadius: '6px',
+            fontSize: '14px',
+            marginBottom: '12px'
+          }}>
+            💡 Şu anda <strong>Yolcu {selectedSeats.length + 1}</strong> için koltuk seçiyorsunuz
+          </div>
+        )}
       </div>
 
       <div className="seat-legend">
@@ -144,18 +170,63 @@ const SeatSelector = ({ flightId, passengerCount, onSeatsSelected }) => {
         </div>
       </div>
 
-      {selectedSeats.length > 0 && (
-        <div className="selected-seats-summary">
-          <h4>Seçilen Koltuklar:</h4>
-          <div className="selected-seats-list">
-            {selectedSeats.map((seat, index) => (
-              <span key={seat.seatNumber} className="selected-seat-badge">
-                {seat.seatNumber} ({seat.seatType === 'Window' ? '🪟 Cam' : seat.seatType === 'Aisle' ? '🚶 Koridor' : '💺 Orta'})
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
+      <div className="selected-seats-summary">
+        {selectedSeats.length > 0 && (
+          <>
+            <h4>Seçilen Koltuklar:</h4>
+            <div className="selected-seats-list">
+              {selectedSeats.map((seat, index) => (
+                <div key={seat.seatNumber} className="selected-seat-item" style={{
+                  display: 'inline-block',
+                  margin: '6px',
+                  padding: '10px 16px',
+                  background: 'linear-gradient(135deg, #00bcd4, #00acc1)',
+                  color: 'white',
+                  borderRadius: '12px',
+                  fontSize: '15px',
+                  fontWeight: '500'
+                }}>
+                  <strong>Yolcu {index + 1}:</strong> {seat.seatNumber} ({seat.seatType === 'Window' ? '🪟 Cam' : seat.seatType === 'Aisle' ? '🚶 Koridor' : '💺 Orta'})
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+        
+        <button 
+          className={`btn ${selectedSeats.length === passengerCount ? 'btn-primary' : 'btn-secondary'}`}
+          onClick={() => {
+            if (selectedSeats.length !== passengerCount) {
+              alert(`⚠️ Lütfen ${passengerCount} koltuk seçin. Şu anda ${selectedSeats.length} koltuk seçili.`)
+              return
+            }
+            onSeatsSelected(selectedSeats)
+          }}
+          disabled={selectedSeats.length !== passengerCount}
+          style={{ 
+            marginTop: '16px', 
+            width: '100%',
+            opacity: selectedSeats.length === passengerCount ? 1 : 0.6,
+            cursor: selectedSeats.length === passengerCount ? 'pointer' : 'not-allowed'
+          }}
+        >
+          {selectedSeats.length === passengerCount 
+            ? `✅ Koltuk Seçimini Onayla (${selectedSeats.length} Koltuk)` 
+            : `🚫 Koltuk Seçin (${selectedSeats.length}/${passengerCount}) - ${passengerCount - selectedSeats.length} eksik`
+          }
+        </button>
+        
+        {selectedSeats.length > 0 && selectedSeats.length !== passengerCount && (
+          <p style={{ 
+            textAlign: 'center', 
+            marginTop: '8px', 
+            color: '#666', 
+            fontSize: '14px' 
+          }}>
+            {passengerCount - selectedSeats.length} koltuk daha seçmeniz gerekiyor
+          </p>
+        )}
+      </div>
     </div>
   );
 };

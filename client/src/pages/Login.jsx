@@ -21,7 +21,8 @@ function Login({ setUser }) {
       setUser(response.data.user)
       navigate('/flights')
     } catch (err) {
-      setError(err.response?.data?.message || 'Giriş başarısız')
+      console.error('Giriş hatası:', err)
+      setError(err.response?.data?.message || err.message || 'Giriş başarısız')
     } finally {
       setLoading(false)
     }
@@ -30,7 +31,9 @@ function Login({ setUser }) {
   return (
     <div className="container">
       <div className="card" style={{ maxWidth: '500px', margin: '40px auto' }}>
-        <h2 style={{ marginBottom: '24px', textAlign: 'center' }}>Giriş Yap</h2>
+        <h2 style={{ marginBottom: '32px', textAlign: 'center', fontSize: '28px', fontWeight: '700', color: '#37474f' }}>
+          BULUTBİLET<span style={{ color: '#00e5ff' }}>.COM</span> - Giriş Yap
+        </h2>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>E-posta</label>

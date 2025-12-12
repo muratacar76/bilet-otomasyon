@@ -13,123 +13,89 @@ public static class DbInitializer
             return; // DB has been seeded
         }
 
-        var flights = new Flight[]
-        {
-            new Flight
-            {
-                FlightNumber = "TK101",
-                Airline = "Turkish Airlines",
-                DepartureCity = "İstanbul",
-                ArrivalCity = "Ankara",
-                DepartureTime = DateTime.Now.AddDays(2).AddHours(9),
-                ArrivalTime = DateTime.Now.AddDays(2).AddHours(10).AddMinutes(30),
-                Price = 850,
-                TotalSeats = 180,
-                AvailableSeats = 180,
-                Status = "Active",
-                CreatedAt = DateTime.UtcNow
-            },
-            new Flight
-            {
-                FlightNumber = "PC202",
-                Airline = "Pegasus",
-                DepartureCity = "İstanbul",
-                ArrivalCity = "İzmir",
-                DepartureTime = DateTime.Now.AddDays(1).AddHours(14),
-                ArrivalTime = DateTime.Now.AddDays(1).AddHours(15).AddMinutes(20),
-                Price = 650,
-                TotalSeats = 150,
-                AvailableSeats = 150,
-                Status = "Active",
-                CreatedAt = DateTime.UtcNow
-            },
-            new Flight
-            {
-                FlightNumber = "TK303",
-                Airline = "Turkish Airlines",
-                DepartureCity = "Ankara",
-                ArrivalCity = "Antalya",
-                DepartureTime = DateTime.Now.AddDays(3).AddHours(11),
-                ArrivalTime = DateTime.Now.AddDays(3).AddHours(12).AddMinutes(45),
-                Price = 920,
-                TotalSeats = 200,
-                AvailableSeats = 200,
-                Status = "Active",
-                CreatedAt = DateTime.UtcNow
-            },
-            new Flight
-            {
-                FlightNumber = "SJ404",
-                Airline = "SunExpress",
-                DepartureCity = "İzmir",
-                ArrivalCity = "Antalya",
-                DepartureTime = DateTime.Now.AddDays(2).AddHours(16),
-                ArrivalTime = DateTime.Now.AddDays(2).AddHours(17).AddMinutes(10),
-                Price = 580,
-                TotalSeats = 120,
-                AvailableSeats = 120,
-                Status = "Active",
-                CreatedAt = DateTime.UtcNow
-            },
-            new Flight
-            {
-                FlightNumber = "PC505",
-                Airline = "Pegasus",
-                DepartureCity = "İstanbul",
-                ArrivalCity = "Trabzon",
-                DepartureTime = DateTime.Now.AddDays(4).AddHours(8),
-                ArrivalTime = DateTime.Now.AddDays(4).AddHours(10).AddMinutes(15),
-                Price = 780,
-                TotalSeats = 140,
-                AvailableSeats = 140,
-                Status = "Active",
-                CreatedAt = DateTime.UtcNow
-            },
-            new Flight
-            {
-                FlightNumber = "TK606",
-                Airline = "Turkish Airlines",
-                DepartureCity = "Ankara",
-                ArrivalCity = "İstanbul",
-                DepartureTime = DateTime.Now.AddDays(1).AddHours(18),
-                ArrivalTime = DateTime.Now.AddDays(1).AddHours(19).AddMinutes(30),
-                Price = 890,
-                TotalSeats = 180,
-                AvailableSeats = 180,
-                Status = "Active",
-                CreatedAt = DateTime.UtcNow
-            },
-            new Flight
-            {
-                FlightNumber = "AJ707",
-                Airline = "AnadoluJet",
-                DepartureCity = "İzmir",
-                ArrivalCity = "İstanbul",
-                DepartureTime = DateTime.Now.AddDays(2).AddHours(12),
-                ArrivalTime = DateTime.Now.AddDays(2).AddHours(13).AddMinutes(20),
-                Price = 720,
-                TotalSeats = 160,
-                AvailableSeats = 160,
-                Status = "Active",
-                CreatedAt = DateTime.UtcNow
-            },
-            new Flight
-            {
-                FlightNumber = "TK808",
-                Airline = "Turkish Airlines",
-                DepartureCity = "Antalya",
-                ArrivalCity = "İstanbul",
-                DepartureTime = DateTime.Now.AddDays(3).AddHours(20),
-                ArrivalTime = DateTime.Now.AddDays(3).AddHours(21).AddMinutes(40),
-                Price = 950,
-                TotalSeats = 200,
-                AvailableSeats = 200,
-                Status = "Active",
-                CreatedAt = DateTime.UtcNow
-            }
-        };
+        var flights = GenerateFlights();
 
         context.Flights.AddRange(flights);
         context.SaveChanges();
+    }
+
+    private static List<Flight> GenerateFlights()
+    {
+        var flights = new List<Flight>();
+        var airlines = new[] { "Turkish Airlines", "Pegasus", "SunExpress", "AnadoluJet", "AtlasGlobal" };
+        var cities = new[] { "İstanbul", "Ankara", "İzmir", "Antalya", "Trabzon", "Adana", "Gaziantep", "Kayseri", "Konya", "Bursa" };
+        var random = new Random();
+        var flightCounter = 1;
+
+        // 14 gün boyunca her gün uçuşlar oluştur
+        for (int day = 1; day <= 14; day++)
+        {
+            // Her gün 8-12 arası uçuş oluştur
+            int dailyFlights = random.Next(8, 13);
+            
+            for (int i = 0; i < dailyFlights; i++)
+            {
+                var departureCity = cities[random.Next(cities.Length)];
+                var arrivalCity = cities[random.Next(cities.Length)];
+                
+                // Aynı şehir olmasın
+                while (arrivalCity == departureCity)
+                {
+                    arrivalCity = cities[random.Next(cities.Length)];
+                }
+
+                var airline = airlines[random.Next(airlines.Length)];
+                var departureHour = random.Next(6, 23); // 06:00 - 22:59 arası
+                var departureMinute = random.Next(0, 60);
+                var flightDuration = random.Next(60, 180); // 1-3 saat arası
+
+                var departureTime = DateTime.Now.AddDays(day).Date.AddHours(departureHour).AddMinutes(departureMinute);
+                var arrivalTime = departureTime.AddMinutes(flightDuration);
+
+                // Fiyat hesaplama (mesafeye göre)
+                var basePrice = 400;
+                var distanceMultiplier = random.Next(1, 4);
+                var price = basePrice + (distanceMultiplier * 150) + random.Next(-50, 100);
+
+                // Koltuk sayısı
+                var totalSeats = random.Next(120, 201);
+                var bookedSeats = random.Next(0, totalSeats / 3); // %0-33 arası dolu
+                var availableSeats = totalSeats - bookedSeats;
+
+                flights.Add(new Flight
+                {
+                    FlightNumber = GetFlightNumber(airline, flightCounter++),
+                    Airline = airline,
+                    DepartureCity = departureCity,
+                    ArrivalCity = arrivalCity,
+                    DepartureTime = departureTime,
+                    ArrivalTime = arrivalTime,
+                    Price = price,
+                    TotalSeats = totalSeats,
+                    AvailableSeats = availableSeats,
+                    Status = "Active",
+                    CreatedAt = DateTime.UtcNow,
+                    SeatsPerRow = 6,
+                    TotalRows = totalSeats / 6
+                });
+            }
+        }
+
+        return flights;
+    }
+
+    private static string GetFlightNumber(string airline, int counter)
+    {
+        var prefix = airline switch
+        {
+            "Turkish Airlines" => "TK",
+            "Pegasus" => "PC",
+            "SunExpress" => "XQ",
+            "AnadoluJet" => "AJ",
+            "AtlasGlobal" => "KK",
+            _ => "XX"
+        };
+        
+        return $"{prefix}{counter:D3}";
     }
 }

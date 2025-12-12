@@ -1,6 +1,14 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 
+// Rezervasyon durumu çevirisi
+const getStatusText = (status, isPaid) => {
+  if (status === 'Cancelled') return 'İptal Edildi'
+  if (status === 'Confirmed' && isPaid) return 'Ödendi'
+  if (status === 'Confirmed' && !isPaid) return 'Onaylandı'
+  return status
+}
+
 function AdminDashboard() {
   const [flights, setFlights] = useState([])
   const [bookings, setBookings] = useState([])
@@ -127,9 +135,43 @@ function AdminDashboard() {
     }
   }
 
+  const handleDeleteAllBookings = async () => {
+    const confirmMessage = `⚠️ DİKKAT: Tüm rezervasyonları silmek istediğinizden emin misiniz?\n\n` +
+                          `• Toplam ${bookings.length} rezervasyon silinecek\n` +
+                          `• Bu işlem geri alınamaz\n` +
+                          `• Uçuşlardaki koltuk sayıları sıfırlanacak\n\n` +
+                          `Devam etmek için "EVET" yazın:`
+
+    const userInput = prompt(confirmMessage)
+    
+    if (userInput !== 'EVET') {
+      alert('❌ İşlem iptal edildi')
+      return
+    }
+
+    try {
+      const token = localStorage.getItem('token')
+      
+      const response = await axios.delete('/api/bookings/all', {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      
+      const { deletedCount, deletedPassengers } = response.data
+      alert(`✅ Toplu silme tamamlandı!\n\n• ${deletedCount} rezervasyon silindi\n• ${deletedPassengers} yolcu kaydı silindi\n• Uçuş koltuk sayıları güncellendi`)
+      
+      fetchAllBookings()
+      fetchFlights()
+    } catch (error) {
+      const errorMsg = error.response?.data?.message || 'Toplu silme işlemi sırasında bir hata oluştu'
+      alert('❌ ' + errorMsg)
+    }
+  }
+
   return (
     <div className="container">
-      <h2 style={{ color: 'white', marginBottom: '24px' }}>Admin Paneli</h2>
+      <h2 style={{ color: 'white', marginBottom: '32px', fontSize: '32px', fontWeight: '800' }}>
+        BULUTBİLET<span style={{ color: '#00e5ff' }}>.COM</span> - Admin Paneli
+      </h2>
 
       <div className="card">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
@@ -264,7 +306,18 @@ function AdminDashboard() {
       </div>
 
       <div className="card" style={{ marginTop: '24px' }}>
-        <h3 style={{ marginBottom: '20px' }}>Tüm Rezervasyonlar</h3>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+          <h3>Tüm Rezervasyonlar ({bookings.length})</h3>
+          {bookings.length > 0 && (
+            <button 
+              className="btn btn-danger" 
+              onClick={handleDeleteAllBookings}
+              style={{ fontSize: '14px', padding: '8px 16px' }}
+            >
+              🗑️ Tüm Rezervasyonları Sil
+            </button>
+          )}
+        </div>
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
@@ -289,7 +342,7 @@ function AdminDashboard() {
                   <td style={{ padding: '12px' }}>₺{booking.totalPrice}</td>
                   <td style={{ padding: '12px' }}>
                     <span className={`booking-status status-${booking.status.toLowerCase()}`}>
-                      {booking.status}
+                      {getStatusText(booking.status, booking.isPaid)}
                     </span>
                   </td>
                   <td style={{ padding: '12px' }}>{booking.isPaid ? '✅' : '❌'}</td>

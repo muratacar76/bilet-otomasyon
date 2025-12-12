@@ -9,6 +9,7 @@ function Register({ setUser }) {
     lastName: '',
     email: location.state?.email || '',
     password: '',
+    confirmPassword: '',
     phoneNumber: ''
   })
   const [error, setError] = useState('')
@@ -25,14 +26,24 @@ function Register({ setUser }) {
     setError('')
     setLoading(true)
 
+    // Şifre kontrolü
+    if (formData.password !== formData.confirmPassword) {
+      setError('Şifreler eşleşmiyor')
+      setLoading(false)
+      return
+    }
+
     try {
-      const response = await axios.post('/api/auth/register', formData)
+      // confirmPassword'u API'ye göndermiyoruz
+      const { confirmPassword, ...dataToSend } = formData
+      const response = await axios.post('/api/auth/register', dataToSend)
       localStorage.setItem('token', response.data.token)
       localStorage.setItem('user', JSON.stringify(response.data.user))
       setUser(response.data.user)
       navigate('/flights')
     } catch (err) {
-      setError(err.response?.data?.message || 'Kayıt başarısız')
+      console.error('Kayıt hatası:', err)
+      setError(err.response?.data?.message || err.message || 'Kayıt başarısız')
     } finally {
       setLoading(false)
     }
@@ -43,20 +54,20 @@ function Register({ setUser }) {
       <div className="card" style={{ maxWidth: '500px', margin: '40px auto' }}>
         {showWelcome && (
           <div style={{
-            background: 'linear-gradient(135deg, #51cf66 0%, #37b24d 100%)',
+            background: 'linear-gradient(135deg, #4caf50 0%, #388e3c 100%)',
             color: 'white',
-            padding: '20px',
-            borderRadius: '12px',
-            marginBottom: '24px',
+            padding: '24px',
+            borderRadius: '16px',
+            marginBottom: '32px',
             textAlign: 'center',
             animation: 'slideInLeft 0.5s ease-out'
           }}>
-            <h3 style={{ fontSize: '24px', marginBottom: '12px' }}>🎉 Hoş Geldiniz!</h3>
-            <p style={{ fontSize: '16px' }}>Rezervasyonunuz tamamlandı. Şimdi üyeliğinizi tamamlayın ve avantajlardan yararlanın!</p>
+            <h3 style={{ fontSize: '26px', marginBottom: '16px', fontWeight: '700' }}>🎉 Hoş Geldiniz!</h3>
+            <p style={{ fontSize: '16px', lineHeight: '1.6' }}>Rezervasyonunuz tamamlandı. Şimdi üyeliğinizi tamamlayın ve avantajlardan yararlanın!</p>
           </div>
         )}
-        <h2 style={{ marginBottom: '24px', textAlign: 'center' }}>
-          {showWelcome ? '✨ Üyeliğinizi Tamamlayın' : 'Kayıt Ol'}
+        <h2 style={{ marginBottom: '32px', textAlign: 'center', fontSize: '28px', fontWeight: '700', color: '#37474f' }}>
+          BULUTBİLET<span style={{ color: '#00e5ff' }}>.COM</span> - {showWelcome ? '✨ Üyeliğinizi Tamamlayın' : 'Kayıt Ol'}
         </h2>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
@@ -115,6 +126,30 @@ function Register({ setUser }) {
               required
               minLength="4"
             />
+          </div>
+          <div className="form-group">
+            <label>Şifre Tekrarı</label>
+            <input
+              type="password"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              required
+              minLength="4"
+              style={{
+                borderColor: formData.confirmPassword && formData.password !== formData.confirmPassword ? '#dc3545' : ''
+              }}
+            />
+            {formData.confirmPassword && formData.password !== formData.confirmPassword && (
+              <small style={{ color: '#dc3545', fontSize: '12px' }}>
+                ❌ Şifreler eşleşmiyor
+              </small>
+            )}
+            {formData.confirmPassword && formData.password === formData.confirmPassword && (
+              <small style={{ color: '#28a745', fontSize: '12px' }}>
+                ✅ Şifreler eşleşiyor
+              </small>
+            )}
           </div>
           {error && <div className="error">{error}</div>}
           <button type="submit" className="btn btn-primary" disabled={loading} style={{ width: '100%' }}>

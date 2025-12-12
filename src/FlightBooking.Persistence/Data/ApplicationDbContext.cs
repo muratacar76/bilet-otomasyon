@@ -1,5 +1,4 @@
 using FlightBooking.Core.Entities;
-using FlightBooking.Persistence.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace FlightBooking.Persistence.Data;
@@ -23,11 +22,38 @@ public class ApplicationDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        
+        // Booking - User relationship
+        modelBuilder.Entity<Booking>()
+            .HasOne(b => b.User)
+            .WithMany(u => u.Bookings)
+            .HasForeignKey(b => b.UserId)
+            .OnDelete(DeleteBehavior.NoAction);
 
-        // Model yapılandırmalarını uygula
-        modelBuilder.ApplyConfiguration(new UserConfiguration());
-        modelBuilder.ApplyConfiguration(new FlightConfiguration());
-        modelBuilder.ApplyConfiguration(new BookingConfiguration());
-        modelBuilder.ApplyConfiguration(new PassengerConfiguration());
+        // Booking - Flight relationship
+        modelBuilder.Entity<Booking>()
+            .HasOne(b => b.Flight)
+            .WithMany(f => f.Bookings)
+            .HasForeignKey(b => b.FlightId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        // Passenger - Booking relationship
+        modelBuilder.Entity<Passenger>()
+            .HasOne(p => p.Booking)
+            .WithMany(b => b.Passengers)
+            .HasForeignKey(p => p.BookingId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Indexes for better performance
+        modelBuilder.Entity<User>()
+            .HasIndex(u => u.Email)
+            .IsUnique();
+
+        modelBuilder.Entity<Flight>()
+            .HasIndex(f => f.FlightNumber);
+
+        modelBuilder.Entity<Booking>()
+            .HasIndex(b => b.BookingReference)
+            .IsUnique();
     }
 }

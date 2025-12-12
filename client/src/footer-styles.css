@@ -1,0 +1,302 @@
+/* Yeni Footer Styles */
+.footer {
+  background: linear-gradient(135deg, rgba(55, 71, 79, 0.98) 0%, rgba(38, 50, 56, 0.98) 100%);
+  backdrop-filter: blur(20px);
+  color: white;
+  margin-top: 60px;
+  position: relative;
+  overflow: hidden;
+}
+
+.footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, #00bcd4, #00acc1, #0097a7, #00838f);
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 25px 30px 20px;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+/* Brand Section */
+.footer-brand h3 {
+  background: linear-gradient(135deg, #00bcd4 0%, #00acc1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 20px;
+  font-weight: 800;
+  margin-bottom: 8px;
+  font-family: 'Inter', sans-serif;
+}
+
+.footer-brand p {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 13px;
+  line-height: 1.4;
+  margin-bottom: 15px;
+  font-family: 'Inter', sans-serif;
+}
+
+.footer-contact-quick {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.quick-contact {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.quick-contact span {
+  font-size: 16px;
+}
+
+.quick-contact a {
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.quick-contact a:hover {
+  color: #00bcd4;
+}
+
+/* Section Headers */
+.footer-section h4 {
+  color: #00bcd4;
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  font-family: 'Inter', sans-serif;
+  position: relative;
+}
+
+.footer-section h4::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  width: 30px;
+  height: 2px;
+  background: linear-gradient(90deg, #00bcd4, #00acc1);
+  border-radius: 1px;
+}
+
+/* Links Grid */
+.footer-links-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.footer-links-grid a {
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  font-size: 13px;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.3s ease;
+  position: relative;
+  padding: 2px 0;
+}
+
+.footer-links-grid a:hover {
+  color: #00bcd4;
+  transform: translateX(3px);
+}
+
+/* Social Media Compact */
+.social-links-compact {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.social-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.social-icon:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 188, 212, 0.3);
+}
+
+.social-icon.facebook:hover {
+  color: #1877f2;
+  background: linear-gradient(135deg, rgba(24, 119, 242, 0.2) 0%, rgba(24, 119, 242, 0.1) 100%);
+  border-color: rgba(24, 119, 242, 0.3);
+}
+
+.social-icon.twitter:hover {
+  color: #1da1f2;
+  background: linear-gradient(135deg, rgba(29, 161, 242, 0.2) 0%, rgba(29, 161, 242, 0.1) 100%);
+  border-color: rgba(29, 161, 242, 0.3);
+}
+
+.social-icon.instagram:hover {
+  color: #e4405f;
+  background: linear-gradient(135deg, rgba(228, 64, 95, 0.2) 0%, rgba(228, 64, 95, 0.1) 100%);
+  border-color: rgba(228, 64, 95, 0.3);
+}
+
+.social-icon.linkedin:hover {
+  color: #0077b5;
+  background: linear-gradient(135deg, rgba(0, 119, 181, 0.2) 0%, rgba(0, 119, 181, 0.1) 100%);
+  border-color: rgba(0, 119, 181, 0.3);
+}
+
+/* Legal Links */
+.footer-legal-links {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.footer-legal-links a {
+  color: rgba(255, 255, 255, 0.5);
+  text-decoration: none;
+  font-size: 11px;
+  font-family: 'Inter', sans-serif;
+  transition: color 0.3s ease;
+}
+
+.footer-legal-links a:hover {
+  color: #00bcd4;
+}
+
+/* Footer Bottom */
+.footer-bottom {
+  background: linear-gradient(135deg, rgba(38, 50, 56, 0.95) 0%, rgba(33, 43, 48, 0.95) 100%);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(0, 188, 212, 0.2);
+  padding: 12px 0;
+}
+
+.footer-bottom-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.footer-bottom p {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+}
+
+.footer-location {
+  color: rgba(255, 255, 255, 0.5) !important;
+  font-size: 11px !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .footer-content {
+    grid-template-columns: 1fr 1fr;
+    padding: 20px 20px 15px;
+    gap: 18px;
+  }
+  
+  .footer-brand {
+    grid-column: 1 / -1;
+  }
+  
+  .footer-brand h3 {
+    font-size: 18px;
+  }
+  
+  .footer-section h4 {
+    font-size: 14px;
+  }
+  
+  .footer-bottom-content {
+    padding: 0 20px;
+    flex-direction: column;
+    text-align: center;
+    gap: 8px;
+  }
+  
+  .social-links-compact {
+    justify-content: center;
+  }
+  
+  .footer-legal-links {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-content {
+    grid-template-columns: 1fr;
+    padding: 20px 15px 15px;
+    gap: 20px;
+  }
+  
+  .footer-brand h3 {
+    font-size: 18px;
+  }
+  
+  .social-icon {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .social-links-compact {
+    gap: 8px;
+  }
+  
+  .footer-legal-links {
+    gap: 8px;
+  }
+  
+  .footer-legal-links a {
+    font-size: 11px;
+  }
+}
+
+/* Animation */
+.footer-section {
+  animation: slideInLeft 0.6s ease-out;
+}
+
+.footer-section:nth-child(2) { animation-delay: 0.1s; }
+.footer-section:nth-child(3) { animation-delay: 0.2s; }
+.footer-section:nth-child(4) { animation-delay: 0.3s; }
+
+.social-icon {
+  animation: fadeIn 0.5s ease-in;
+}
+
+.social-icon:nth-child(1) { animation-delay: 0.1s; }
+.social-icon:nth-child(2) { animation-delay: 0.2s; }
+.social-icon:nth-child(3) { animation-delay: 0.3s; }
+.social-icon:nth-child(4) { animation-delay: 0.4s; }
