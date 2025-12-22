@@ -1,0 +1,594 @@
+2025-12-22 14:30:57.288 +03:00 [INF] Executed DbCommand (6ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*) FROM "sqlite_master" WHERE "type" = 'table' AND "rootpage" IS NOT NULL;
+2025-12-22 14:30:57.368 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT EXISTS (
+    SELECT 1
+    FROM "Users" AS "u")
+2025-12-22 14:30:57.370 +03:00 [INF] Database initialized successfully
+2025-12-22 14:30:57.371 +03:00 [INF] Bulut Bilet.com MVC Application starting up...
+2025-12-22 14:30:57.376 +03:00 [INF] User profile is available. Using '/Users/tiryaki/.aspnet/DataProtection-Keys' as key repository; keys will not be encrypted at rest.
+2025-12-22 14:30:57.391 +03:00 [INF] Now listening on: http://localhost:5000
+2025-12-22 14:30:57.391 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-12-22 14:30:57.391 +03:00 [INF] Hosting environment: Production
+2025-12-22 14:30:57.391 +03:00 [INF] Content root path: /Users/tiryaki/bilet-otomasyon/mvc-flight-booking/backend/FlightBooking.Web
+2025-12-22 14:31:01.375 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/ - null null
+2025-12-22 14:31:01.377 +03:00 [WRN] Failed to determine the https port for redirect.
+2025-12-22 14:31:01.390 +03:00 [INF] Executing endpoint 'FlightBooking.Web.Controllers.HomeController.Index (FlightBooking.Web)'
+2025-12-22 14:31:01.393 +03:00 [INF] Route matched with {action = "Index", controller = "Home"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Index() on controller FlightBooking.Web.Controllers.HomeController (FlightBooking.Web).
+2025-12-22 14:31:02.395 +03:00 [INF] Executing ViewResult, running view Index.
+2025-12-22 14:31:02.620 +03:00 [INF] Executed ViewResult - view Index executed in 1223.4998ms.
+2025-12-22 14:31:02.621 +03:00 [INF] Executed action FlightBooking.Web.Controllers.HomeController.Index (FlightBooking.Web) in 1227.2763ms
+2025-12-22 14:31:02.621 +03:00 [INF] Executed endpoint 'FlightBooking.Web.Controllers.HomeController.Index (FlightBooking.Web)'
+2025-12-22 14:31:02.622 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/ - 200 null text/html; charset=utf-8 1247.1065ms
+2025-12-22 14:31:02.627 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/css/site.css?v=Xl2tWuvvtWtp8Lp9pMkn6qZdYpsBZFKQrC66Mo4GV9U - null null
+2025-12-22 14:31:02.631 +03:00 [INF] Sending file. Request path: '/css/site.css'. Physical path: '/Users/tiryaki/bilet-otomasyon/mvc-flight-booking/backend/FlightBooking.Web/wwwroot/css/site.css'
+2025-12-22 14:31:02.631 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/js/site.js?v=QHcG3DXmbhJr8AuIlJuQmUueXrjLZXpPL0EuobrV6zA - null null
+2025-12-22 14:31:02.631 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/css/site.css?v=Xl2tWuvvtWtp8Lp9pMkn6qZdYpsBZFKQrC66Mo4GV9U - 200 34852 text/css 3.9726ms
+2025-12-22 14:31:02.631 +03:00 [INF] Sending file. Request path: '/js/site.js'. Physical path: '/Users/tiryaki/bilet-otomasyon/mvc-flight-booking/backend/FlightBooking.Web/wwwroot/js/site.js'
+2025-12-22 14:31:02.632 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/js/site.js?v=QHcG3DXmbhJr8AuIlJuQmUueXrjLZXpPL0EuobrV6zA - 200 10386 text/javascript 0.6255ms
+2025-12-22 14:31:03.028 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/images/ucak.jpg - null null
+2025-12-22 14:31:03.030 +03:00 [INF] Sending file. Request path: '/images/ucak.jpg'. Physical path: '/Users/tiryaki/bilet-otomasyon/mvc-flight-booking/backend/FlightBooking.Web/wwwroot/images/ucak.jpg'
+2025-12-22 14:31:03.030 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/images/ucak.jpg - 200 157964 image/jpeg 2.2792ms
+2025-12-22 14:31:03.733 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/favicon.ico - null null
+2025-12-22 14:31:03.738 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/favicon.ico - 404 0 null 4.503ms
+2025-12-22 14:31:03.738 +03:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5000/favicon.ico, Response status code: 404
+2025-12-22 14:31:13.183 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/Auth/Login - null null
+2025-12-22 14:31:13.188 +03:00 [INF] Executing endpoint 'FlightBooking.Web.Controllers.AuthController.Login (FlightBooking.Web)'
+2025-12-22 14:31:13.195 +03:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Login(System.String) on controller FlightBooking.Web.Controllers.AuthController (FlightBooking.Web).
+2025-12-22 14:31:13.363 +03:00 [INF] Executing ViewResult, running view Login.
+2025-12-22 14:31:13.375 +03:00 [INF] Executed ViewResult - view Login executed in 118.8636ms.
+2025-12-22 14:31:13.376 +03:00 [INF] Executed action FlightBooking.Web.Controllers.AuthController.Login (FlightBooking.Web) in 180.1504ms
+2025-12-22 14:31:13.376 +03:00 [INF] Executed endpoint 'FlightBooking.Web.Controllers.AuthController.Login (FlightBooking.Web)'
+2025-12-22 14:31:13.376 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/Auth/Login - 200 null text/html; charset=utf-8 193.8626ms
+2025-12-22 14:31:13.517 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/apple-touch-icon-precomposed.png - null null
+2025-12-22 14:31:13.518 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/apple-touch-icon-precomposed.png - 404 0 null 0.5111ms
+2025-12-22 14:31:13.518 +03:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5000/apple-touch-icon-precomposed.png, Response status code: 404
+2025-12-22 14:31:13.518 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/apple-touch-icon.png - null null
+2025-12-22 14:31:13.519 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/apple-touch-icon.png - 404 0 null 0.3223ms
+2025-12-22 14:31:13.519 +03:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET http://localhost:5000/apple-touch-icon.png, Response status code: 404
+2025-12-22 14:31:15.939 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/Auth/Login - application/x-www-form-urlencoded 260
+2025-12-22 14:31:15.942 +03:00 [INF] Executing endpoint 'FlightBooking.Web.Controllers.AuthController.Login (FlightBooking.Web)'
+2025-12-22 14:31:15.950 +03:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(FlightBooking.Web.Models.Auth.LoginViewModel) on controller FlightBooking.Web.Controllers.AuthController (FlightBooking.Web).
+2025-12-22 14:31:16.016 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[@__ToLower_0='?' (Size = 20)], CommandType='"Text"', CommandTimeout='30']
+SELECT "u"."Id", "u"."CreatedAt", "u"."DateOfBirth", "u"."Email", "u"."FirstName", "u"."Gender", "u"."IdentityNumber", "u"."IsActive", "u"."IsAdmin", "u"."IsGuest", "u"."LastName", "u"."PasswordHash", "u"."PhoneNumber", "u"."UpdatedAt"
+FROM "Users" AS "u"
+WHERE lower("u"."Email") = @__ToLower_0
+LIMIT 1
+2025-12-22 14:31:16.211 +03:00 [INF] AuthenticationScheme: Cookies signed in.
+2025-12-22 14:31:16.212 +03:00 [INF] User admin@bulutbilet.com logged in successfully
+2025-12-22 14:31:16.212 +03:00 [INF] Executing RedirectResult, redirecting to /.
+2025-12-22 14:31:16.212 +03:00 [INF] Executed action FlightBooking.Web.Controllers.AuthController.Login (FlightBooking.Web) in 261.5602ms
+2025-12-22 14:31:16.212 +03:00 [INF] Executed endpoint 'FlightBooking.Web.Controllers.AuthController.Login (FlightBooking.Web)'
+2025-12-22 14:31:16.212 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/Auth/Login - 302 0 null 273.8969ms
+2025-12-22 14:31:16.274 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/ - null null
+2025-12-22 14:31:16.275 +03:00 [INF] Executing endpoint 'FlightBooking.Web.Controllers.HomeController.Index (FlightBooking.Web)'
+2025-12-22 14:31:16.275 +03:00 [INF] Route matched with {action = "Index", controller = "Home"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Index() on controller FlightBooking.Web.Controllers.HomeController (FlightBooking.Web).
+2025-12-22 14:31:16.275 +03:00 [INF] Executing ViewResult, running view Index.
+2025-12-22 14:31:16.277 +03:00 [INF] Executed ViewResult - view Index executed in 1.7502ms.
+2025-12-22 14:31:16.277 +03:00 [INF] Executed action FlightBooking.Web.Controllers.HomeController.Index (FlightBooking.Web) in 1.8822ms
+2025-12-22 14:31:16.277 +03:00 [INF] Executed endpoint 'FlightBooking.Web.Controllers.HomeController.Index (FlightBooking.Web)'
+2025-12-22 14:31:16.277 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/ - 200 null text/html; charset=utf-8 3.1364ms
+2025-12-22 14:31:18.567 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/Admin - null null
+2025-12-22 14:31:18.571 +03:00 [INF] Executing endpoint 'FlightBooking.Web.Controllers.AdminController.Index (FlightBooking.Web)'
+2025-12-22 14:31:18.572 +03:00 [INF] Route matched with {action = "Index", controller = "Admin"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Index() on controller FlightBooking.Web.Controllers.AdminController (FlightBooking.Web).
+2025-12-22 14:31:18.698 +03:00 [INF] Executing ViewResult, running view Index.
+2025-12-22 14:31:18.701 +03:00 [INF] Executed ViewResult - view Index executed in 127.3832ms.
+2025-12-22 14:31:18.701 +03:00 [INF] Executed action FlightBooking.Web.Controllers.AdminController.Index (FlightBooking.Web) in 128.1714ms
+2025-12-22 14:31:18.701 +03:00 [INF] Executed endpoint 'FlightBooking.Web.Controllers.AdminController.Index (FlightBooking.Web)'
+2025-12-22 14:31:18.701 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/Admin - 200 null text/html; charset=utf-8 134.1846ms
+2025-12-22 14:31:19.174 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/js/admin.js - null null
+2025-12-22 14:31:19.175 +03:00 [INF] Sending file. Request path: '/js/admin.js'. Physical path: '/Users/tiryaki/bilet-otomasyon/mvc-flight-booking/backend/FlightBooking.Web/wwwroot/js/admin.js'
+2025-12-22 14:31:19.175 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/js/admin.js - 200 26442 text/javascript 0.8613ms
+2025-12-22 14:31:19.215 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/api/flights - application/json null
+2025-12-22 14:31:19.215 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/api/bookings/all - application/json null
+2025-12-22 14:31:19.215 +03:00 [INF] Executing endpoint 'FlightBooking.Web.Controllers.Api.FlightsApiController.GetFlights (FlightBooking.Web)'
+2025-12-22 14:31:19.216 +03:00 [INF] Executing endpoint 'FlightBooking.Web.Controllers.Api.BookingsApiController.GetAllBookings (FlightBooking.Web)'
+2025-12-22 14:31:19.217 +03:00 [INF] Route matched with {action = "GetAllBookings", controller = "BookingsApi"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAllBookings() on controller FlightBooking.Web.Controllers.Api.BookingsApiController (FlightBooking.Web).
+2025-12-22 14:31:19.218 +03:00 [INF] Route matched with {action = "GetFlights", controller = "FlightsApi"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetFlights(System.String, System.String, System.Nullable`1[System.DateTime]) on controller FlightBooking.Web.Controllers.Api.FlightsApiController (FlightBooking.Web).
+2025-12-22 14:31:19.223 +03:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT "f"."Id", "f"."Airline", "f"."ArrivalCity", "f"."ArrivalTime", "f"."AvailableSeats", "f"."CreatedAt", "f"."DepartureCity", "f"."DepartureTime", "f"."FlightNumber", "f"."Price", "f"."SeatsPerRow", "f"."Status", "f"."TotalRows", "f"."TotalSeats", "f"."UpdatedAt"
+FROM "Flights" AS "f"
+2025-12-22 14:31:19.234 +03:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[<>f__AnonymousType6`10[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.DateTime, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.DateTime, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Decimal, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], FlightBooking.Web, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-12-22 14:31:19.246 +03:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT "b"."Id", "b"."BookingDate", "b"."BookingReference", "b"."CancellationDate", "b"."CancellationReason", "b"."FlightId", "b"."IsPaid", "b"."PassengerCount", "b"."PaymentDate", "b"."Status", "b"."TotalPrice", "b"."UserId", "u"."Id", "u"."CreatedAt", "u"."DateOfBirth", "u"."Email", "u"."FirstName", "u"."Gender", "u"."IdentityNumber", "u"."IsActive", "u"."IsAdmin", "u"."IsGuest", "u"."LastName", "u"."PasswordHash", "u"."PhoneNumber", "u"."UpdatedAt", "f"."Id", "f"."Airline", "f"."ArrivalCity", "f"."ArrivalTime", "f"."AvailableSeats", "f"."CreatedAt", "f"."DepartureCity", "f"."DepartureTime", "f"."FlightNumber", "f"."Price", "f"."SeatsPerRow", "f"."Status", "f"."TotalRows", "f"."TotalSeats", "f"."UpdatedAt", "p"."Id", "p"."BookingId", "p"."DateOfBirth", "p"."FirstName", "p"."Gender", "p"."IdentityNumber", "p"."LastName", "p"."PhoneNumber", "p"."SeatNumber", "p"."SeatType"
+FROM "Bookings" AS "b"
+INNER JOIN "Users" AS "u" ON "b"."UserId" = "u"."Id"
+INNER JOIN "Flights" AS "f" ON "b"."FlightId" = "f"."Id"
+LEFT JOIN "Passengers" AS "p" ON "b"."Id" = "p"."BookingId"
+ORDER BY "b"."BookingDate" DESC, "b"."Id", "u"."Id", "f"."Id"
+2025-12-22 14:31:19.247 +03:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-12-22 14:31:19.248 +03:00 [INF] Executed action FlightBooking.Web.Controllers.Api.FlightsApiController.GetFlights (FlightBooking.Web) in 30.0347ms
+2025-12-22 14:31:19.248 +03:00 [INF] Executed action FlightBooking.Web.Controllers.Api.BookingsApiController.GetAllBookings (FlightBooking.Web) in 30.5972ms
+2025-12-22 14:31:19.248 +03:00 [INF] Executed endpoint 'FlightBooking.Web.Controllers.Api.FlightsApiController.GetFlights (FlightBooking.Web)'
+2025-12-22 14:31:19.248 +03:00 [INF] Executed endpoint 'FlightBooking.Web.Controllers.Api.BookingsApiController.GetAllBookings (FlightBooking.Web)'
+2025-12-22 14:31:19.248 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/api/bookings/all - 200 null application/json; charset=utf-8 33.2695ms
+2025-12-22 14:31:19.248 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/api/flights - 200 null application/json; charset=utf-8 33.4555ms
+2025-12-22 14:31:20.282 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/Admin/Users - null null
+2025-12-22 14:31:20.283 +03:00 [INF] Executing endpoint 'FlightBooking.Web.Controllers.AdminController.Users (FlightBooking.Web)'
+2025-12-22 14:31:20.283 +03:00 [INF] Route matched with {action = "Users", controller = "Admin"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Users() on controller FlightBooking.Web.Controllers.AdminController (FlightBooking.Web).
+2025-12-22 14:31:20.286 +03:00 [INF] Users page accessed. User: 1, IsAdmin: true, Claims: http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier=1, http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress=admin@bulutbilet.com, http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name=Admin User, IsGuest=false, http://schemas.microsoft.com/ws/2008/06/identity/claims/role=Admin, IsAdmin=true
+2025-12-22 14:31:20.315 +03:00 [INF] Executing ViewResult, running view Users.
+2025-12-22 14:31:20.318 +03:00 [INF] Executed ViewResult - view Users executed in 24.105ms.
+2025-12-22 14:31:20.318 +03:00 [INF] Executed action FlightBooking.Web.Controllers.AdminController.Users (FlightBooking.Web) in 34.3609ms
+2025-12-22 14:31:20.318 +03:00 [INF] Executed endpoint 'FlightBooking.Web.Controllers.AdminController.Users (FlightBooking.Web)'
+2025-12-22 14:31:20.318 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/Admin/Users - 200 null text/html; charset=utf-8 36.3377ms
+2025-12-22 14:31:21.149 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/api/users - application/json null
+2025-12-22 14:31:21.151 +03:00 [INF] Executing endpoint 'FlightBooking.Web.Controllers.Api.UsersApiController.GetUsers (FlightBooking.Web)'
+2025-12-22 14:31:21.154 +03:00 [INF] Route matched with {action = "GetUsers", controller = "UsersApi"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetUsers() on controller FlightBooking.Web.Controllers.Api.UsersApiController (FlightBooking.Web).
+2025-12-22 14:31:21.158 +03:00 [INF] GetUsers API called. Authenticated: true
+2025-12-22 14:31:21.159 +03:00 [INF] GetUsers API called. User: 1, IsAdmin: true, Claims: http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier=1, http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress=admin@bulutbilet.com, http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name=Admin User, IsGuest=false, http://schemas.microsoft.com/ws/2008/06/identity/claims/role=Admin, IsAdmin=true
+2025-12-22 14:31:21.159 +03:00 [INF] Fetching users from repository...
+2025-12-22 14:31:21.166 +03:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT "u"."Id", "u"."CreatedAt", "u"."DateOfBirth", "u"."Email", "u"."FirstName", "u"."Gender", "u"."IdentityNumber", "u"."IsActive", "u"."IsAdmin", "u"."IsGuest", "u"."LastName", "u"."PasswordHash", "u"."PhoneNumber", "u"."UpdatedAt"
+FROM "Users" AS "u"
+2025-12-22 14:31:21.167 +03:00 [INF] Found 1 users
+2025-12-22 14:31:21.180 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT "b"."Id", "b"."BookingDate", "b"."BookingReference", "b"."CancellationDate", "b"."CancellationReason", "b"."FlightId", "b"."IsPaid", "b"."PassengerCount", "b"."PaymentDate", "b"."Status", "b"."TotalPrice", "b"."UserId", "f"."Id", "f"."Airline", "f"."ArrivalCity", "f"."ArrivalTime", "f"."AvailableSeats", "f"."CreatedAt", "f"."DepartureCity", "f"."DepartureTime", "f"."FlightNumber", "f"."Price", "f"."SeatsPerRow", "f"."Status", "f"."TotalRows", "f"."TotalSeats", "f"."UpdatedAt", "p"."Id", "p"."BookingId", "p"."DateOfBirth", "p"."FirstName", "p"."Gender", "p"."IdentityNumber", "p"."LastName", "p"."PhoneNumber", "p"."SeatNumber", "p"."SeatType"
+FROM "Bookings" AS "b"
+INNER JOIN "Flights" AS "f" ON "b"."FlightId" = "f"."Id"
+LEFT JOIN "Passengers" AS "p" ON "b"."Id" = "p"."BookingId"
+WHERE "b"."UserId" = @__userId_0
+ORDER BY "b"."BookingDate" DESC, "b"."Id", "f"."Id"
+2025-12-22 14:31:21.181 +03:00 [INF] Returning 1 users
+2025-12-22 14:31:21.182 +03:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-12-22 14:31:21.189 +03:00 [INF] Executed action FlightBooking.Web.Controllers.Api.UsersApiController.GetUsers (FlightBooking.Web) in 35.4635ms
+2025-12-22 14:31:21.190 +03:00 [INF] Executed endpoint 'FlightBooking.Web.Controllers.Api.UsersApiController.GetUsers (FlightBooking.Web)'
+2025-12-22 14:31:21.190 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/api/users - 200 null application/json; charset=utf-8 41.0534ms
+2025-12-22 14:31:32.182 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/ - null null
+2025-12-22 14:31:32.183 +03:00 [INF] Executing endpoint 'FlightBooking.Web.Controllers.HomeController.Index (FlightBooking.Web)'
+2025-12-22 14:31:32.184 +03:00 [INF] Route matched with {action = "Index", controller = "Home"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Index() on controller FlightBooking.Web.Controllers.HomeController (FlightBooking.Web).
+2025-12-22 14:31:32.184 +03:00 [INF] Executing ViewResult, running view Index.
+2025-12-22 14:31:32.185 +03:00 [INF] Executed ViewResult - view Index executed in 0.9854ms.
+2025-12-22 14:31:32.185 +03:00 [INF] Executed action FlightBooking.Web.Controllers.HomeController.Index (FlightBooking.Web) in 1.2755ms
+2025-12-22 14:31:32.185 +03:00 [INF] Executed endpoint 'FlightBooking.Web.Controllers.HomeController.Index (FlightBooking.Web)'
+2025-12-22 14:31:32.185 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/ - 200 null text/html; charset=utf-8 2.8082ms
+2025-12-22 14:31:35.431 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/Admin - null null
+2025-12-22 14:31:35.433 +03:00 [INF] Executing endpoint 'FlightBooking.Web.Controllers.AdminController.Index (FlightBooking.Web)'
+2025-12-22 14:31:35.434 +03:00 [INF] Route matched with {action = "Index", controller = "Admin"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Index() on controller FlightBooking.Web.Controllers.AdminController (FlightBooking.Web).
+2025-12-22 14:31:35.434 +03:00 [INF] Executing ViewResult, running view Index.
+2025-12-22 14:31:35.436 +03:00 [INF] Executed ViewResult - view Index executed in 1.5234ms.
+2025-12-22 14:31:35.436 +03:00 [INF] Executed action FlightBooking.Web.Controllers.AdminController.Index (FlightBooking.Web) in 1.8139ms
+2025-12-22 14:31:35.436 +03:00 [INF] Executed endpoint 'FlightBooking.Web.Controllers.AdminController.Index (FlightBooking.Web)'
+2025-12-22 14:31:35.436 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/Admin - 200 null text/html; charset=utf-8 4.939ms
+2025-12-22 14:31:35.448 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/api/flights - application/json null
+2025-12-22 14:31:35.448 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/api/bookings/all - application/json null
+2025-12-22 14:31:35.449 +03:00 [INF] Executing endpoint 'FlightBooking.Web.Controllers.Api.FlightsApiController.GetFlights (FlightBooking.Web)'
+2025-12-22 14:31:35.449 +03:00 [INF] Route matched with {action = "GetFlights", controller = "FlightsApi"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetFlights(System.String, System.String, System.Nullable`1[System.DateTime]) on controller FlightBooking.Web.Controllers.Api.FlightsApiController (FlightBooking.Web).
+2025-12-22 14:31:35.450 +03:00 [INF] Executing endpoint 'FlightBooking.Web.Controllers.Api.BookingsApiController.GetAllBookings (FlightBooking.Web)'
+2025-12-22 14:31:35.451 +03:00 [INF] Route matched with {action = "GetAllBookings", controller = "BookingsApi"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAllBookings() on controller FlightBooking.Web.Controllers.Api.BookingsApiController (FlightBooking.Web).
+2025-12-22 14:31:35.452 +03:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT "f"."Id", "f"."Airline", "f"."ArrivalCity", "f"."ArrivalTime", "f"."AvailableSeats", "f"."CreatedAt", "f"."DepartureCity", "f"."DepartureTime", "f"."FlightNumber", "f"."Price", "f"."SeatsPerRow", "f"."Status", "f"."TotalRows", "f"."TotalSeats", "f"."UpdatedAt"
+FROM "Flights" AS "f"
+2025-12-22 14:31:35.458 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT "b"."Id", "b"."BookingDate", "b"."BookingReference", "b"."CancellationDate", "b"."CancellationReason", "b"."FlightId", "b"."IsPaid", "b"."PassengerCount", "b"."PaymentDate", "b"."Status", "b"."TotalPrice", "b"."UserId", "u"."Id", "u"."CreatedAt", "u"."DateOfBirth", "u"."Email", "u"."FirstName", "u"."Gender", "u"."IdentityNumber", "u"."IsActive", "u"."IsAdmin", "u"."IsGuest", "u"."LastName", "u"."PasswordHash", "u"."PhoneNumber", "u"."UpdatedAt", "f"."Id", "f"."Airline", "f"."ArrivalCity", "f"."ArrivalTime", "f"."AvailableSeats", "f"."CreatedAt", "f"."DepartureCity", "f"."DepartureTime", "f"."FlightNumber", "f"."Price", "f"."SeatsPerRow", "f"."Status", "f"."TotalRows", "f"."TotalSeats", "f"."UpdatedAt", "p"."Id", "p"."BookingId", "p"."DateOfBirth", "p"."FirstName", "p"."Gender", "p"."IdentityNumber", "p"."LastName", "p"."PhoneNumber", "p"."SeatNumber", "p"."SeatType"
+FROM "Bookings" AS "b"
+INNER JOIN "Users" AS "u" ON "b"."UserId" = "u"."Id"
+INNER JOIN "Flights" AS "f" ON "b"."FlightId" = "f"."Id"
+LEFT JOIN "Passengers" AS "p" ON "b"."Id" = "p"."BookingId"
+ORDER BY "b"."BookingDate" DESC, "b"."Id", "u"."Id", "f"."Id"
+2025-12-22 14:31:35.459 +03:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-12-22 14:31:35.459 +03:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[<>f__AnonymousType6`10[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.DateTime, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.DateTime, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Decimal, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], FlightBooking.Web, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-12-22 14:31:35.459 +03:00 [INF] Executed action FlightBooking.Web.Controllers.Api.BookingsApiController.GetAllBookings (FlightBooking.Web) in 8.1733ms
+2025-12-22 14:31:35.459 +03:00 [INF] Executed endpoint 'FlightBooking.Web.Controllers.Api.BookingsApiController.GetAllBookings (FlightBooking.Web)'
+2025-12-22 14:31:35.459 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/api/bookings/all - 200 null application/json; charset=utf-8 10.6858ms
+2025-12-22 14:31:35.460 +03:00 [INF] Executed action FlightBooking.Web.Controllers.Api.FlightsApiController.GetFlights (FlightBooking.Web) in 10.6787ms
+2025-12-22 14:31:35.460 +03:00 [INF] Executed endpoint 'FlightBooking.Web.Controllers.Api.FlightsApiController.GetFlights (FlightBooking.Web)'
+2025-12-22 14:31:35.460 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/api/flights - 200 null application/json; charset=utf-8 12.2638ms
+2025-12-22 14:31:36.397 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/Admin - null null
+2025-12-22 14:31:36.399 +03:00 [INF] Executing endpoint 'FlightBooking.Web.Controllers.AdminController.Index (FlightBooking.Web)'
+2025-12-22 14:31:36.399 +03:00 [INF] Route matched with {action = "Index", controller = "Admin"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Index() on controller FlightBooking.Web.Controllers.AdminController (FlightBooking.Web).
+2025-12-22 14:31:36.399 +03:00 [INF] Executing ViewResult, running view Index.
+2025-12-22 14:31:36.400 +03:00 [INF] Executed ViewResult - view Index executed in 0.6437ms.
+2025-12-22 14:31:36.400 +03:00 [INF] Executed action FlightBooking.Web.Controllers.AdminController.Index (FlightBooking.Web) in 0.8051ms
+2025-12-22 14:31:36.400 +03:00 [INF] Executed endpoint 'FlightBooking.Web.Controllers.AdminController.Index (FlightBooking.Web)'
+2025-12-22 14:31:36.400 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/Admin - 200 null text/html; charset=utf-8 2.6015ms
+2025-12-22 14:31:36.408 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/api/flights - application/json null
+2025-12-22 14:31:36.408 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/api/bookings/all - application/json null
+2025-12-22 14:31:36.408 +03:00 [INF] Executing endpoint 'FlightBooking.Web.Controllers.Api.FlightsApiController.GetFlights (FlightBooking.Web)'
+2025-12-22 14:31:36.408 +03:00 [INF] Executing endpoint 'FlightBooking.Web.Controllers.Api.BookingsApiController.GetAllBookings (FlightBooking.Web)'
+2025-12-22 14:31:36.408 +03:00 [INF] Route matched with {action = "GetAllBookings", controller = "BookingsApi"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAllBookings() on controller FlightBooking.Web.Controllers.Api.BookingsApiController (FlightBooking.Web).
+2025-12-22 14:31:36.408 +03:00 [INF] Route matched with {action = "GetFlights", controller = "FlightsApi"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetFlights(System.String, System.String, System.Nullable`1[System.DateTime]) on controller FlightBooking.Web.Controllers.Api.FlightsApiController (FlightBooking.Web).
+2025-12-22 14:31:36.409 +03:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT "f"."Id", "f"."Airline", "f"."ArrivalCity", "f"."ArrivalTime", "f"."AvailableSeats", "f"."CreatedAt", "f"."DepartureCity", "f"."DepartureTime", "f"."FlightNumber", "f"."Price", "f"."SeatsPerRow", "f"."Status", "f"."TotalRows", "f"."TotalSeats", "f"."UpdatedAt"
+FROM "Flights" AS "f"
+2025-12-22 14:31:36.411 +03:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT "b"."Id", "b"."BookingDate", "b"."BookingReference", "b"."CancellationDate", "b"."CancellationReason", "b"."FlightId", "b"."IsPaid", "b"."PassengerCount", "b"."PaymentDate", "b"."Status", "b"."TotalPrice", "b"."UserId", "u"."Id", "u"."CreatedAt", "u"."DateOfBirth", "u"."Email", "u"."FirstName", "u"."Gender", "u"."IdentityNumber", "u"."IsActive", "u"."IsAdmin", "u"."IsGuest", "u"."LastName", "u"."PasswordHash", "u"."PhoneNumber", "u"."UpdatedAt", "f"."Id", "f"."Airline", "f"."ArrivalCity", "f"."ArrivalTime", "f"."AvailableSeats", "f"."CreatedAt", "f"."DepartureCity", "f"."DepartureTime", "f"."FlightNumber", "f"."Price", "f"."SeatsPerRow", "f"."Status", "f"."TotalRows", "f"."TotalSeats", "f"."UpdatedAt", "p"."Id", "p"."BookingId", "p"."DateOfBirth", "p"."FirstName", "p"."Gender", "p"."IdentityNumber", "p"."LastName", "p"."PhoneNumber", "p"."SeatNumber", "p"."SeatType"
+FROM "Bookings" AS "b"
+INNER JOIN "Users" AS "u" ON "b"."UserId" = "u"."Id"
+INNER JOIN "Flights" AS "f" ON "b"."FlightId" = "f"."Id"
+LEFT JOIN "Passengers" AS "p" ON "b"."Id" = "p"."BookingId"
+ORDER BY "b"."BookingDate" DESC, "b"."Id", "u"."Id", "f"."Id"
+2025-12-22 14:31:36.411 +03:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-12-22 14:31:36.411 +03:00 [INF] Executed action FlightBooking.Web.Controllers.Api.BookingsApiController.GetAllBookings (FlightBooking.Web) in 2.6947ms
+2025-12-22 14:31:36.411 +03:00 [INF] Executed endpoint 'FlightBooking.Web.Controllers.Api.BookingsApiController.GetAllBookings (FlightBooking.Web)'
+2025-12-22 14:31:36.412 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/api/bookings/all - 200 null application/json; charset=utf-8 3.5962ms
+2025-12-22 14:31:36.412 +03:00 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[<>f__AnonymousType6`10[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.DateTime, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.DateTime, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Decimal, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], FlightBooking.Web, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-12-22 14:31:36.413 +03:00 [INF] Executed action FlightBooking.Web.Controllers.Api.FlightsApiController.GetFlights (FlightBooking.Web) in 4.4444ms
+2025-12-22 14:31:36.413 +03:00 [INF] Executed endpoint 'FlightBooking.Web.Controllers.Api.FlightsApiController.GetFlights (FlightBooking.Web)'
+2025-12-22 14:31:36.413 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/api/flights - 200 null application/json; charset=utf-8 5.4824ms
+2025-12-22 14:32:01.091 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/Auth/Logout - application/x-www-form-urlencoded 225
+2025-12-22 14:32:01.092 +03:00 [INF] Executing endpoint 'FlightBooking.Web.Controllers.AuthController.Logout (FlightBooking.Web)'
+2025-12-22 14:32:01.095 +03:00 [INF] Route matched with {action = "Logout", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Logout() on controller FlightBooking.Web.Controllers.AuthController (FlightBooking.Web).
+2025-12-22 14:32:01.099 +03:00 [INF] AuthenticationScheme: Cookies signed out.
+2025-12-22 14:32:01.099 +03:00 [INF] User logged out
+2025-12-22 14:32:01.100 +03:00 [INF] Executing RedirectResult, redirecting to /.
+2025-12-22 14:32:01.100 +03:00 [INF] Executed action FlightBooking.Web.Controllers.AuthController.Logout (FlightBooking.Web) in 4.1766ms
+2025-12-22 14:32:01.100 +03:00 [INF] Executed endpoint 'FlightBooking.Web.Controllers.AuthController.Logout (FlightBooking.Web)'
+2025-12-22 14:32:01.100 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/Auth/Logout - 302 0 null 9.3652ms
+2025-12-22 14:32:01.103 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/ - null null
+2025-12-22 14:32:01.103 +03:00 [INF] Executing endpoint 'FlightBooking.Web.Controllers.HomeController.Index (FlightBooking.Web)'
+2025-12-22 14:32:01.104 +03:00 [INF] Route matched with {action = "Index", controller = "Home"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Index() on controller FlightBooking.Web.Controllers.HomeController (FlightBooking.Web).
+2025-12-22 14:32:01.104 +03:00 [INF] Executing ViewResult, running view Index.
+2025-12-22 14:32:01.105 +03:00 [INF] Executed ViewResult - view Index executed in 1.1792ms.
+2025-12-22 14:32:01.105 +03:00 [INF] Executed action FlightBooking.Web.Controllers.HomeController.Index (FlightBooking.Web) in 1.4249ms
+2025-12-22 14:32:01.105 +03:00 [INF] Executed endpoint 'FlightBooking.Web.Controllers.HomeController.Index (FlightBooking.Web)'
+2025-12-22 14:32:01.105 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/ - 200 null text/html; charset=utf-8 2.3835ms
+2025-12-22 14:32:03.315 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/Auth/Login - null null
+2025-12-22 14:32:03.316 +03:00 [INF] Executing endpoint 'FlightBooking.Web.Controllers.AuthController.Login (FlightBooking.Web)'
+2025-12-22 14:32:03.316 +03:00 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Login(System.String) on controller FlightBooking.Web.Controllers.AuthController (FlightBooking.Web).
+2025-12-22 14:32:03.317 +03:00 [INF] Executing ViewResult, running view Login.
+2025-12-22 14:32:03.321 +03:00 [INF] Executed ViewResult - view Login executed in 3.9915ms.
+2025-12-22 14:32:03.322 +03:00 [INF] Executed action FlightBooking.Web.Controllers.AuthController.Login (FlightBooking.Web) in 5.6592ms
+2025-12-22 14:32:03.322 +03:00 [INF] Executed endpoint 'FlightBooking.Web.Controllers.AuthController.Login (FlightBooking.Web)'
+2025-12-22 14:32:03.322 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/Auth/Login - 200 null text/html; charset=utf-8 7.6358ms
+2025-12-22 14:32:04.547 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/Auth/Register - null null
+2025-12-22 14:32:04.548 +03:00 [INF] Executing endpoint 'FlightBooking.Web.Controllers.AuthController.Register (FlightBooking.Web)'
+2025-12-22 14:32:04.551 +03:00 [INF] Route matched with {action = "Register", controller = "Auth"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Register(System.String, System.String, System.String, System.String, System.String, System.String, System.String, System.String, System.String) on controller FlightBooking.Web.Controllers.AuthController (FlightBooking.Web).
+2025-12-22 14:32:04.624 +03:00 [INF] Executing ViewResult, running view Register.
+2025-12-22 14:32:04.652 +03:00 [INF] Executed ViewResult - view Register executed in 98.7859ms.
+2025-12-22 14:32:04.652 +03:00 [INF] Executed action FlightBooking.Web.Controllers.AuthController.Register (FlightBooking.Web) in 101.1323ms
+2025-12-22 14:32:04.652 +03:00 [INF] Executed endpoint 'FlightBooking.Web.Controllers.AuthController.Register (FlightBooking.Web)'
+2025-12-22 14:32:04.653 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/Auth/Register - 200 null text/html; charset=utf-8 105.1263ms
+2025-12-22 14:32:07.001 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/ - null null
+2025-12-22 14:32:07.002 +03:00 [INF] Executing endpoint 'FlightBooking.Web.Controllers.HomeController.Index (FlightBooking.Web)'
+2025-12-22 14:32:07.002 +03:00 [INF] Route matched with {action = "Index", controller = "Home"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Index() on controller FlightBooking.Web.Controllers.HomeController (FlightBooking.Web).
+2025-12-22 14:32:07.002 +03:00 [INF] Executing ViewResult, running view Index.
+2025-12-22 14:32:07.003 +03:00 [INF] Executed ViewResult - view Index executed in 1.256ms.
+2025-12-22 14:32:07.003 +03:00 [INF] Executed action FlightBooking.Web.Controllers.HomeController.Index (FlightBooking.Web) in 1.5736ms
+2025-12-22 14:32:07.004 +03:00 [INF] Executed endpoint 'FlightBooking.Web.Controllers.HomeController.Index (FlightBooking.Web)'
+2025-12-22 14:32:07.004 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/ - 200 null text/html; charset=utf-8 2.827ms
+2025-12-22 14:32:14.760 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/Flight/Search?DepartureCity=%C4%B0stanbul&ArrivalCity=Adana&DepartureDate=2025-12-22 - null null
+2025-12-22 14:32:14.761 +03:00 [INF] Executing endpoint 'FlightBooking.Web.Controllers.FlightController.Search (FlightBooking.Web)'
+2025-12-22 14:32:14.766 +03:00 [INF] Route matched with {action = "Search", controller = "Flight"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Search(System.String) on controller FlightBooking.Web.Controllers.FlightController (FlightBooking.Web).
+2025-12-22 14:32:14.886 +03:00 [INF] Executing ViewResult, running view Search.
+2025-12-22 14:32:14.897 +03:00 [INF] Executed ViewResult - view Search executed in 125.5182ms.
+2025-12-22 14:32:14.897 +03:00 [INF] Executed action FlightBooking.Web.Controllers.FlightController.Search (FlightBooking.Web) in 131.5247ms
+2025-12-22 14:32:14.897 +03:00 [INF] Executed endpoint 'FlightBooking.Web.Controllers.FlightController.Search (FlightBooking.Web)'
+2025-12-22 14:32:14.897 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/Flight/Search?DepartureCity=%C4%B0stanbul&ArrivalCity=Adana&DepartureDate=2025-12-22 - 200 null text/html; charset=utf-8 137.215ms
+2025-12-22 14:32:15.383 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/Flight/GetFlights?departureDate=2025-12-22 - null null
+2025-12-22 14:32:15.384 +03:00 [INF] Executing endpoint 'FlightBooking.Web.Controllers.FlightController.GetFlights (FlightBooking.Web)'
+2025-12-22 14:32:15.386 +03:00 [INF] Route matched with {action = "GetFlights", controller = "Flight"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetFlights(System.String, System.String, System.Nullable`1[System.DateTime]) on controller FlightBooking.Web.Controllers.FlightController (FlightBooking.Web).
+2025-12-22 14:32:15.388 +03:00 [INF] GetFlights called with: departureCity=null, arrivalCity=null, departureDate="2025-12-22T00:00:00.0000000"
+2025-12-22 14:32:15.389 +03:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT "f"."Id", "f"."Airline", "f"."ArrivalCity", "f"."ArrivalTime", "f"."AvailableSeats", "f"."CreatedAt", "f"."DepartureCity", "f"."DepartureTime", "f"."FlightNumber", "f"."Price", "f"."SeatsPerRow", "f"."Status", "f"."TotalRows", "f"."TotalSeats", "f"."UpdatedAt"
+FROM "Flights" AS "f"
+2025-12-22 14:32:15.392 +03:00 [INF] GetFlights returning 5 flights
+2025-12-22 14:32:15.393 +03:00 [INF] Executing JsonResult, writing value of type 'System.Collections.Generic.List`1[[<>f__AnonymousType6`10[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.DateTime, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.DateTime, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Decimal, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], FlightBooking.Web, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2025-12-22 14:32:15.394 +03:00 [INF] Executed action FlightBooking.Web.Controllers.FlightController.GetFlights (FlightBooking.Web) in 7.9829ms
+2025-12-22 14:32:15.394 +03:00 [INF] Executed endpoint 'FlightBooking.Web.Controllers.FlightController.GetFlights (FlightBooking.Web)'
+2025-12-22 14:32:15.394 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/Flight/GetFlights?departureDate=2025-12-22 - 200 null application/json; charset=utf-8 11.7265ms
+2025-12-22 14:33:18.905 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/api/bookings - application/json 248
+2025-12-22 14:33:18.905 +03:00 [INF] Executing endpoint 'FlightBooking.Web.Controllers.Api.BookingsApiController.CreateBooking (FlightBooking.Web)'
+2025-12-22 14:33:18.909 +03:00 [INF] Route matched with {action = "CreateBooking", controller = "BookingsApi"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] CreateBooking(FlightBooking.Web.Controllers.Api.CreateBookingRequest) on controller FlightBooking.Web.Controllers.Api.BookingsApiController (FlightBooking.Web).
+2025-12-22 14:33:18.929 +03:00 [INF] Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT "f"."Id", "f"."Airline", "f"."ArrivalCity", "f"."ArrivalTime", "f"."AvailableSeats", "f"."CreatedAt", "f"."DepartureCity", "f"."DepartureTime", "f"."FlightNumber", "f"."Price", "f"."SeatsPerRow", "f"."Status", "f"."TotalRows", "f"."TotalSeats", "f"."UpdatedAt"
+FROM "Flights" AS "f"
+WHERE "f"."Id" = @__p_0
+LIMIT 1
+2025-12-22 14:33:18.930 +03:00 [INF] Executed DbCommand (0ms) [Parameters=[@__ToLower_0='?' (Size = 19)], CommandType='"Text"', CommandTimeout='30']
+SELECT "u"."Id", "u"."CreatedAt", "u"."DateOfBirth", "u"."Email", "u"."FirstName", "u"."Gender", "u"."IdentityNumber", "u"."IsActive", "u"."IsAdmin", "u"."IsGuest", "u"."LastName", "u"."PasswordHash", "u"."PhoneNumber", "u"."UpdatedAt"
+FROM "Users" AS "u"
+WHERE lower("u"."Email") = @__ToLower_0
+LIMIT 1
+2025-12-22 14:33:18.980 +03:00 [INF] Executed DbCommand (0ms) [Parameters=[@p0='?' (DbType = DateTime), @p1='?' (DbType = DateTime), @p2='?' (Size = 19), @p3='?', @p4='?', @p5='?', @p6='?' (DbType = Boolean), @p7='?' (DbType = Boolean), @p8='?' (DbType = Boolean), @p9='?', @p10='?', @p11='?', @p12='?' (DbType = DateTime)], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "Users" ("CreatedAt", "DateOfBirth", "Email", "FirstName", "Gender", "IdentityNumber", "IsActive", "IsAdmin", "IsGuest", "LastName", "PasswordHash", "PhoneNumber", "UpdatedAt")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9, @p10, @p11, @p12)
+RETURNING "Id";
+2025-12-22 14:33:18.999 +03:00 [INF] Executed DbCommand (0ms) [Parameters=[@p0='?' (DbType = DateTime), @p1='?' (Size = 6), @p2='?' (DbType = DateTime), @p3='?', @p4='?' (DbType = Int32), @p5='?' (DbType = Boolean), @p6='?' (DbType = Int32), @p7='?' (DbType = DateTime), @p8='?' (Size = 9), @p9='?' (DbType = Decimal), @p10='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "Bookings" ("BookingDate", "BookingReference", "CancellationDate", "CancellationReason", "FlightId", "IsPaid", "PassengerCount", "PaymentDate", "Status", "TotalPrice", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9, @p10)
+RETURNING "Id";
+2025-12-22 14:33:19.006 +03:00 [INF] Executed DbCommand (0ms) [Parameters=[@p0='?' (DbType = Int32), @p1='?' (DbType = DateTime), @p2='?' (Size = 4), @p3='?' (Size = 5), @p4='?' (Size = 11), @p5='?' (Size = 7), @p6='?' (Size = 10), @p7='?' (Size = 2), @p8='?' (Size = 6)], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "Passengers" ("BookingId", "DateOfBirth", "FirstName", "Gender", "IdentityNumber", "LastName", "PhoneNumber", "SeatNumber", "SeatType")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8)
+RETURNING "Id";
+2025-12-22 14:33:19.009 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[@p14='?' (DbType = Int32), @p0='?' (Size = 10), @p1='?' (Size = 7), @p2='?' (DbType = DateTime), @p3='?' (DbType = Int32), @p4='?' (DbType = DateTime), @p5='?' (Size = 5), @p6='?' (DbType = DateTime), @p7='?' (Size = 5), @p8='?' (DbType = Decimal), @p9='?' (DbType = Int32), @p10='?' (Size = 6), @p11='?' (DbType = Int32), @p12='?' (DbType = Int32), @p13='?' (DbType = DateTime)], CommandType='"Text"', CommandTimeout='30']
+UPDATE "Flights" SET "Airline" = @p0, "ArrivalCity" = @p1, "ArrivalTime" = @p2, "AvailableSeats" = @p3, "CreatedAt" = @p4, "DepartureCity" = @p5, "DepartureTime" = @p6, "FlightNumber" = @p7, "Price" = @p8, "SeatsPerRow" = @p9, "Status" = @p10, "TotalRows" = @p11, "TotalSeats" = @p12, "UpdatedAt" = @p13
+WHERE "Id" = @p14
+RETURNING 1;
+2025-12-22 14:33:19.010 +03:00 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType5`2[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-12-22 14:33:19.011 +03:00 [INF] Executed action FlightBooking.Web.Controllers.Api.BookingsApiController.CreateBooking (FlightBooking.Web) in 101.812ms
+2025-12-22 14:33:19.011 +03:00 [INF] Executed endpoint 'FlightBooking.Web.Controllers.Api.BookingsApiController.CreateBooking (FlightBooking.Web)'
+2025-12-22 14:33:19.011 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/api/bookings - 200 null application/json; charset=utf-8 106.2442ms
+2025-12-22 14:33:30.352 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/Auth/Register?email=etiryakim%40gmail.com&firstName=Eren&lastName=Tiryaki&identityNumber=10550565850&phoneNumber=5474122004&dateOfBirth=2004-12-04&gender=Erkek&fromBooking=true&pnr=5BTNZB - null null
+2025-12-22 14:33:30.352 +03:00 [INF] Executing endpoint 'FlightBooking.Web.Controllers.AuthController.Register (FlightBooking.Web)'
+2025-12-22 14:33:30.353 +03:00 [INF] Route matched with {action = "Register", controller = "Auth"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Register(System.String, System.String, System.String, System.String, System.String, System.String, System.String, System.String, System.String) on controller FlightBooking.Web.Controllers.AuthController (FlightBooking.Web).
+2025-12-22 14:33:30.359 +03:00 [INF] Executing ViewResult, running view Register.
+2025-12-22 14:33:30.376 +03:00 [INF] Executed ViewResult - view Register executed in 17.0682ms.
+2025-12-22 14:33:30.377 +03:00 [INF] Executed action FlightBooking.Web.Controllers.AuthController.Register (FlightBooking.Web) in 23.8822ms
+2025-12-22 14:33:30.377 +03:00 [INF] Executed endpoint 'FlightBooking.Web.Controllers.AuthController.Register (FlightBooking.Web)'
+2025-12-22 14:33:30.377 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/Auth/Register?email=etiryakim%40gmail.com&firstName=Eren&lastName=Tiryaki&identityNumber=10550565850&phoneNumber=5474122004&dateOfBirth=2004-12-04&gender=Erkek&fromBooking=true&pnr=5BTNZB - 200 null text/html; charset=utf-8 25.4599ms
+2025-12-22 14:33:44.508 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/Auth/Register - application/x-www-form-urlencoded 443
+2025-12-22 14:33:44.509 +03:00 [INF] Executing endpoint 'FlightBooking.Web.Controllers.AuthController.Register (FlightBooking.Web)'
+2025-12-22 14:33:44.513 +03:00 [INF] Route matched with {action = "Register", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Register(FlightBooking.Web.Models.Auth.RegisterViewModel) on controller FlightBooking.Web.Controllers.AuthController (FlightBooking.Web).
+2025-12-22 14:33:44.520 +03:00 [INF] Register POST called for email: etiryakim@gmail.com
+2025-12-22 14:33:44.520 +03:00 [INF] Starting registration process for email: etiryakim@gmail.com
+2025-12-22 14:33:44.521 +03:00 [INF] Executed DbCommand (0ms) [Parameters=[@__ToLower_0='?' (Size = 19)], CommandType='"Text"', CommandTimeout='30']
+SELECT "u"."Id", "u"."CreatedAt", "u"."DateOfBirth", "u"."Email", "u"."FirstName", "u"."Gender", "u"."IdentityNumber", "u"."IsActive", "u"."IsAdmin", "u"."IsGuest", "u"."LastName", "u"."PasswordHash", "u"."PhoneNumber", "u"."UpdatedAt"
+FROM "Users" AS "u"
+WHERE lower("u"."Email") = @__ToLower_0
+LIMIT 1
+2025-12-22 14:33:44.521 +03:00 [INF] Existing user check result: Found
+2025-12-22 14:33:44.521 +03:00 [INF] Converting guest user to registered user: etiryakim@gmail.com
+2025-12-22 14:33:44.711 +03:00 [INF] Executed DbCommand (0ms) [Parameters=[@p13='?' (DbType = Int32), @p0='?' (DbType = DateTime), @p1='?' (DbType = DateTime), @p2='?' (Size = 19), @p3='?' (Size = 4), @p4='?' (Size = 5), @p5='?' (Size = 11), @p6='?' (DbType = Boolean), @p7='?' (DbType = Boolean), @p8='?' (DbType = Boolean), @p9='?' (Size = 7), @p10='?' (Size = 60), @p11='?' (Size = 14), @p12='?' (DbType = DateTime)], CommandType='"Text"', CommandTimeout='30']
+UPDATE "Users" SET "CreatedAt" = @p0, "DateOfBirth" = @p1, "Email" = @p2, "FirstName" = @p3, "Gender" = @p4, "IdentityNumber" = @p5, "IsActive" = @p6, "IsAdmin" = @p7, "IsGuest" = @p8, "LastName" = @p9, "PasswordHash" = @p10, "PhoneNumber" = @p11, "UpdatedAt" = @p12
+WHERE "Id" = @p13
+RETURNING 1;
+2025-12-22 14:33:44.712 +03:00 [INF] Guest user converted successfully: etiryakim@gmail.com
+2025-12-22 14:33:44.712 +03:00 [INF] User etiryakim@gmail.com registered successfully
+2025-12-22 14:33:44.712 +03:00 [INF] AuthenticationScheme: Cookies signed in.
+2025-12-22 14:33:44.712 +03:00 [INF] Executing RedirectResult, redirecting to /Booking/Manage?pnr=5BTNZB&email=etiryakim@gmail.com.
+2025-12-22 14:33:44.712 +03:00 [INF] Executed action FlightBooking.Web.Controllers.AuthController.Register (FlightBooking.Web) in 198.8483ms
+2025-12-22 14:33:44.712 +03:00 [INF] Executed endpoint 'FlightBooking.Web.Controllers.AuthController.Register (FlightBooking.Web)'
+2025-12-22 14:33:44.713 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/Auth/Register - 302 0 null 204.2836ms
+2025-12-22 14:33:44.836 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/Booking/Manage?pnr=5BTNZB&email=etiryakim@gmail.com - null null
+2025-12-22 14:33:44.837 +03:00 [INF] Executing endpoint 'FlightBooking.Web.Controllers.BookingController.Manage (FlightBooking.Web)'
+2025-12-22 14:33:44.839 +03:00 [INF] Route matched with {action = "Manage", controller = "Booking"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Manage(System.String, System.String) on controller FlightBooking.Web.Controllers.BookingController (FlightBooking.Web).
+2025-12-22 14:33:44.841 +03:00 [INF] Manage action called with PNR: 5BTNZB, Email: etiryakim@gmail.com
+2025-12-22 14:33:44.841 +03:00 [INF] Searching for booking with PNR: 5BTNZB and email: etiryakim@gmail.com
+2025-12-22 14:33:44.854 +03:00 [INF] Executed DbCommand (0ms) [Parameters=[@__ToUpper_0='?' (Size = 6), @__ToLower_1='?' (Size = 19)], CommandType='"Text"', CommandTimeout='30']
+SELECT "t"."Id", "t"."BookingDate", "t"."BookingReference", "t"."CancellationDate", "t"."CancellationReason", "t"."FlightId", "t"."IsPaid", "t"."PassengerCount", "t"."PaymentDate", "t"."Status", "t"."TotalPrice", "t"."UserId", "t"."Id0", "t"."CreatedAt", "t"."DateOfBirth", "t"."Email", "t"."FirstName", "t"."Gender", "t"."IdentityNumber", "t"."IsActive", "t"."IsAdmin", "t"."IsGuest", "t"."LastName", "t"."PasswordHash", "t"."PhoneNumber", "t"."UpdatedAt", "t"."Id1", "t"."Airline", "t"."ArrivalCity", "t"."ArrivalTime", "t"."AvailableSeats", "t"."CreatedAt0", "t"."DepartureCity", "t"."DepartureTime", "t"."FlightNumber", "t"."Price", "t"."SeatsPerRow", "t"."Status0", "t"."TotalRows", "t"."TotalSeats", "t"."UpdatedAt0", "p"."Id", "p"."BookingId", "p"."DateOfBirth", "p"."FirstName", "p"."Gender", "p"."IdentityNumber", "p"."LastName", "p"."PhoneNumber", "p"."SeatNumber", "p"."SeatType"
+FROM (
+    SELECT "b"."Id", "b"."BookingDate", "b"."BookingReference", "b"."CancellationDate", "b"."CancellationReason", "b"."FlightId", "b"."IsPaid", "b"."PassengerCount", "b"."PaymentDate", "b"."Status", "b"."TotalPrice", "b"."UserId", "u"."Id" AS "Id0", "u"."CreatedAt", "u"."DateOfBirth", "u"."Email", "u"."FirstName", "u"."Gender", "u"."IdentityNumber", "u"."IsActive", "u"."IsAdmin", "u"."IsGuest", "u"."LastName", "u"."PasswordHash", "u"."PhoneNumber", "u"."UpdatedAt", "f"."Id" AS "Id1", "f"."Airline", "f"."ArrivalCity", "f"."ArrivalTime", "f"."AvailableSeats", "f"."CreatedAt" AS "CreatedAt0", "f"."DepartureCity", "f"."DepartureTime", "f"."FlightNumber", "f"."Price", "f"."SeatsPerRow", "f"."Status" AS "Status0", "f"."TotalRows", "f"."TotalSeats", "f"."UpdatedAt" AS "UpdatedAt0"
+    FROM "Bookings" AS "b"
+    INNER JOIN "Users" AS "u" ON "b"."UserId" = "u"."Id"
+    INNER JOIN "Flights" AS "f" ON "b"."FlightId" = "f"."Id"
+    WHERE upper("b"."BookingReference") = @__ToUpper_0 AND lower("u"."Email") = @__ToLower_1
+    LIMIT 1
+) AS "t"
+LEFT JOIN "Passengers" AS "p" ON "t"."Id" = "p"."BookingId"
+ORDER BY "t"."Id", "t"."Id0", "t"."Id1"
+2025-12-22 14:33:44.856 +03:00 [INF] Booking found: 11
+2025-12-22 14:33:44.859 +03:00 [INF] Executed DbCommand (0ms) [Parameters=[@__bookingId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT "p"."Id", "p"."BookingId", "p"."DateOfBirth", "p"."FirstName", "p"."Gender", "p"."IdentityNumber", "p"."LastName", "p"."PhoneNumber", "p"."SeatNumber", "p"."SeatType"
+FROM "Passengers" AS "p"
+WHERE "p"."BookingId" = @__bookingId_0
+ORDER BY "p"."Id"
+2025-12-22 14:33:44.859 +03:00 [INF] Booking details loaded successfully for PNR: 5BTNZB
+2025-12-22 14:33:44.896 +03:00 [INF] Executing ViewResult, running view Manage.
+2025-12-22 14:33:44.910 +03:00 [INF] Executed ViewResult - view Manage executed in 51.0299ms.
+2025-12-22 14:33:44.910 +03:00 [INF] Executed action FlightBooking.Web.Controllers.BookingController.Manage (FlightBooking.Web) in 71.4897ms
+2025-12-22 14:33:44.910 +03:00 [INF] Executed endpoint 'FlightBooking.Web.Controllers.BookingController.Manage (FlightBooking.Web)'
+2025-12-22 14:33:44.911 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/Booking/Manage?pnr=5BTNZB&email=etiryakim@gmail.com - 200 null text/html; charset=utf-8 74.2094ms
+2025-12-22 14:33:50.666 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/Booking/Payment?pnr=5BTNZB - null null
+2025-12-22 14:33:50.669 +03:00 [INF] Executing endpoint 'FlightBooking.Web.Controllers.BookingController.Payment (FlightBooking.Web)'
+2025-12-22 14:33:50.672 +03:00 [INF] Route matched with {action = "Payment", controller = "Booking"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Payment(System.String, System.String) on controller FlightBooking.Web.Controllers.BookingController (FlightBooking.Web).
+2025-12-22 14:33:50.676 +03:00 [INF] Executed DbCommand (0ms) [Parameters=[@__ToUpper_0='?' (Size = 6), @__ToLower_1='?' (Size = 19)], CommandType='"Text"', CommandTimeout='30']
+SELECT "t"."Id", "t"."BookingDate", "t"."BookingReference", "t"."CancellationDate", "t"."CancellationReason", "t"."FlightId", "t"."IsPaid", "t"."PassengerCount", "t"."PaymentDate", "t"."Status", "t"."TotalPrice", "t"."UserId", "t"."Id0", "t"."CreatedAt", "t"."DateOfBirth", "t"."Email", "t"."FirstName", "t"."Gender", "t"."IdentityNumber", "t"."IsActive", "t"."IsAdmin", "t"."IsGuest", "t"."LastName", "t"."PasswordHash", "t"."PhoneNumber", "t"."UpdatedAt", "t"."Id1", "t"."Airline", "t"."ArrivalCity", "t"."ArrivalTime", "t"."AvailableSeats", "t"."CreatedAt0", "t"."DepartureCity", "t"."DepartureTime", "t"."FlightNumber", "t"."Price", "t"."SeatsPerRow", "t"."Status0", "t"."TotalRows", "t"."TotalSeats", "t"."UpdatedAt0", "p"."Id", "p"."BookingId", "p"."DateOfBirth", "p"."FirstName", "p"."Gender", "p"."IdentityNumber", "p"."LastName", "p"."PhoneNumber", "p"."SeatNumber", "p"."SeatType"
+FROM (
+    SELECT "b"."Id", "b"."BookingDate", "b"."BookingReference", "b"."CancellationDate", "b"."CancellationReason", "b"."FlightId", "b"."IsPaid", "b"."PassengerCount", "b"."PaymentDate", "b"."Status", "b"."TotalPrice", "b"."UserId", "u"."Id" AS "Id0", "u"."CreatedAt", "u"."DateOfBirth", "u"."Email", "u"."FirstName", "u"."Gender", "u"."IdentityNumber", "u"."IsActive", "u"."IsAdmin", "u"."IsGuest", "u"."LastName", "u"."PasswordHash", "u"."PhoneNumber", "u"."UpdatedAt", "f"."Id" AS "Id1", "f"."Airline", "f"."ArrivalCity", "f"."ArrivalTime", "f"."AvailableSeats", "f"."CreatedAt" AS "CreatedAt0", "f"."DepartureCity", "f"."DepartureTime", "f"."FlightNumber", "f"."Price", "f"."SeatsPerRow", "f"."Status" AS "Status0", "f"."TotalRows", "f"."TotalSeats", "f"."UpdatedAt" AS "UpdatedAt0"
+    FROM "Bookings" AS "b"
+    INNER JOIN "Users" AS "u" ON "b"."UserId" = "u"."Id"
+    INNER JOIN "Flights" AS "f" ON "b"."FlightId" = "f"."Id"
+    WHERE upper("b"."BookingReference") = @__ToUpper_0 AND lower("u"."Email") = @__ToLower_1
+    LIMIT 1
+) AS "t"
+LEFT JOIN "Passengers" AS "p" ON "t"."Id" = "p"."BookingId"
+ORDER BY "t"."Id", "t"."Id0", "t"."Id1"
+2025-12-22 14:33:50.720 +03:00 [INF] Executing ViewResult, running view Payment.
+2025-12-22 14:33:50.729 +03:00 [INF] Executed ViewResult - view Payment executed in 51.745ms.
+2025-12-22 14:33:50.730 +03:00 [INF] Executed action FlightBooking.Web.Controllers.BookingController.Payment (FlightBooking.Web) in 57.8372ms
+2025-12-22 14:33:50.730 +03:00 [INF] Executed endpoint 'FlightBooking.Web.Controllers.BookingController.Payment (FlightBooking.Web)'
+2025-12-22 14:33:50.730 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/Booking/Payment?pnr=5BTNZB - 200 null text/html; charset=utf-8 63.3367ms
+2025-12-22 14:34:18.824 +03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5000/Booking/ProcessPayment - application/x-www-form-urlencoded 36
+2025-12-22 14:34:18.825 +03:00 [INF] Executing endpoint 'FlightBooking.Web.Controllers.BookingController.ProcessPayment (FlightBooking.Web)'
+2025-12-22 14:34:18.829 +03:00 [INF] Route matched with {action = "ProcessPayment", controller = "Booking"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] ProcessPayment(System.String, System.String) on controller FlightBooking.Web.Controllers.BookingController (FlightBooking.Web).
+2025-12-22 14:34:18.834 +03:00 [INF] Executed DbCommand (0ms) [Parameters=[@__ToUpper_0='?' (Size = 6), @__ToLower_1='?' (Size = 19)], CommandType='"Text"', CommandTimeout='30']
+SELECT "t"."Id", "t"."BookingDate", "t"."BookingReference", "t"."CancellationDate", "t"."CancellationReason", "t"."FlightId", "t"."IsPaid", "t"."PassengerCount", "t"."PaymentDate", "t"."Status", "t"."TotalPrice", "t"."UserId", "t"."Id0", "t"."CreatedAt", "t"."DateOfBirth", "t"."Email", "t"."FirstName", "t"."Gender", "t"."IdentityNumber", "t"."IsActive", "t"."IsAdmin", "t"."IsGuest", "t"."LastName", "t"."PasswordHash", "t"."PhoneNumber", "t"."UpdatedAt", "t"."Id1", "t"."Airline", "t"."ArrivalCity", "t"."ArrivalTime", "t"."AvailableSeats", "t"."CreatedAt0", "t"."DepartureCity", "t"."DepartureTime", "t"."FlightNumber", "t"."Price", "t"."SeatsPerRow", "t"."Status0", "t"."TotalRows", "t"."TotalSeats", "t"."UpdatedAt0", "p"."Id", "p"."BookingId", "p"."DateOfBirth", "p"."FirstName", "p"."Gender", "p"."IdentityNumber", "p"."LastName", "p"."PhoneNumber", "p"."SeatNumber", "p"."SeatType"
+FROM (
+    SELECT "b"."Id", "b"."BookingDate", "b"."BookingReference", "b"."CancellationDate", "b"."CancellationReason", "b"."FlightId", "b"."IsPaid", "b"."PassengerCount", "b"."PaymentDate", "b"."Status", "b"."TotalPrice", "b"."UserId", "u"."Id" AS "Id0", "u"."CreatedAt", "u"."DateOfBirth", "u"."Email", "u"."FirstName", "u"."Gender", "u"."IdentityNumber", "u"."IsActive", "u"."IsAdmin", "u"."IsGuest", "u"."LastName", "u"."PasswordHash", "u"."PhoneNumber", "u"."UpdatedAt", "f"."Id" AS "Id1", "f"."Airline", "f"."ArrivalCity", "f"."ArrivalTime", "f"."AvailableSeats", "f"."CreatedAt" AS "CreatedAt0", "f"."DepartureCity", "f"."DepartureTime", "f"."FlightNumber", "f"."Price", "f"."SeatsPerRow", "f"."Status" AS "Status0", "f"."TotalRows", "f"."TotalSeats", "f"."UpdatedAt" AS "UpdatedAt0"
+    FROM "Bookings" AS "b"
+    INNER JOIN "Users" AS "u" ON "b"."UserId" = "u"."Id"
+    INNER JOIN "Flights" AS "f" ON "b"."FlightId" = "f"."Id"
+    WHERE upper("b"."BookingReference") = @__ToUpper_0 AND lower("u"."Email") = @__ToLower_1
+    LIMIT 1
+) AS "t"
+LEFT JOIN "Passengers" AS "p" ON "t"."Id" = "p"."BookingId"
+ORDER BY "t"."Id", "t"."Id0", "t"."Id1"
+2025-12-22 14:34:18.838 +03:00 [INF] Executed DbCommand (0ms) [Parameters=[@p11='?' (DbType = Int32), @p0='?' (DbType = DateTime), @p1='?' (Size = 6), @p2='?' (DbType = DateTime), @p3='?', @p4='?' (DbType = Int32), @p5='?' (DbType = Boolean), @p6='?' (DbType = Int32), @p7='?' (DbType = DateTime), @p8='?' (Size = 9), @p9='?' (DbType = Decimal), @p10='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+UPDATE "Bookings" SET "BookingDate" = @p0, "BookingReference" = @p1, "CancellationDate" = @p2, "CancellationReason" = @p3, "FlightId" = @p4, "IsPaid" = @p5, "PassengerCount" = @p6, "PaymentDate" = @p7, "Status" = @p8, "TotalPrice" = @p9, "UserId" = @p10
+WHERE "Id" = @p11
+RETURNING 1;
+2025-12-22 14:34:18.839 +03:00 [INF] Executing JsonResult, writing value of type '<>f__AnonymousType18`2[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-12-22 14:34:18.842 +03:00 [INF] Executed action FlightBooking.Web.Controllers.BookingController.ProcessPayment (FlightBooking.Web) in 12.1173ms
+2025-12-22 14:34:18.842 +03:00 [INF] Executed endpoint 'FlightBooking.Web.Controllers.BookingController.ProcessPayment (FlightBooking.Web)'
+2025-12-22 14:34:18.842 +03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5000/Booking/ProcessPayment - 200 null application/json; charset=utf-8 17.7718ms
+2025-12-22 14:34:20.693 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/Booking/MyBookings - null null
+2025-12-22 14:34:20.695 +03:00 [INF] Executing endpoint 'FlightBooking.Web.Controllers.BookingController.MyBookings (FlightBooking.Web)'
+2025-12-22 14:34:20.698 +03:00 [INF] Route matched with {action = "MyBookings", controller = "Booking"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] MyBookings() on controller FlightBooking.Web.Controllers.BookingController (FlightBooking.Web).
+2025-12-22 14:34:20.703 +03:00 [INF] MyBookings action called
+2025-12-22 14:34:20.703 +03:00 [INF] User ID claim: 5
+2025-12-22 14:34:20.703 +03:00 [INF] Loading bookings for user ID: 5
+2025-12-22 14:34:20.709 +03:00 [INF] Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT "u"."Id", "u"."CreatedAt", "u"."DateOfBirth", "u"."Email", "u"."FirstName", "u"."Gender", "u"."IdentityNumber", "u"."IsActive", "u"."IsAdmin", "u"."IsGuest", "u"."LastName", "u"."PasswordHash", "u"."PhoneNumber", "u"."UpdatedAt"
+FROM "Users" AS "u"
+WHERE "u"."Id" = @__p_0
+LIMIT 1
+2025-12-22 14:34:20.710 +03:00 [INF] User found: etiryakim@gmail.com
+2025-12-22 14:34:20.711 +03:00 [INF] Executed DbCommand (0ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT "b"."Id", "b"."BookingDate", "b"."BookingReference", "b"."CancellationDate", "b"."CancellationReason", "b"."FlightId", "b"."IsPaid", "b"."PassengerCount", "b"."PaymentDate", "b"."Status", "b"."TotalPrice", "b"."UserId", "f"."Id", "f"."Airline", "f"."ArrivalCity", "f"."ArrivalTime", "f"."AvailableSeats", "f"."CreatedAt", "f"."DepartureCity", "f"."DepartureTime", "f"."FlightNumber", "f"."Price", "f"."SeatsPerRow", "f"."Status", "f"."TotalRows", "f"."TotalSeats", "f"."UpdatedAt", "p"."Id", "p"."BookingId", "p"."DateOfBirth", "p"."FirstName", "p"."Gender", "p"."IdentityNumber", "p"."LastName", "p"."PhoneNumber", "p"."SeatNumber", "p"."SeatType"
+FROM "Bookings" AS "b"
+INNER JOIN "Flights" AS "f" ON "b"."FlightId" = "f"."Id"
+LEFT JOIN "Passengers" AS "p" ON "b"."Id" = "p"."BookingId"
+WHERE "b"."UserId" = @__userId_0
+ORDER BY "b"."BookingDate" DESC, "b"."Id", "f"."Id"
+2025-12-22 14:34:20.712 +03:00 [INF] Found 1 bookings for user 5
+2025-12-22 14:34:20.713 +03:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT "b"."Id", "b"."BookingDate", "b"."BookingReference", "b"."CancellationDate", "b"."CancellationReason", "b"."FlightId", "b"."IsPaid", "b"."PassengerCount", "b"."PaymentDate", "b"."Status", "b"."TotalPrice", "b"."UserId", "u"."Id", "u"."CreatedAt", "u"."DateOfBirth", "u"."Email", "u"."FirstName", "u"."Gender", "u"."IdentityNumber", "u"."IsActive", "u"."IsAdmin", "u"."IsGuest", "u"."LastName", "u"."PasswordHash", "u"."PhoneNumber", "u"."UpdatedAt", "f"."Id", "f"."Airline", "f"."ArrivalCity", "f"."ArrivalTime", "f"."AvailableSeats", "f"."CreatedAt", "f"."DepartureCity", "f"."DepartureTime", "f"."FlightNumber", "f"."Price", "f"."SeatsPerRow", "f"."Status", "f"."TotalRows", "f"."TotalSeats", "f"."UpdatedAt", "p"."Id", "p"."BookingId", "p"."DateOfBirth", "p"."FirstName", "p"."Gender", "p"."IdentityNumber", "p"."LastName", "p"."PhoneNumber", "p"."SeatNumber", "p"."SeatType"
+FROM "Bookings" AS "b"
+INNER JOIN "Users" AS "u" ON "b"."UserId" = "u"."Id"
+INNER JOIN "Flights" AS "f" ON "b"."FlightId" = "f"."Id"
+LEFT JOIN "Passengers" AS "p" ON "b"."Id" = "p"."BookingId"
+ORDER BY "b"."BookingDate" DESC, "b"."Id", "u"."Id", "f"."Id"
+2025-12-22 14:34:20.714 +03:00 [INF] Total bookings in database: 1
+2025-12-22 14:34:20.714 +03:00 [INF] Processing booking 11
+2025-12-22 14:34:20.714 +03:00 [INF] Booking details: Id=11, PNR='5BTNZB', Status='Onaylandı', UserId=5
+2025-12-22 14:34:20.715 +03:00 [INF] Executed DbCommand (0ms) [Parameters=[@__bookingId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT "p"."Id", "p"."BookingId", "p"."DateOfBirth", "p"."FirstName", "p"."Gender", "p"."IdentityNumber", "p"."LastName", "p"."PhoneNumber", "p"."SeatNumber", "p"."SeatType"
+FROM "Passengers" AS "p"
+WHERE "p"."BookingId" = @__bookingId_0
+ORDER BY "p"."Id"
+2025-12-22 14:34:20.715 +03:00 [INF] Found 1 passengers for booking 11
+2025-12-22 14:34:20.715 +03:00 [INF] Booking 11 has PNR: '5BTNZB'
+2025-12-22 14:34:20.716 +03:00 [INF] Successfully added booking 11 to view models
+2025-12-22 14:34:20.716 +03:00 [INF] Successfully loaded 1 bookings for user 5
+2025-12-22 14:34:20.760 +03:00 [INF] Executing ViewResult, running view MyBookings.
+2025-12-22 14:34:20.764 +03:00 [INF] Executed ViewResult - view MyBookings executed in 47.1421ms.
+2025-12-22 14:34:20.764 +03:00 [INF] Executed action FlightBooking.Web.Controllers.BookingController.MyBookings (FlightBooking.Web) in 65.3155ms
+2025-12-22 14:34:20.764 +03:00 [INF] Executed endpoint 'FlightBooking.Web.Controllers.BookingController.MyBookings (FlightBooking.Web)'
+2025-12-22 14:34:20.764 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/Booking/MyBookings - 200 null text/html; charset=utf-8 70.875ms
+2025-12-22 14:34:23.386 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/Booking/Query?pnr=5BTNZB - null null
+2025-12-22 14:34:23.387 +03:00 [INF] Executing endpoint 'FlightBooking.Web.Controllers.BookingController.Query (FlightBooking.Web)'
+2025-12-22 14:34:23.388 +03:00 [INF] Route matched with {action = "Query", controller = "Booking"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Query(System.String) on controller FlightBooking.Web.Controllers.BookingController (FlightBooking.Web).
+2025-12-22 14:34:23.434 +03:00 [INF] Executing ViewResult, running view Query.
+2025-12-22 14:34:23.438 +03:00 [INF] Executed ViewResult - view Query executed in 46.0658ms.
+2025-12-22 14:34:23.438 +03:00 [INF] Executed action FlightBooking.Web.Controllers.BookingController.Query (FlightBooking.Web) in 49.9193ms
+2025-12-22 14:34:23.438 +03:00 [INF] Executed endpoint 'FlightBooking.Web.Controllers.BookingController.Query (FlightBooking.Web)'
+2025-12-22 14:34:23.439 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/Booking/Query?pnr=5BTNZB - 200 null text/html; charset=utf-8 52.9936ms
+2025-12-22 14:34:38.239 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/Booking/Manage?pnr=5BTNZB&email=etiryakim%40gmail.com - null null
+2025-12-22 14:34:38.240 +03:00 [INF] Executing endpoint 'FlightBooking.Web.Controllers.BookingController.Manage (FlightBooking.Web)'
+2025-12-22 14:34:38.240 +03:00 [INF] Route matched with {action = "Manage", controller = "Booking"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Manage(System.String, System.String) on controller FlightBooking.Web.Controllers.BookingController (FlightBooking.Web).
+2025-12-22 14:34:38.241 +03:00 [INF] Manage action called with PNR: 5BTNZB, Email: etiryakim@gmail.com
+2025-12-22 14:34:38.241 +03:00 [INF] Searching for booking with PNR: 5BTNZB and email: etiryakim@gmail.com
+2025-12-22 14:34:38.243 +03:00 [INF] Executed DbCommand (0ms) [Parameters=[@__ToUpper_0='?' (Size = 6), @__ToLower_1='?' (Size = 19)], CommandType='"Text"', CommandTimeout='30']
+SELECT "t"."Id", "t"."BookingDate", "t"."BookingReference", "t"."CancellationDate", "t"."CancellationReason", "t"."FlightId", "t"."IsPaid", "t"."PassengerCount", "t"."PaymentDate", "t"."Status", "t"."TotalPrice", "t"."UserId", "t"."Id0", "t"."CreatedAt", "t"."DateOfBirth", "t"."Email", "t"."FirstName", "t"."Gender", "t"."IdentityNumber", "t"."IsActive", "t"."IsAdmin", "t"."IsGuest", "t"."LastName", "t"."PasswordHash", "t"."PhoneNumber", "t"."UpdatedAt", "t"."Id1", "t"."Airline", "t"."ArrivalCity", "t"."ArrivalTime", "t"."AvailableSeats", "t"."CreatedAt0", "t"."DepartureCity", "t"."DepartureTime", "t"."FlightNumber", "t"."Price", "t"."SeatsPerRow", "t"."Status0", "t"."TotalRows", "t"."TotalSeats", "t"."UpdatedAt0", "p"."Id", "p"."BookingId", "p"."DateOfBirth", "p"."FirstName", "p"."Gender", "p"."IdentityNumber", "p"."LastName", "p"."PhoneNumber", "p"."SeatNumber", "p"."SeatType"
+FROM (
+    SELECT "b"."Id", "b"."BookingDate", "b"."BookingReference", "b"."CancellationDate", "b"."CancellationReason", "b"."FlightId", "b"."IsPaid", "b"."PassengerCount", "b"."PaymentDate", "b"."Status", "b"."TotalPrice", "b"."UserId", "u"."Id" AS "Id0", "u"."CreatedAt", "u"."DateOfBirth", "u"."Email", "u"."FirstName", "u"."Gender", "u"."IdentityNumber", "u"."IsActive", "u"."IsAdmin", "u"."IsGuest", "u"."LastName", "u"."PasswordHash", "u"."PhoneNumber", "u"."UpdatedAt", "f"."Id" AS "Id1", "f"."Airline", "f"."ArrivalCity", "f"."ArrivalTime", "f"."AvailableSeats", "f"."CreatedAt" AS "CreatedAt0", "f"."DepartureCity", "f"."DepartureTime", "f"."FlightNumber", "f"."Price", "f"."SeatsPerRow", "f"."Status" AS "Status0", "f"."TotalRows", "f"."TotalSeats", "f"."UpdatedAt" AS "UpdatedAt0"
+    FROM "Bookings" AS "b"
+    INNER JOIN "Users" AS "u" ON "b"."UserId" = "u"."Id"
+    INNER JOIN "Flights" AS "f" ON "b"."FlightId" = "f"."Id"
+    WHERE upper("b"."BookingReference") = @__ToUpper_0 AND lower("u"."Email") = @__ToLower_1
+    LIMIT 1
+) AS "t"
+LEFT JOIN "Passengers" AS "p" ON "t"."Id" = "p"."BookingId"
+ORDER BY "t"."Id", "t"."Id0", "t"."Id1"
+2025-12-22 14:34:38.244 +03:00 [INF] Booking found: 11
+2025-12-22 14:34:38.244 +03:00 [INF] Executed DbCommand (0ms) [Parameters=[@__bookingId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT "p"."Id", "p"."BookingId", "p"."DateOfBirth", "p"."FirstName", "p"."Gender", "p"."IdentityNumber", "p"."LastName", "p"."PhoneNumber", "p"."SeatNumber", "p"."SeatType"
+FROM "Passengers" AS "p"
+WHERE "p"."BookingId" = @__bookingId_0
+ORDER BY "p"."Id"
+2025-12-22 14:34:38.245 +03:00 [INF] Booking details loaded successfully for PNR: 5BTNZB
+2025-12-22 14:34:38.245 +03:00 [INF] Executing ViewResult, running view Manage.
+2025-12-22 14:34:38.248 +03:00 [INF] Executed ViewResult - view Manage executed in 3.3697ms.
+2025-12-22 14:34:38.248 +03:00 [INF] Executed action FlightBooking.Web.Controllers.BookingController.Manage (FlightBooking.Web) in 8.0482ms
+2025-12-22 14:34:38.249 +03:00 [INF] Executed endpoint 'FlightBooking.Web.Controllers.BookingController.Manage (FlightBooking.Web)'
+2025-12-22 14:34:38.249 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/Booking/Manage?pnr=5BTNZB&email=etiryakim%40gmail.com - 200 null text/html; charset=utf-8 9.7436ms
+2025-12-22 14:34:52.684 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/ - null null
+2025-12-22 14:34:52.685 +03:00 [INF] Executing endpoint 'FlightBooking.Web.Controllers.HomeController.Index (FlightBooking.Web)'
+2025-12-22 14:34:52.685 +03:00 [INF] Route matched with {action = "Index", controller = "Home"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Index() on controller FlightBooking.Web.Controllers.HomeController (FlightBooking.Web).
+2025-12-22 14:34:52.685 +03:00 [INF] Executing ViewResult, running view Index.
+2025-12-22 14:34:52.686 +03:00 [INF] Executed ViewResult - view Index executed in 0.9228ms.
+2025-12-22 14:34:52.686 +03:00 [INF] Executed action FlightBooking.Web.Controllers.HomeController.Index (FlightBooking.Web) in 1.149ms
+2025-12-22 14:34:52.686 +03:00 [INF] Executed endpoint 'FlightBooking.Web.Controllers.HomeController.Index (FlightBooking.Web)'
+2025-12-22 14:34:52.686 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/ - 200 null text/html; charset=utf-8 2.401ms
+2025-12-22 14:34:55.031 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/Booking/MyBookings - null null
+2025-12-22 14:34:55.032 +03:00 [INF] Executing endpoint 'FlightBooking.Web.Controllers.BookingController.MyBookings (FlightBooking.Web)'
+2025-12-22 14:34:55.032 +03:00 [INF] Route matched with {action = "MyBookings", controller = "Booking"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] MyBookings() on controller FlightBooking.Web.Controllers.BookingController (FlightBooking.Web).
+2025-12-22 14:34:55.033 +03:00 [INF] MyBookings action called
+2025-12-22 14:34:55.033 +03:00 [INF] User ID claim: 5
+2025-12-22 14:34:55.033 +03:00 [INF] Loading bookings for user ID: 5
+2025-12-22 14:34:55.034 +03:00 [INF] Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT "u"."Id", "u"."CreatedAt", "u"."DateOfBirth", "u"."Email", "u"."FirstName", "u"."Gender", "u"."IdentityNumber", "u"."IsActive", "u"."IsAdmin", "u"."IsGuest", "u"."LastName", "u"."PasswordHash", "u"."PhoneNumber", "u"."UpdatedAt"
+FROM "Users" AS "u"
+WHERE "u"."Id" = @__p_0
+LIMIT 1
+2025-12-22 14:34:55.035 +03:00 [INF] User found: etiryakim@gmail.com
+2025-12-22 14:34:55.036 +03:00 [INF] Executed DbCommand (0ms) [Parameters=[@__userId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT "b"."Id", "b"."BookingDate", "b"."BookingReference", "b"."CancellationDate", "b"."CancellationReason", "b"."FlightId", "b"."IsPaid", "b"."PassengerCount", "b"."PaymentDate", "b"."Status", "b"."TotalPrice", "b"."UserId", "f"."Id", "f"."Airline", "f"."ArrivalCity", "f"."ArrivalTime", "f"."AvailableSeats", "f"."CreatedAt", "f"."DepartureCity", "f"."DepartureTime", "f"."FlightNumber", "f"."Price", "f"."SeatsPerRow", "f"."Status", "f"."TotalRows", "f"."TotalSeats", "f"."UpdatedAt", "p"."Id", "p"."BookingId", "p"."DateOfBirth", "p"."FirstName", "p"."Gender", "p"."IdentityNumber", "p"."LastName", "p"."PhoneNumber", "p"."SeatNumber", "p"."SeatType"
+FROM "Bookings" AS "b"
+INNER JOIN "Flights" AS "f" ON "b"."FlightId" = "f"."Id"
+LEFT JOIN "Passengers" AS "p" ON "b"."Id" = "p"."BookingId"
+WHERE "b"."UserId" = @__userId_0
+ORDER BY "b"."BookingDate" DESC, "b"."Id", "f"."Id"
+2025-12-22 14:34:55.037 +03:00 [INF] Found 1 bookings for user 5
+2025-12-22 14:34:55.038 +03:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT "b"."Id", "b"."BookingDate", "b"."BookingReference", "b"."CancellationDate", "b"."CancellationReason", "b"."FlightId", "b"."IsPaid", "b"."PassengerCount", "b"."PaymentDate", "b"."Status", "b"."TotalPrice", "b"."UserId", "u"."Id", "u"."CreatedAt", "u"."DateOfBirth", "u"."Email", "u"."FirstName", "u"."Gender", "u"."IdentityNumber", "u"."IsActive", "u"."IsAdmin", "u"."IsGuest", "u"."LastName", "u"."PasswordHash", "u"."PhoneNumber", "u"."UpdatedAt", "f"."Id", "f"."Airline", "f"."ArrivalCity", "f"."ArrivalTime", "f"."AvailableSeats", "f"."CreatedAt", "f"."DepartureCity", "f"."DepartureTime", "f"."FlightNumber", "f"."Price", "f"."SeatsPerRow", "f"."Status", "f"."TotalRows", "f"."TotalSeats", "f"."UpdatedAt", "p"."Id", "p"."BookingId", "p"."DateOfBirth", "p"."FirstName", "p"."Gender", "p"."IdentityNumber", "p"."LastName", "p"."PhoneNumber", "p"."SeatNumber", "p"."SeatType"
+FROM "Bookings" AS "b"
+INNER JOIN "Users" AS "u" ON "b"."UserId" = "u"."Id"
+INNER JOIN "Flights" AS "f" ON "b"."FlightId" = "f"."Id"
+LEFT JOIN "Passengers" AS "p" ON "b"."Id" = "p"."BookingId"
+ORDER BY "b"."BookingDate" DESC, "b"."Id", "u"."Id", "f"."Id"
+2025-12-22 14:34:55.038 +03:00 [INF] Total bookings in database: 1
+2025-12-22 14:34:55.038 +03:00 [INF] Processing booking 11
+2025-12-22 14:34:55.038 +03:00 [INF] Booking details: Id=11, PNR='5BTNZB', Status='Onaylandı', UserId=5
+2025-12-22 14:34:55.039 +03:00 [INF] Executed DbCommand (0ms) [Parameters=[@__bookingId_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT "p"."Id", "p"."BookingId", "p"."DateOfBirth", "p"."FirstName", "p"."Gender", "p"."IdentityNumber", "p"."LastName", "p"."PhoneNumber", "p"."SeatNumber", "p"."SeatType"
+FROM "Passengers" AS "p"
+WHERE "p"."BookingId" = @__bookingId_0
+ORDER BY "p"."Id"
+2025-12-22 14:34:55.039 +03:00 [INF] Found 1 passengers for booking 11
+2025-12-22 14:34:55.039 +03:00 [INF] Booking 11 has PNR: '5BTNZB'
+2025-12-22 14:34:55.039 +03:00 [INF] Successfully added booking 11 to view models
+2025-12-22 14:34:55.039 +03:00 [INF] Successfully loaded 1 bookings for user 5
+2025-12-22 14:34:55.039 +03:00 [INF] Executing ViewResult, running view MyBookings.
+2025-12-22 14:34:55.042 +03:00 [INF] Executed ViewResult - view MyBookings executed in 2.3512ms.
+2025-12-22 14:34:55.042 +03:00 [INF] Executed action FlightBooking.Web.Controllers.BookingController.MyBookings (FlightBooking.Web) in 9.7257ms
+2025-12-22 14:34:55.042 +03:00 [INF] Executed endpoint 'FlightBooking.Web.Controllers.BookingController.MyBookings (FlightBooking.Web)'
+2025-12-22 14:34:55.042 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/Booking/MyBookings - 200 null text/html; charset=utf-8 11.159ms
+2025-12-22 14:35:00.499 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/Booking/Query - null null
+2025-12-22 14:35:00.500 +03:00 [INF] Executing endpoint 'FlightBooking.Web.Controllers.BookingController.Query (FlightBooking.Web)'
+2025-12-22 14:35:00.501 +03:00 [INF] Route matched with {action = "Query", controller = "Booking"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Query(System.String) on controller FlightBooking.Web.Controllers.BookingController (FlightBooking.Web).
+2025-12-22 14:35:00.503 +03:00 [INF] Executing ViewResult, running view Query.
+2025-12-22 14:35:00.507 +03:00 [INF] Executed ViewResult - view Query executed in 3.7608ms.
+2025-12-22 14:35:00.507 +03:00 [INF] Executed action FlightBooking.Web.Controllers.BookingController.Query (FlightBooking.Web) in 6.4305ms
+2025-12-22 14:35:00.507 +03:00 [INF] Executed endpoint 'FlightBooking.Web.Controllers.BookingController.Query (FlightBooking.Web)'
+2025-12-22 14:35:00.508 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/Booking/Query - 200 null text/html; charset=utf-8 8.4664ms
+2025-12-22 14:35:04.599 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/ - null null
+2025-12-22 14:35:04.600 +03:00 [INF] Executing endpoint 'FlightBooking.Web.Controllers.HomeController.Index (FlightBooking.Web)'
+2025-12-22 14:35:04.601 +03:00 [INF] Route matched with {action = "Index", controller = "Home"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Index() on controller FlightBooking.Web.Controllers.HomeController (FlightBooking.Web).
+2025-12-22 14:35:04.601 +03:00 [INF] Executing ViewResult, running view Index.
+2025-12-22 14:35:04.602 +03:00 [INF] Executed ViewResult - view Index executed in 1.3633ms.
+2025-12-22 14:35:04.602 +03:00 [INF] Executed action FlightBooking.Web.Controllers.HomeController.Index (FlightBooking.Web) in 1.6149ms
+2025-12-22 14:35:04.602 +03:00 [INF] Executed endpoint 'FlightBooking.Web.Controllers.HomeController.Index (FlightBooking.Web)'
+2025-12-22 14:35:04.603 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/ - 200 null text/html; charset=utf-8 3.153ms
+2025-12-22 14:35:52.117 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/Home/Campaigns - null null
+2025-12-22 14:35:52.118 +03:00 [INF] Executing endpoint 'FlightBooking.Web.Controllers.HomeController.Campaigns (FlightBooking.Web)'
+2025-12-22 14:35:52.120 +03:00 [INF] Route matched with {action = "Campaigns", controller = "Home"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Campaigns() on controller FlightBooking.Web.Controllers.HomeController (FlightBooking.Web).
+2025-12-22 14:35:52.149 +03:00 [INF] Executing ViewResult, running view Campaigns.
+2025-12-22 14:35:52.150 +03:00 [INF] Executed ViewResult - view Campaigns executed in 30.0962ms.
+2025-12-22 14:35:52.150 +03:00 [INF] Executed action FlightBooking.Web.Controllers.HomeController.Campaigns (FlightBooking.Web) in 30.355ms
+2025-12-22 14:35:52.150 +03:00 [INF] Executed endpoint 'FlightBooking.Web.Controllers.HomeController.Campaigns (FlightBooking.Web)'
+2025-12-22 14:35:52.150 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/Home/Campaigns - 200 null text/html; charset=utf-8 33.1691ms
+2025-12-22 14:36:03.166 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/ - null null
+2025-12-22 14:36:03.167 +03:00 [INF] Executing endpoint 'FlightBooking.Web.Controllers.HomeController.Index (FlightBooking.Web)'
+2025-12-22 14:36:03.167 +03:00 [INF] Route matched with {action = "Index", controller = "Home"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Index() on controller FlightBooking.Web.Controllers.HomeController (FlightBooking.Web).
+2025-12-22 14:36:03.167 +03:00 [INF] Executing ViewResult, running view Index.
+2025-12-22 14:36:03.168 +03:00 [INF] Executed ViewResult - view Index executed in 1.1673ms.
+2025-12-22 14:36:03.169 +03:00 [INF] Executed action FlightBooking.Web.Controllers.HomeController.Index (FlightBooking.Web) in 1.4366ms
+2025-12-22 14:36:03.169 +03:00 [INF] Executed endpoint 'FlightBooking.Web.Controllers.HomeController.Index (FlightBooking.Web)'
+2025-12-22 14:36:03.169 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/ - 200 null text/html; charset=utf-8 3.0848ms
+2025-12-22 14:36:22.249 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/Auth/ForgotPassword - null null
+2025-12-22 14:36:22.250 +03:00 [INF] Executing endpoint 'FlightBooking.Web.Controllers.AuthController.ForgotPassword (FlightBooking.Web)'
+2025-12-22 14:36:22.251 +03:00 [INF] Route matched with {action = "ForgotPassword", controller = "Auth"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult ForgotPassword() on controller FlightBooking.Web.Controllers.AuthController (FlightBooking.Web).
+2025-12-22 14:36:22.294 +03:00 [INF] Executing ViewResult, running view ForgotPassword.
+2025-12-22 14:36:22.298 +03:00 [INF] Executed ViewResult - view ForgotPassword executed in 45.9275ms.
+2025-12-22 14:36:22.298 +03:00 [INF] Executed action FlightBooking.Web.Controllers.AuthController.ForgotPassword (FlightBooking.Web) in 46.9328ms
+2025-12-22 14:36:22.298 +03:00 [INF] Executed endpoint 'FlightBooking.Web.Controllers.AuthController.ForgotPassword (FlightBooking.Web)'
+2025-12-22 14:36:22.298 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/Auth/ForgotPassword - 200 null text/html; charset=utf-8 49.8573ms
+2025-12-22 14:36:36.414 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/Legal/Privacy - null null
+2025-12-22 14:36:36.414 +03:00 [INF] Executing endpoint 'FlightBooking.Web.Controllers.LegalController.Privacy (FlightBooking.Web)'
+2025-12-22 14:36:36.415 +03:00 [INF] Route matched with {action = "Privacy", controller = "Legal"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Privacy() on controller FlightBooking.Web.Controllers.LegalController (FlightBooking.Web).
+2025-12-22 14:36:36.454 +03:00 [INF] Executing ViewResult, running view Privacy.
+2025-12-22 14:36:36.456 +03:00 [INF] Executed ViewResult - view Privacy executed in 39.8202ms.
+2025-12-22 14:36:36.456 +03:00 [INF] Executed action FlightBooking.Web.Controllers.LegalController.Privacy (FlightBooking.Web) in 40.2994ms
+2025-12-22 14:36:36.456 +03:00 [INF] Executed endpoint 'FlightBooking.Web.Controllers.LegalController.Privacy (FlightBooking.Web)'
+2025-12-22 14:36:36.456 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/Legal/Privacy - 200 null text/html; charset=utf-8 41.972ms
+2025-12-22 14:36:50.249 +03:00 [INF] Request starting HTTP/1.1 GET http://localhost:5000/ - null null
+2025-12-22 14:36:50.250 +03:00 [INF] Executing endpoint 'FlightBooking.Web.Controllers.HomeController.Index (FlightBooking.Web)'
+2025-12-22 14:36:50.250 +03:00 [INF] Route matched with {action = "Index", controller = "Home"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Index() on controller FlightBooking.Web.Controllers.HomeController (FlightBooking.Web).
+2025-12-22 14:36:50.250 +03:00 [INF] Executing ViewResult, running view Index.
+2025-12-22 14:36:50.252 +03:00 [INF] Executed ViewResult - view Index executed in 1.3377ms.
+2025-12-22 14:36:50.252 +03:00 [INF] Executed action FlightBooking.Web.Controllers.HomeController.Index (FlightBooking.Web) in 1.7079ms
+2025-12-22 14:36:50.252 +03:00 [INF] Executed endpoint 'FlightBooking.Web.Controllers.HomeController.Index (FlightBooking.Web)'
+2025-12-22 14:36:50.252 +03:00 [INF] Request finished HTTP/1.1 GET http://localhost:5000/ - 200 null text/html; charset=utf-8 3.3841ms

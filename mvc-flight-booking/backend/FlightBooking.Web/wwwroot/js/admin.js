@@ -1,30 +1,36 @@
-// Admin panel JavaScript functionality
+// Admin paneli JavaScript fonksiyonları
 
-// API Base URL
+// API temel URL'i
 const API_BASE = '/api';
 
-// Admin utilities
+// Admin API işlemleri için yardımcı sınıf
 class AdminAPI {
+    // Genel API istek fonksiyonu
     static async request(url, options = {}) {
+        // Varsayılan istek ayarları
         const defaultOptions = {
             headers: {
                 'Content-Type': 'application/json',
+                // CSRF token'ı ekle (güvenlik için)
                 'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
             },
-            credentials: 'same-origin' // Include cookies for authentication
+            credentials: 'same-origin' // Kimlik doğrulama için cookie'leri dahil et
         };
 
+        // API isteğini gönder
         const response = await fetch(API_BASE + url, {
             ...defaultOptions,
             ...options,
             headers: { ...defaultOptions.headers, ...options.headers }
         });
 
+        // Hata kontrolü
         if (!response.ok) {
             const error = await response.text();
             throw new Error(error || 'İşlem başarısız');
         }
 
+        // JSON yanıt varsa parse et, yoksa text olarak döndür
         const contentType = response.headers.get('content-type');
         if (contentType && contentType.includes('application/json')) {
             return response.json();
@@ -32,11 +38,13 @@ class AdminAPI {
         return response.text();
     }
 
-    // Flight operations
+    // Uçuş işlemleri
+    // Tüm uçuşları getir
     static async getFlights() {
         return this.request('/flights');
     }
 
+    // Yeni uçuş oluştur
     static async createFlight(flightData) {
         return this.request('/flights', {
             method: 'POST',
@@ -44,6 +52,7 @@ class AdminAPI {
         });
     }
 
+    // Uçuş güncelle
     static async updateFlight(id, flightData) {
         return this.request(`/flights/${id}`, {
             method: 'PUT',
@@ -51,30 +60,35 @@ class AdminAPI {
         });
     }
 
+    // Uçuş sil
     static async deleteFlight(id) {
         return this.request(`/flights/${id}`, {
             method: 'DELETE'
         });
     }
 
-    // Booking operations
+    // Rezervasyon işlemleri
+    // Tüm rezervasyonları getir
     static async getAllBookings() {
         return this.request('/bookings/all');
     }
 
+    // Rezervasyon iptal et
     static async cancelBooking(id) {
         return this.request(`/bookings/${id}`, {
             method: 'DELETE'
         });
     }
 
+    // Tüm rezervasyonları sil
     static async deleteAllBookings() {
         return this.request('/bookings/all', {
             method: 'DELETE'
         });
     }
 
-    // User operations
+    // Kullanıcı işlemleri
+    // Tüm kullanıcıları getir
     static async getUsers() {
         console.log('AdminAPI.getUsers called');
         try {
@@ -83,12 +97,13 @@ class AdminAPI {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                credentials: 'same-origin'
+                credentials: 'same-origin' // Cookie'leri dahil et
             });
             
             console.log('Response status:', response.status);
             console.log('Response headers:', [...response.headers.entries()]);
             
+            // Hata kontrolü
             if (!response.ok) {
                 const errorText = await response.text();
                 console.error('API Error:', response.status, errorText);

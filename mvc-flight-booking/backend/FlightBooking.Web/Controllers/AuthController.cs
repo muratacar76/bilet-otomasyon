@@ -30,30 +30,33 @@ public class AuthController : Controller
     }
 
     /// <summary>
-    /// Login page
+    /// Giriş sayfasını gösterir
     /// </summary>
     [HttpGet]
     public IActionResult Login(string? returnUrl = null)
     {
+        // Kullanıcı zaten giriş yapmışsa ana sayfaya yönlendir
         if (User.Identity?.IsAuthenticated == true)
         {
             return RedirectToAction("Index", "Home");
         }
 
+        // Sayfa başlığını ve geri dönüş URL'ini ayarla
         ViewData["Title"] = "Giriş Yap - Bulut Bilet.com";
         ViewData["ReturnUrl"] = returnUrl;
         return View(new LoginViewModel { ReturnUrl = returnUrl });
     }
 
     /// <summary>
-    /// Process login
+    /// Giriş işlemini gerçekleştirir
     /// </summary>
     [HttpPost]
-    [ValidateAntiForgeryToken]
+    [ValidateAntiForgeryToken] // CSRF saldırılarına karşı koruma
     public async Task<IActionResult> Login(LoginViewModel model)
     {
         ViewData["Title"] = "Giriş Yap - Bulut Bilet.com";
 
+        // Model validasyonu başarısızsa formu tekrar göster
         if (!ModelState.IsValid)
         {
             return View(model);
@@ -61,8 +64,10 @@ public class AuthController : Controller
 
         try
         {
+            // Kullanıcıyı e-posta ile veritabanından bul
             var user = await _userRepository.GetByEmailAsync(model.Email);
             
+            // Kullanıcı bulunamadıysa veya şifre yanlışsa hata ver
             if (user == null || user.PasswordHash == null || 
                 !BCrypt.Net.BCrypt.Verify(model.Password, user.PasswordHash))
             {
@@ -70,15 +75,16 @@ public class AuthController : Controller
                 return View(model);
             }
 
-            // Create claims
+            // Kullanıcı bilgilerini claim'lere ekle (kimlik bilgileri)
             var claims = new List<Claim>
             {
-                new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new(ClaimTypes.Email, user.Email),
-                new(ClaimTypes.Name, user.FullName),
-                new("IsGuest", user.IsGuest.ToString().ToLower())
+                new(ClaimTypes.NameIdentifier, user.Id.ToString()), // Kullanıcı ID
+                new(ClaimTypes.Email, user.Email), // E-posta
+                new(ClaimTypes.Name, user.FullName), // Tam ad
+                new("IsGuest", user.IsGuest.ToString().ToLower()) // Misafir mi?
             };
 
+            // Admin kullanıcı ise admin claim'lerini ekle
             if (user.IsAdmin)
             {
                 claims.Add(new Claim(ClaimTypes.Role, "Admin"));
@@ -89,13 +95,17 @@ public class AuthController : Controller
                 claims.Add(new Claim("IsAdmin", "false"));
             }
 
+            // Kimlik bilgilerini oluştur
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            
+            // Authentication özellikleri (cookie ayarları)
             var authProperties = new AuthenticationProperties
             {
-                IsPersistent = model.RememberMe,
-                ExpiresUtc = model.RememberMe ? DateTimeOffset.UtcNow.AddDays(30) : DateTimeOffset.UtcNow.AddHours(8)
+                IsPersistent = model.RememberMe, // "Beni hatırla" seçeneği
+                ExpiresUtc = model.RememberMe ? DateTimeOffset.UtcNow.AddDays(30) : DateTimeOffset.UtcNow.AddHours(8) // Cookie süresi
             };
 
+            // Kullanıcıyı sisteme giriş yaptır (cookie oluştur)
             await HttpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,
                 new ClaimsPrincipal(claimsIdentity),
@@ -103,7 +113,7 @@ public class AuthController : Controller
 
             _logger.LogInformation("User {Email} logged in successfully", user.Email);
 
-            // Redirect to return URL or home
+            // Geri dönüş URL'i varsa oraya, yoksa ana sayfaya yönlendir
             if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
             {
                 return Redirect(model.ReturnUrl);

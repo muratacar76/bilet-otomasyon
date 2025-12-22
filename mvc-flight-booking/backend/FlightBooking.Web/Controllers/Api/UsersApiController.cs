@@ -6,6 +6,10 @@ using System.Security.Claims;
 
 namespace FlightBooking.Web.Controllers.Api;
 
+/// <summary>
+/// Kullanıcı yönetimi için API Controller
+/// Admin panelinden kullanıcı işlemlerini yönetir
+/// </summary>
 [ApiController]
 [Route("api/users")]
 public class UsersApiController : ControllerBase
@@ -24,21 +28,25 @@ public class UsersApiController : ControllerBase
         _logger = logger;
     }
 
+    /// <summary>
+    /// Tüm kullanıcıları getirir (Sadece admin)
+    /// </summary>
     [HttpGet]
-    [Authorize]
+    [Authorize] // Giriş yapmış kullanıcı gerekli
     public async Task<IActionResult> GetUsers()
     {
         try
         {
             _logger.LogInformation("GetUsers API called. Authenticated: {IsAuthenticated}", User.Identity.IsAuthenticated);
             
+            // Kullanıcı giriş yapmış mı kontrol et
             if (!User.Identity.IsAuthenticated)
             {
                 _logger.LogWarning("Unauthenticated user attempted to access users API");
                 return Unauthorized("Giriş yapmanız gereklidir");
             }
             
-            // Admin kontrolü - daha esnek kontrol
+            // Admin kontrolü - farklı claim türlerini kontrol et
             var isAdmin = User.FindFirst("IsAdmin")?.Value == "true" || 
                          User.IsInRole("Admin") || 
                          User.FindFirst(ClaimTypes.Role)?.Value == "Admin";
@@ -48,6 +56,7 @@ public class UsersApiController : ControllerBase
                 isAdmin,
                 string.Join(", ", User.Claims.Select(c => $"{c.Type}={c.Value}")));
             
+            // Admin değilse erişimi reddet
             if (!isAdmin)
             {
                 _logger.LogWarning("Non-admin user attempted to access users API: {UserId}", User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
@@ -58,11 +67,13 @@ public class UsersApiController : ControllerBase
             var users = await _userRepository.GetAllAsync();
             _logger.LogInformation("Found {UserCount} users", users.Count());
             
+            // Kullanıcı listesini hazırla
             var result = new List<object>();
             foreach (var user in users)
             {
                 try
                 {
+                    // Her kullanıcının rezervasyon sayısını al
                     var bookings = await _bookingRepository.GetByUserIdAsync(user.Id);
                     result.Add(new
                     {
@@ -97,18 +108,22 @@ public class UsersApiController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Yeni kullanıcı oluşturur
+    /// </summary>
     [HttpPost]
     public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request)
     {
         try
         {
-            // Check if email already exists
+            // E-posta zaten kullanılıyor mu kontrol et
             var existingUser = await _userRepository.GetByEmailAsync(request.Email);
             if (existingUser != null && !existingUser.IsGuest)
             {
                 return BadRequest("Bu e-posta adresi zaten kullanılıyor");
             }
 
+            // Yeni kullanıcı oluştur
             var user = new User
             {
                 FirstName = request.FirstName,
@@ -135,6 +150,9 @@ public class UsersApiController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Kullanıcı bilgilerini günceller
+    /// </summary>
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateUser(int id, [FromBody] CreateUserRequest request)
     {
@@ -146,6 +164,7 @@ public class UsersApiController : ControllerBase
                 return NotFound("Kullanıcı bulunamadı");
             }
 
+            // Kullanıcı bilgilerini güncelle
             user.FirstName = request.FirstName;
             user.LastName = request.LastName;
             user.Email = request.Email;
@@ -169,6 +188,9 @@ public class UsersApiController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Kullanıcı durumunu aktif/pasif yapar
+    /// </summary>
     [HttpPatch("{id}/toggle-status")]
     public async Task<IActionResult> ToggleUserStatus(int id)
     {
@@ -180,6 +202,7 @@ public class UsersApiController : ControllerBase
                 return NotFound("Kullanıcı bulunamadı");
             }
 
+            // Durumu tersine çevir
             user.IsActive = !user.IsActive;
             user.UpdatedAt = DateTime.UtcNow;
 
@@ -195,11 +218,15 @@ public class UsersApiController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Kullanıcıyı siler
+    /// </summary>
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteUser(int id)
     {
         try
         {
+            // Kendi hesabını silmeye çalışıyor mu kontrol et
             var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
             if (id == currentUserId)
             {
@@ -212,13 +239,14 @@ public class UsersApiController : ControllerBase
                 return NotFound("Kullanıcı bulunamadı");
             }
 
-            // Delete user's bookings first
+            // Önce kullanıcının rezervasyonlarını sil
             var bookings = await _bookingRepository.GetByUserIdAsync(id);
             foreach (var booking in bookings)
             {
                 await _bookingRepository.DeleteAsync(booking);
             }
 
+            // Sonra kullanıcıyı sil
             await _userRepository.DeleteAsync(user);
             return Ok(new { message = "Kullanıcı ve rezervasyonları başarıyla silindi" });
         }
@@ -229,6 +257,9 @@ public class UsersApiController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Kullanıcı istatistiklerini getirir
+    /// </summary>
     [HttpGet("stats")]
     public async Task<IActionResult> GetUserStats()
     {
@@ -237,14 +268,15 @@ public class UsersApiController : ControllerBase
             var users = await _userRepository.GetAllAsync();
             var oneMonthAgo = DateTime.UtcNow.AddDays(-30);
 
+            // İstatistikleri hesapla
             var stats = new
             {
-                totalUsers = users.Count(),
-                activeUsers = users.Count(u => u.IsActive),
-                passiveUsers = users.Count(u => !u.IsActive),
-                guestUsers = users.Count(u => u.IsGuest),
-                adminUsers = users.Count(u => u.IsAdmin),
-                newUsersThisMonth = users.Count(u => u.CreatedAt >= oneMonthAgo)
+                totalUsers = users.Count(), // Toplam kullanıcı
+                activeUsers = users.Count(u => u.IsActive), // Aktif kullanıcı
+                passiveUsers = users.Count(u => !u.IsActive), // Pasif kullanıcı
+                guestUsers = users.Count(u => u.IsGuest), // Misafir kullanıcı
+                adminUsers = users.Count(u => u.IsAdmin), // Admin kullanıcı
+                newUsersThisMonth = users.Count(u => u.CreatedAt >= oneMonthAgo) // Bu ay kayıt olan
             };
 
             return Ok(stats);
@@ -257,6 +289,9 @@ public class UsersApiController : ControllerBase
     }
 }
 
+/// <summary>
+/// Kullanıcı oluşturma/güncelleme için request modeli
+/// </summary>
 public class CreateUserRequest
 {
     public string FirstName { get; set; } = string.Empty;
